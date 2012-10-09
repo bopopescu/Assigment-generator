@@ -1,6 +1,7 @@
 import os
 import re
 from random import random, choice
+from math import floor
 
 expanding = "{ukol_prvni}"
 
@@ -46,7 +47,7 @@ for file in files:
 
 history = []
 
-expr = re.compile("\\{(?P<name>[^ ]+)( (?P<params>[^}])*)?\\}")
+expr = re.compile("\\{(?P<name>[^ }]+)( (?P<params>[^}]*))?\\}")
 
 
 def replaceNonterminal(match):
@@ -59,16 +60,17 @@ def replaceNonterminal(match):
         return str( fr+ floor(random()*(to-fr)) )
 
     if nonterminal in nonterminals:
-        return choice( nonterminals[nonterminal]["text"])
+        return choice( nonterminals[nonterminal])["text"]
 
-    return nonterminal
+    return "chyba <"+nonterminal+">"
     
 
 
 #parsovani
 while True:
     history.append(expanding)
-
+    print("-"*20)
+    print(expanding)
     expanding, changes = expr.subn(replaceNonterminal,history[-1],1)
     if changes == 0:
         break

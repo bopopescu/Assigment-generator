@@ -1,4 +1,4 @@
-nonterminal:napln_segment
+nonterminal:napln_ds
 priznaky: d_segment
 text:
 Do datového segmentu ve vašem programu zapište vaše jméno bez diakritiky a malými písmeny.
