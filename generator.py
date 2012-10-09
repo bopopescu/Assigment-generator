@@ -3,80 +3,89 @@ import re
 from random import random, choice
 from math import floor
 
-expanding = "{ukol_prvni}"
+expanding = "{cviceni_prvni}"
 
-nonterminals = {}
 
-##########################
-#načtení fragmentů
-files = os.listdir("segmenty")
-for file in files:
-    with open("segmenty\\"+file) as f:
-        content = f.readlines()
+class Generator:
+    nonterminals = {}
 
-    line = 0        
-    tag,nonterminal = map(lambda x: x.strip(), content[(line)].split(":",2))
-    line += 1
+    def __init__(self):
+        if len(self.nonterminals) == 0:
+            self.loadFragments()
+        pass
 
-    if not nonterminal in nonterminals:
-        nonterminals[nonterminal] = []
 
-    data = {}
-    data["file"] = file
+    def replaceNonterminal(self,match):
+        matches = match.groupdict()
+        nonterminal = matches["name"]
 
-    while True:
-        try:
-            print ( content[line].strip())
-            tag,value = map(lambda x: x.strip(), content[line].split(":",2))
+        if nonterminal == "cislo":
+            par = matches["params"] if matches["params"] != None else "0-9"
+            fr, to = map(lambda x: int(x), par.split("-"))
+            return str( fr+ floor(random()*(to-fr)) )
+
+        if nonterminal in self.nonterminals:
+            return choice( self.nonterminals[nonterminal])["text"]
+
+        return "chyba <"+nonterminal+">"
+            
+
+    def parse(self, expanding):
+        history = []
+        expr = re.compile("\\{(?P<name>[^ }]+)( (?P<params>[^}]*))?\\}")
+
+        #parsovani
+        while True:
+            history.append(expanding)
+            #oly one change at time
+            expanding, changes = expr.subn(self.replaceNonterminal,history[-1],1)
+            if changes == 0:
+                break
+
+        return expanding            
+
+
+    ##########################
+    #načtení fragmentů
+    def loadFragments(self, path = "segmenty"):
+        files = os.listdir(path)
+        for file in files:
+            with open(path+"\\"+file) as f:
+                content = f.readlines()
+
+            line = 0        
+            tag,nonterminal = map(lambda x: x.strip(), content[(line)].split(":",2))
             line += 1
-        except IndexError:
-            print("Error in file "+file)
-            break
 
-        if tag == "text":
-            value = "".join(content[line:])
-            data[tag] = value
-            break
-        elif tag == "priznaky":
-            value = map(lambda x: x.strip(), value.split(","))
+            if not nonterminal in self.nonterminals:
+                self.nonterminals[nonterminal] = []
 
-        data[tag] = value
+            data = {}
+            data["file"] = file
 
-    nonterminals[nonterminal].append(data)
-##########################
+            while True:
+                try:
+                    tag,value = map(lambda x: x.strip(), content[line].split(":",2))
+                    line += 1
+                except IndexError:
+                    print("Error in file "+file)
+                    break
 
-history = []
+                if tag == "text":
+                    value = "".join(content[line:])
+                    data[tag] = value
+                    break
+                elif tag == "priznaky":
+                    value = map(lambda x: x.strip(), value.split(","))
 
-expr = re.compile("\\{(?P<name>[^ }]+)( (?P<params>[^}]*))?\\}")
+                data[tag] = value
 
+            self.nonterminals[nonterminal].append(data)
+    ##########################
 
-def replaceNonterminal(match):
-    matches = match.groupdict()
-    nonterminal = matches["name"]
-
-    if nonterminal == "cislo":
-        par = matches["params"] if matches["params"] != None else "0-9"
-        fr, to = map(lambda x: int(x), par.split("-"))
-        return str( fr+ floor(random()*(to-fr)) )
-
-    if nonterminal in nonterminals:
-        return choice( nonterminals[nonterminal])["text"]
-
-    return "chyba <"+nonterminal+">"
-    
+g = Generator()
+print(g.parse(expanding))
 
 
-#parsovani
-while True:
-    history.append(expanding)
-    print("-"*20)
-    print(expanding)
-    expanding, changes = expr.subn(replaceNonterminal,history[-1],1)
-    if changes == 0:
-        break
-    
 
-    
-
-    expanding
     
