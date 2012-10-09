@@ -1,4 +1,4 @@
-import os
+﻿import os
 import re
 from random import random, choice
 from math import floor
@@ -9,9 +9,16 @@ expanding = "{cviceni_prvni}"
 class Generator:
     nonterminals = {}
 
+    usedFiles = None
+    flags = None
+    
     def __init__(self):
         if len(self.nonterminals) == 0:
             self.loadFragments()
+
+        self.usedFiles = {}
+        self.flags = {}
+        
         pass
 
 
@@ -25,7 +32,12 @@ class Generator:
             return str( fr+ floor(random()*(to-fr)) )
 
         if nonterminal in self.nonterminals:
-            return choice( self.nonterminals[nonterminal])["text"]
+            replacement = choice( self.nonterminals[nonterminal])
+            
+            self.usedFiles[ replacement["file"] ] = 1
+            if "priznaky" in replacement:
+                for flag in replacement["priznaky"]: self.flags[ flag ] = 1
+            return replacement["text"]
 
         return "chyba <"+nonterminal+">"
             
@@ -83,9 +95,9 @@ class Generator:
             self.nonterminals[nonterminal].append(data)
     ##########################
 
-g = Generator()
-print(g.parse(expanding))
-
+#g = Generator()
+#print(g.parse(expanding))
+#print(g.flags)
 
 
     
