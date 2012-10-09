@@ -1,0 +1,8 @@
+nonterminal:porovnej_1
+priznaky: compare
+text:
+Jesliže je výsledek
+	< X, vypište na samostatnýøádek text "mensi"
+	= X, vypište na samostatnýøádek text "rovno"
+	> X, vypište na samostatnýøádek text "vetsi"
+kde X = {cislo 50-200}

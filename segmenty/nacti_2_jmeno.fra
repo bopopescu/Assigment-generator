@@ -1,0 +1,5 @@
+nonterminal:nacti_2
+priznaky: jmeno, d_segment
+text:
+Do datového segmentu ve vašem programu zapište vaše jméno bez diakritiky, mezer a malými písmeny.
+Dále použijte dekadickou reprezentaci {cislo 0-6}. a {cislo 6-10}. znaku jako èísla A a B.

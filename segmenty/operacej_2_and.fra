@@ -1,0 +1,4 @@
+nonterminal:operace_2
+priznak: logicke
+text:
+Proveïte logický AND s èísly A a B. Výsledek uložte do A.
