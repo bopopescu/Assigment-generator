@@ -1,15 +1,14 @@
 import os
+import re
+from random import random, choice
 
-start = "{ukol_prvni}"
-
-
-##########################
-#načtení fragmentů
+expanding = "{ukol_prvni}"
 
 nonterminals = {}
 
+##########################
+#načtení fragmentů
 files = os.listdir("segmenty")
-
 for file in files:
     with open("segmenty\\"+file) as f:
         content = f.readlines()
@@ -43,5 +42,39 @@ for file in files:
         data[tag] = value
 
     nonterminals[nonterminal].append(data)
-print(nonterminals)
+##########################
 
+history = []
+
+expr = re.compile("\\{(?P<name>[^ ]+)( (?P<params>[^}])*)?\\}")
+
+
+def replaceNonterminal(match):
+    matches = match.groupdict()
+    nonterminal = matches["name"]
+
+    if nonterminal == "cislo":
+        par = matches["params"] if matches["params"] != None else "0-9"
+        fr, to = map(lambda x: int(x), par.split("-"))
+        return str( fr+ floor(random()*(to-fr)) )
+
+    if nonterminal in nonterminals:
+        return choice( nonterminals[nonterminal]["text"])
+
+    return nonterminal
+    
+
+
+#parsovani
+while True:
+    history.append(expanding)
+
+    expanding, changes = expr.subn(replaceNonterminal,history[-1],1)
+    if changes == 0:
+        break
+    
+
+    
+
+    expanding
+    
