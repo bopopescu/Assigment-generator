@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 from bottle import route, run, view
 from generator import Generator
+import codecs
 
 @route('/')
 @view("index")
@@ -16,7 +17,7 @@ def index():
 
     data["files"] = {}
     for file in g.usedFiles.keys():
-        with open("segmenty\\"+file) as f:
+       with codecs.open(path+"/"+file,'r', 'utf-8') as f:
                 content = f.readlines()
                 f.close()
         data["files"][file] = content

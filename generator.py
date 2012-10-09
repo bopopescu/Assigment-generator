@@ -2,6 +2,7 @@
 import re
 from random import random, choice
 from math import floor
+import codecs
 
 expanding = "{cviceni_prvni}"
 
@@ -62,7 +63,7 @@ class Generator:
     def loadFragments(self, path = "segmenty"):
         files = os.listdir(path)
         for file in files:
-            with open(path+"/"+file) as f:
+            with codecs.open(path+"/"+file,'r', 'utf-8') as f:
                 content = f.readlines()
 
             line = 0        
