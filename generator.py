@@ -62,7 +62,7 @@ class Generator:
     def loadFragments(self, path = "segmenty"):
         files = os.listdir(path)
         for file in files:
-            with open(path+"\\"+file) as f:
+            with open(path+"/"+file) as f:
                 content = f.readlines()
 
             line = 0        

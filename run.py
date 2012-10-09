@@ -1,3 +1,4 @@
+#! /usr/bin/python3
 from bottle import route, run, view
 from generator import Generator
 
