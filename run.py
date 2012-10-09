@@ -17,10 +17,10 @@ def index():
 
     data["files"] = {}
     for file in g.usedFiles.keys():
-       with codecs.open(path+"/"+file,'r', 'utf-8') as f:
-                content = f.readlines()
-                f.close()
-        data["files"][file] = content
+       with codecs.open("segmenty/"+file,'r', 'utf-8') as f:
+            content = f.readlines()
+            f.close()
+       data["files"][file] = content
         
     
     

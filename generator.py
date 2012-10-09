@@ -9,17 +9,10 @@ expanding = "{cviceni_prvni}"
 
 class Generator:
     nonterminals = {}
-
-    usedFiles = None
-    flags = None
     
     def __init__(self):
         if len(self.nonterminals) == 0:
             self.loadFragments()
-
-        self.usedFiles = {}
-        self.flags = {}
-        
         pass
 
 
@@ -46,6 +39,9 @@ class Generator:
     def parse(self, expanding):
         history = []
         expr = re.compile("\\{(?P<name>[^ }]+)( (?P<params>[^}]*))?\\}")
+
+        self.usedFiles = {}
+        self.flags = {}
 
         #parsovani
         while True:
