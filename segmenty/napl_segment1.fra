@@ -1,0 +1,4 @@
+nonterminal:napln_segment
+priznaky: xlogin, d_segment
+text:
+Do datového segmentu ve vašem programu zapište váš xlogin.

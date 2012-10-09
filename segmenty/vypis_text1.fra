@@ -1,0 +1,3 @@
+nonterminal:vypis_text
+text:
+Vypište vždy na nový øádek {cislo 0-9} a {cislo 0-9} znak nahraného textu

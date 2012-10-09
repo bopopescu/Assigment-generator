@@ -1,0 +1,4 @@
+nonterminal:prvni_ukol
+text:
+- {napln_ds}
+- {vypis_text}
