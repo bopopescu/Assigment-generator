@@ -1,5 +1,5 @@
 nonterminal:nacti_2
 priznaky: xlogin, d_segment
 text:
-Do datového segmentu ve vašem programu zapište váš xlogin.
-Dále pouijte dekadickou reprezentaci {cislo 0-4}. a {cislo 4-7}. znak jako èísla A a B.
+Do datovÃ©ho segmentu ve vaÅ¡em programu zapiÅ¡te vÃ¡Å¡ xlogin.
+DÃ¡le pouÅ¾ijte dekadickou reprezentaci {cislo 0-4}. a {cislo 4-7}. znak jako ÄÃ­sla A a B.

@@ -1,4 +1,4 @@
 nonterminal:nacti_2
 priznaky: d_segment, read_byte
 text:
-Z klávesnice naètìte 2 hodnoty (první oznaèíme A, druhou B) typu byte (pomocí Read_Byte) a ulote je do datového segmentu
+Z klÃ¡vesnice naÄtÄ›te 2 hodnoty (prvnÃ­ oznaÄÃ­me A, druhou B) typu byte (pomocÃ­ Read_Byte) a uloÅ¾te je do datovÃ©ho segmentu

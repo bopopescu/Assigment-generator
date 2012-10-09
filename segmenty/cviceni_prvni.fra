@@ -1,19 +1,18 @@
 nonterminal:cviceni_prvni
 text:
-
-1. úloha
+1. Ãºloha
 --------------------------
 - {nacti_2}
 - {vypis_2}
 
-2. úloha
+2. Ãºloha
 --------------------------
 - {nacti_2}
 - {porovnej_2}
 
-3. úloha
+3. Ãºloha
 --------------------------
 - {nacti_2}
 - {operace_2}
 - {operace_2}
-- Výsledek vypište na samostaný øádek
+- VÃ½sledek vypiÅ¡te na samostanÃ½ Å™Ã¡dek

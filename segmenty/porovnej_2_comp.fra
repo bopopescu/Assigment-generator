@@ -1,7 +1,7 @@
 nonterminal:porovnej_2
 priznaky: compare
 text:
-V pøípadì e:
-	A > B, vypište na samostatnı øádek text "A > B"
-	A = B, vypište na samostatnı øádek text "A = B"
-	A < B, vypište na samostatnı øádek text "A < B"
+V pÅ™Ã­padÄ› Å¾e:
+	A > B, vypiÅ¡te na samostatnÃ½ Å™Ã¡dek text "A > B"
+	A = B, vypiÅ¡te na samostatnÃ½ Å™Ã¡dek text "A = B"
+	A < B, vypiÅ¡te na samostatnÃ½ Å™Ã¡dek text "A < B"

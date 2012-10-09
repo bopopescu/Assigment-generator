@@ -1,8 +1,8 @@
 nonterminal:porovnej_1
 priznaky: compare
 text:
-Jeslie je vısledek
-	< X, vypište na samostatnıøádek text "mensi"
-	= X, vypište na samostatnıøádek text "rovno"
-	> X, vypište na samostatnıøádek text "vetsi"
+JesliÅ¾e je vÃ½sledek
+	< X, vypiÅ¡te na samostatnÃ½Å™Ã¡dek text "mensi"
+	= X, vypiÅ¡te na samostatnÃ½Å™Ã¡dek text "rovno"
+	> X, vypiÅ¡te na samostatnÃ½Å™Ã¡dek text "vetsi"
 kde X = {cislo 50-200}
