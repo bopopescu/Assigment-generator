@@ -14,7 +14,7 @@ def index():
 
     data["output"] = g.parse(data["start"])
     data["flags"] = g.flags
-
+    print(g.flags)
     data["files"] = {}
     for file in g.usedFiles.keys():
        with codecs.open("segmenty/"+file,'r', 'utf-8') as f:

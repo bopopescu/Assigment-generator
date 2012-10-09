@@ -1,4 +1,4 @@
-nonterminal:operace_2
-priznak: logicke
+﻿nonterminal:operace_2
+priznaky: logicke
 text:
 S číslem A proveďte rotaci doprava o B. Výsledek uložte do A.

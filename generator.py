@@ -30,7 +30,7 @@ class Generator:
             
             self.usedFiles[ replacement["file"] ] = 1
             if "priznaky" in replacement:
-                for flag in replacement["priznaky"]: self.flags[ flag ] = 1
+                for flag in replacement["priznaky"]:  self.flags[ flag ] = 1
             return replacement["text"]
 
         return "chyba <"+nonterminal+">"
@@ -85,7 +85,7 @@ class Generator:
                     data[tag] = value
                     break
                 elif tag == "priznaky":
-                    value = map(lambda x: x.strip(), value.split(","))
+                    value = list(map(lambda x: x.strip(), value.split(",")))
 
                 data[tag] = value
 
