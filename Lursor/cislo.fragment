@@ -1,0 +1,5 @@
+nonterminal: cislo
+code:
+cislice = 5
+text:
+ja jsem {cislice}

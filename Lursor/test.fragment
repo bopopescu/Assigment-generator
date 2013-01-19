@@ -1,0 +1,11 @@
+nonterminal: cviceni
+code:
+import datetime
+
+now = datetime.datetime.now()
+
+casGenerovani = now.strftime("%Y-%m-%d %H:%M")
+
+text:
+prvni cviceni z predmetu asm {cislo}
+vygenerovano: {casGenerovani}
