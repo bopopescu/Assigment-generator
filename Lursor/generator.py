@@ -1,13 +1,14 @@
 import os
+import re
 import codecs
 import warnings
 import tokenize
 from collections import namedtuple
-
+from random import choice
 VERBOSE = True
 
 
-NonTermTuple = namedtuple('NonTermTuple', 'params text program ')
+NonTermTuple = namedtuple('NonTermTuple', 'params program text')
 
 ##        class callableLines:
 ##            def __init__(self, content):
@@ -35,10 +36,10 @@ class Generator:
         files = os.listdir(path)
         for file in files:
             if not file.endswith(".fragment"):
-                if VERBOSE: print("skipping "+file)
+                if VERBOSE: print("skipping ".ljust(10)+file)
                 continue
             
-            if VERBOSE: print("opening "+file)
+            if VERBOSE: print("opening ".ljust(10)+file)
             
             with codecs.open(path+"/"+file,'r', 'utf-8') as f:
                 content = f.readlines()
@@ -53,12 +54,86 @@ class Generator:
 
     def _addNonterminal(self, nonterm, text, program, params):
         """ Prida zaznam do seznamu nonterminalu """
-        tup = NonTermTuple(text, program, params)
+        tup = NonTermTuple(params, program, text)
 
         if not nonterm in self.nonterminals:
             self.nonterminals[nonterm] = []
             
         self.nonterminals[nonterm].append(tup)
+
+
+    def expand(self, text, scope = {}):
+        """ scope jsou lokalni data, funkce a parametry zadane pri volani"""
+        def replace(match):
+            """Lokální funkce pro nahrazovani parametru"""
+            matches = match.groupdict()
+
+            # jmeno ktere nahrazujeme
+            name = matches["name"]
+
+            # parametry ktere byly použity při volání
+            outParams = matches["params"]
+            if outParams == None: outParams = {}
+
+            #todo params prevest reference ze scope do loklani kopie outParams
+
+            # nejdrive zkontrolujeme jestli existuje v lokalnim scope (pokud existuje)
+            # todo: check jsetli se str() provedl ok
+            if scope != None and name in scope:
+                # existuje
+                # pokud je to funkce, predame ji parametry a vratime vysledek
+                if callable(scope[name]):
+                    return str( scope[name]( *outParams ) )
+                # neni to funkce, tak z toho zkusime udelat text
+                return str(scope[name])
+
+            # nenašli jsme ve scope, zkusime načíst nonterminaly
+            candidates = self.getNonterms(name, outParams)
+
+            # zkousime dokud nenajdeme, nebo nedojdou kandidáti
+            while len(candidates) > 0:
+                ntParams, program, text = candidates.pop()
+
+                # predame do potomka vstupni parametry
+                nextScope = outParams
+
+                # todo check jestli paramery sedí na parametry sablony
+                if program != None:
+                    _globals = {}
+                    _locals = nextScope
+
+                    try:
+                        eval(program, _globals, _locals)
+                    except ImportError:
+                        # pokud je ImportError pri spusteni tak preskocime
+                        # tim ho vyradime z uvahy a zkusime dalsi v poradi
+                        continue
+
+                    print("nadefinovan program", nextScope)
+                
+                return self.expand(text, nextScope)
+            
+            # dosli vsichni kandidati
+            raise LookupError("Couldn't find rule to expand %s with params %a" % (nonterm, inParams) )
+        ### end replace
+        
+        expr = re.compile("\\{(?P<name>[^ }]+)( (?P<params>[^}]*))?\\}")
+        while True:
+            # pouze jedna (nejlevejsi zmena najednou
+            text, changes = expr.subn(replace,text,1)
+            if changes == 0:
+                break
+        return text
+
+        
+
+    def getNonterms(self, nonterm, inParams):
+        """Vrátí náhodně seřazené pole použitelných nonterminalů"""
+        if not nonterm in self.nonterminals: raise NameError("No definitions for nonterminal '%s'" % (nonterm,) )
+        #todo: reakce na input
+        #todo: zamichani
+        return self.nonterminals[nonterm]
+    
 
     def parse(self, content):
         """Zpracuje text souboru"""
@@ -128,3 +203,5 @@ class Generator:
 
 g = Generator()
 g.loadDir(".")
+
+print( g.expand("{cviceni}"));
