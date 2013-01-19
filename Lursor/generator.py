@@ -2,8 +2,12 @@ import os
 import codecs
 import warnings
 import tokenize
+from collections import namedtuple
 
-VERBOSE = True 
+VERBOSE = True
+
+
+NonTermTuple = namedtuple('NonTermTuple', 'params text program ')
 
 ##        class callableLines:
 ##            def __init__(self, content):
@@ -18,12 +22,15 @@ VERBOSE = True
 ##                
 ##                return toReturn
 
+def test():
+    a = 1+2
 
 class Generator:
 
     def __init__(self):
+        self.nonterminals = {}
         pass
-
+    
     def loadDir(self, path):
         files = os.listdir(path)
         for file in files:
@@ -40,12 +47,21 @@ class Generator:
                self.parse(content)
             except SyntaxError as e:
                 #todo: udelat z toho warn
+                raise
                 raise SyntaxError(" ".join( ("File", file,"-", e.msg) ) )
-                
 
-        
+
+    def _addNonterminal(self, nonterm, text, program, params):
+        """ Prida zaznam do seznamu nonterminalu """
+        tup = NonTermTuple(text, program, params)
+
+        if not nonterm in self.nonterminals:
+            self.nonterminals[nonterm] = []
+            
+        self.nonterminals[nonterm].append(tup)
 
     def parse(self, content):
+        """Zpracuje text souboru"""
         nonterm = None
 
         params = []
@@ -98,12 +114,15 @@ class Generator:
             currentBlock.append(line)
 
         if VERBOSE:
-            print("parsed nonterminal %s: %d text, %d code"%(nonterm, len(text), len(code)))
+            print("parsed nonterminal '%s': %d text, %d code"%(nonterm, len(text), len(code)))
 
         text = "\n".join(text)
-        code = "\n".join(code)
-
-
+        program = None
+        
+        if len(code) > 0:
+            program = compile("\n".join(code),"<string>","exec")
+            
+        self._addNonterminal(nonterm, text, program, params)
             
 
 
