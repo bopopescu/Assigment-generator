@@ -103,7 +103,10 @@ class Generator:
 
             # zkousime dokud nenajdeme, nebo nedojdou kandidáti
             while len(candidates) > 0:
-                ntParams, program, text = candidates.pop()
+                c = choice(candidates)
+                candidates.remove(c)
+                
+                ntParams, program, text = c
 
                 # predame do volane sablony vstupni parametry
                 nextScope = {}
