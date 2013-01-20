@@ -5,6 +5,7 @@ import warnings
 import tokenize
 from collections import namedtuple
 from random import choice
+from copy import copy
 VERBOSE = True
 
 
@@ -101,6 +102,8 @@ class Generator:
             # nenašli jsme ve scope, zkusime načíst nonterminaly
             candidates = self.getNonterms(name, outParams)
 
+            print("kandidatu",len(candidates))
+
             # zkousime dokud nenajdeme, nebo nedojdou kandidáti
             while len(candidates) > 0:
                 c = choice(candidates)
@@ -139,7 +142,7 @@ class Generator:
                 return self.expand(text, nextScope)
             
             # dosli vsichni kandidati
-            raise LookupError("Couldn't find rule to expand %s with params %a" % (nonterm, inParams) )
+            raise LookupError("Couldn't find rule to expand %s with params %a" % (name, outParams) )
         ### end replace
         
         expr = re.compile("\\{(?P<name>[a-zA-Z_][a-zA-Z0-9_]*)[ ]*(?P<params>\([^}]*\))?[ ]*\\}")
@@ -155,9 +158,10 @@ class Generator:
     def getNonterms(self, nonterm, inParams):
         """Vrátí náhodně seřazené pole použitelných nonterminalů"""
         if not nonterm in self.nonterminals: raise NameError("No definitions for nonterminal '%s'" % (nonterm,) )
-        #todo: reakce na input
-        #todo: zamichani
-        return self.nonterminals[nonterm]
+        #todo: filtrovat podle poctu parametru
+
+        # vracime melkou kopii, protoze se z toho seznamu mazou kandidati co nelze pouzit
+        return copy(self.nonterminals[nonterm])
     
 
     def parse(self, content):
