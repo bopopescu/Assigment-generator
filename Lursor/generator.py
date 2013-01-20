@@ -116,6 +116,8 @@ class Generator:
                         value = ntParams["defaults"][name]
 
                     nextScope[name] = value
+
+                nextScope["_params"] = outParams
                     
                 if program != None:
                     _globals = {}
@@ -160,7 +162,7 @@ class Generator:
         nonterm = None
 
         # dict nezachovava poradi vlozenych klicu, tak musime uchovavat oboje
-        params = {"order":[], "defaults":{} }
+        params = {"order":[], "defaults":{}, "all": False }
 
         text = []
         code = []
@@ -169,11 +171,17 @@ class Generator:
 
         lineNo = 0
 
+        tmp = bytes(content[lineNo],"utf-8")
+        if tmp.startswith( codecs.BOM_UTF8 ):
+            content[lineNo] = str( tmp[ len(codecs.BOM_UTF8): ],"utf-8") 
+
         # prvni radka musi byt nonterm
         try:
+            
             tag,nonterm = map(lambda x: x.strip(), content[lineNo].split(":",2))
 
-            if tag != "nonterminal" : raise SyntaxError(" ".join("line: "+str(lineNo),"first line must contain nonterminal"));
+           
+            if tag != "nonterminal" : raise SyntaxError(" ".join( ("line: "+str(lineNo),"first line must contain nonterminal", "-", "'%s' found"%tag)) );
         except ValueError:
             raise SyntaxError(" ".join("line: "+str(lineNo),"unknown format"));
 
@@ -189,6 +197,10 @@ class Generator:
                         items = [item for item in map( lambda x: x.strip(),  data.split(",") ) ];
 
                         for item in items:
+                            if item.strip() == "*":
+                                params["all"] = True
+                                continue
+                            
                             try:
                                 name, value = map(lambda x: x.strip(), item.split("=",2) )
                                 value = eval(value, {})
@@ -196,7 +208,7 @@ class Generator:
                             except SyntaxError:
                                 raise SyntaxError(" ".join("Error parsing default value for parameter %s"%name, "-", e.msg) )
                             except ValueError:
-                                name = item
+                                name = item.strip()
                                 params["defaults"][ name ] = None
 
                             params["order"].append(name);
@@ -227,7 +239,7 @@ class Generator:
         if VERBOSE:
             print("parsed nonterminal '%s': %d text, %d code, %d params "%(nonterm, len(text), len(code), len(params["order"])))
 
-        text = "\n".join(text)
+        text = "".join(text)
         program = None
         
         if len(code) > 0:
@@ -238,6 +250,7 @@ class Generator:
 
 
 g = Generator()
-g.loadDir(".")
+g.loadDir("base")
+g.loadDir("cviceni3")
 
 print( g.expand("{cviceni}"));
