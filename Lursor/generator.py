@@ -190,7 +190,7 @@ class Generator:
 
                         for item in items:
                             try:
-                                name, value = item.split("=",2)
+                                name, value = map(lambda x: x.strip(), item.split("=",2) )
                                 value = eval(value, {})
                                 params["defaults"][ name ] = value
                             except SyntaxError:
