@@ -71,10 +71,21 @@ class Generator:
             # jmeno ktere nahrazujeme
             name = matches["name"]
 
-            # parametry ktere byly použity při volání
+            # parametry ktere budou použity při volání 
             outParams = matches["params"]
-            if outParams == None: outParams = {}
+            if outParams != None:
+                try:
+                    _globals = {}
+                    _locals = scope
+                    # vyhodnotíme je v rámci naší local
+                    outParams = eval(outParams, _globals, _locals)
+                except Exception as e:
+                    raise SyntaxError(" ".join("Error parsing parameters for %s"%name,"(%s)"%outParams, "-", e.msg) )
+            else:
+                outParams = ()
 
+            print("parametry pro %s"%name, outParams)
+            
             #todo params prevest reference ze scope do loklani kopie outParams
 
             # nejdrive zkontrolujeme jestli existuje v lokalnim scope (pokud existuje)
@@ -94,13 +105,23 @@ class Generator:
             while len(candidates) > 0:
                 ntParams, program, text = candidates.pop()
 
-                # predame do potomka vstupni parametry
-                nextScope = outParams
+                # predame do volane sablony vstupni parametry
+                nextScope = {}
+                
+                for i in range( len(ntParams["order"]) ):
+                    name = ntParams["order"][i]
+                    try:
+                        value = outParams[i]
+                    except IndexError:
+                        value = ntParams["defaults"][name]
 
-                # todo check jestli paramery sedí na parametry sablony
+                    nextScope[name] = value
+                    
                 if program != None:
                     _globals = {}
                     _locals = nextScope
+
+                    print("volame program s",_locals)
 
                     try:
                         eval(program, _globals, _locals)
@@ -109,7 +130,6 @@ class Generator:
                         # tim ho vyradime z uvahy a zkusime dalsi v poradi
                         continue
 
-                    print("nadefinovan program", nextScope)
                 
                 return self.expand(text, nextScope)
             
@@ -117,7 +137,7 @@ class Generator:
             raise LookupError("Couldn't find rule to expand %s with params %a" % (nonterm, inParams) )
         ### end replace
         
-        expr = re.compile("\\{(?P<name>[^ }]+)( (?P<params>[^}]*))?\\}")
+        expr = re.compile("\\{(?P<name>[a-zA-Z_][a-zA-Z0-9_]*)[ ]*(?P<params>\([^}]*\))?[ ]*\\}")
         while True:
             # pouze jedna (nejlevejsi zmena najednou
             text, changes = expr.subn(replace,text,1)
@@ -139,7 +159,9 @@ class Generator:
         """Zpracuje text souboru"""
         nonterm = None
 
-        params = []
+        # dict nezachovava poradi vlozenych klicu, tak musime uchovavat oboje
+        params = {"order":[], "defaults":{} }
+
         text = []
         code = []
 
@@ -164,7 +186,21 @@ class Generator:
 
                 if tag in ("text", "code", "params"):
                     if tag == "params":
-                        #todo
+                        items = [item for item in map( lambda x: x.strip(),  data.split(",") ) ];
+
+                        for item in items:
+                            try:
+                                name, value = item.split("=",2)
+                                value = eval(value, {})
+                                params["defaults"][ name ] = value
+                            except SyntaxError:
+                                raise SyntaxError(" ".join("Error parsing default value for parameter %s"%name, "-", e.msg) )
+                            except ValueError:
+                                name = item
+                                params["defaults"][ name ] = None
+
+                            params["order"].append(name);
+                                
                         continue
 
                     # jedna se o specialni nazev, text za dvojteckou musi byt prazdny
@@ -189,7 +225,7 @@ class Generator:
             currentBlock.append(line)
 
         if VERBOSE:
-            print("parsed nonterminal '%s': %d text, %d code"%(nonterm, len(text), len(code)))
+            print("parsed nonterminal '%s': %d text, %d code, %d params "%(nonterm, len(text), len(code), len(params["order"])))
 
         text = "\n".join(text)
         program = None
