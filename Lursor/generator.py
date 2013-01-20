@@ -145,9 +145,9 @@ class Generator:
             raise LookupError("Couldn't find rule to expand %s with params %a" % (name, outParams) )
         ### end replace
         
-        expr = re.compile("\\{(?P<name>[a-zA-Z_][a-zA-Z0-9_]*)[ ]*(?P<params>\([^}]*\))?[ ]*\\}")
+        expr = re.compile("\\{(?P<name>[a-zA-Z_\-][a-zA-Z0-9_\-]*)[ ]*(?P<params>\([^}]*\))?[ ]*\\}")
         while True:
-            # pouze jedna (nejlevejsi zmena najednou
+            # pouze jedna (nejlevejsi zmena najednou    
             text, changes = expr.subn(replace,text,1)
             if changes == 0:
                 break
