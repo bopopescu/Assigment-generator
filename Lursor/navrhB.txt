@@ -1,0 +1,12 @@
+nonterminal: cislo(min = 0, max = 30)
+% import random
+% c = int(random()*(max-min)+min)
+{c}
+
+nonterminal test():
+Toto je text s cisly {cislo} a {cislo}
+
+nonterminal test:
+Toto je druhá implementace nonterminalu test s {cislo(10,60)}, závorky v názvu volitelné
+
+	
