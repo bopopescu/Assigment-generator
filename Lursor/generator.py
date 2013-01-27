@@ -6,7 +6,7 @@ import tokenize
 from collections import namedtuple
 from random import choice
 from copy import copy
-VERBOSE = True
+VERBOSE = False
 
 
 NonTermTuple = namedtuple('NonTermTuple', 'params program text')
@@ -81,11 +81,10 @@ class Generator:
                     # vyhodnotíme je v rámci naší local
                     outParams = eval(outParams, _globals, _locals)
                 except Exception as e:
-                    raise SyntaxError(" ".join("Error parsing parameters for %s"%name,"(%s)"%outParams, "-", e.msg) )
+                    raise SyntaxError(" ".join(("Error parsing parameters for %s"%name,"(%s)"%outParams, "-", e.msg)) )
             else:
                 outParams = ()
 
-            print("parametry pro %s"%name, outParams)
             
             #todo params prevest reference ze scope do loklani kopie outParams
 
@@ -101,8 +100,6 @@ class Generator:
 
             # nenašli jsme ve scope, zkusime načíst nonterminaly
             candidates = self.getNonterms(name, outParams)
-
-            print("kandidatu",len(candidates))
 
             # zkousime dokud nenajdeme, nebo nedojdou kandidáti
             while len(candidates) > 0:
@@ -128,8 +125,6 @@ class Generator:
                 if program != None:
                     _globals = {}
                     _locals = nextScope
-
-                    print("volame program s",_locals)
 
                     try:
                         eval(program, _globals, _locals)
