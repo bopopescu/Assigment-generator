@@ -1,0 +1,9 @@
+nonterminal: cislo
+params: min,max
+code:
+from random import random
+
+cislice = str(int(random()*(max-min)+min))                    
+
+text:
+{cislice}

@@ -1,0 +1,8 @@
+nonterminal: ulohaWhile
+text:
+S využitím přípravné šablony datového segmentu (viz níže) vytvořte program, který s využitím cyklu a složeného podmíněného výrazu vypočítá (a přehledně vypíše na obrazovku):
+
+a. počet {choice("velkých písmen","malých písmen","číslic")}
+b. počet {choice("mezer","nealfanumerických znaků","interpunkčních znamének")}
+
+{data-string}

@@ -1,0 +1,6 @@
+nonterminal: ulohaBranch
+text:
+Implementujte následující program
+
+{branchZnak}
+{choice("v případě poslední možnosti program skončí, jinak pokračuje znovu od zadání vstupu","")}

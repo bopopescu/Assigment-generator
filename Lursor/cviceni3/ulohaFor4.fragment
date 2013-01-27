@@ -1,0 +1,4 @@
+nonterminal: ulohaFor
+text:
+S využitím cyklu for …  spočítejte součin čísel 1 až {cislo(5,10)} (tzn. faktoriál čísla ?).
+Výsledek vypište na obrazovku.

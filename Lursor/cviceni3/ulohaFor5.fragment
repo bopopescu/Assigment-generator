@@ -1,0 +1,7 @@
+nonterminal: ulohaFor
+text:
+S využitím cyklu s pevným počtem opakování for … vypište čísla 0 až 15 v dekadické a binární podobě. 
+Každé číslo na vlastní řádek ve tvaru:
+0 00000000
+...
+15 00001111

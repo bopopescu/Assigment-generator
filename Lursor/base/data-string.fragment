@@ -1,0 +1,11 @@
+nonterminal: data-string
+params: name = "string_in", term = "0"
+text:
+[segment .data use32]
+{name}   db "{choice(
+"Nikola Tesla (10 July 1856 -- 7 January 1943) was an inventor, mechanical engineer, and electrical engineer.",
+"Socrates (469 BC – 399 BC) was a classical Greek Athenian philosopher.",
+"Sir Isaac Newton [FRS] (4 January 1643 -- 31 March 1727) was an English physicist, mathematician, astronomer, natural philosopher, alchemist, and theologian.",
+"Blaise Pascal (June 19, 1623 - August 19, 1662), was a French mathematician, physicist, inventor, writer and Catholic philosopher.",
+)}",{term}
+

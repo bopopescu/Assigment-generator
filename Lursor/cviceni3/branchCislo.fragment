@@ -1,0 +1,8 @@
+nonterminal: branchCislo
+text:
+
+- z klávesnice načtěte číslo o velikosti {choice("byte","word")}
+- v případě že je kladné, vypište "kladne"
+- v případě že je záporné, vypište "zaporne"
+- v případě nuly vypište "nula"
+

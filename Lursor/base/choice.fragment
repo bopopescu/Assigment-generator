@@ -1,0 +1,9 @@
+nonterminal: choice
+params: *
+code:
+from random import choice
+
+ret = choice(_params)
+
+text:
+{ret}
