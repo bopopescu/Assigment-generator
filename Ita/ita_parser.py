@@ -28,11 +28,6 @@ class Rule:
 
 
 
-
-    def execute(self, ):
-        pass
-
-
 #############################################################################    
 
 class Parser:
@@ -157,7 +152,7 @@ class Parser:
             if currentBlock == None: raise makeException("line doesn't belong to any block", curLine);
 
             if currentBlock == "code":
-                code.append(line)
+                code.append(line.rstrip() )
                 continue
 
             if currentBlock == "text":
@@ -174,29 +169,36 @@ class Parser:
                         
                         
 
-        if VERBOSE:
-            print("parsed nonterminal '%s': %d text, %d code, %d params "%(nonterm, len(text), len(code), len(params["order"])))
 
         # samotné skládání kódu
-        program = ["def implementation() :"]
+        program = ["def implementation(%s) :" % ( ", ".join(params["order"]) ) ]
 
         # první přijde vložení "code" bloku
-        for line in code: program.append( "\t"+line )
+        for line in code: program.append( "\t" + line )
 
         # nasleduje přijde vložení "text" bloku
-        for line in text: program.append( "\t"+line )
+        program.append("\tvalue = []");
+        for line in text: program.append( "\t" + line )
 
-        program = compile("\n".join(program),"<string>","exec")
+        program.append( "\t" + "return ''.join( value )" )  
+
+        if VERBOSE:
+            print("parsed nonterminal '%s': %d text, %d code, %d params "%(nonterm, len(text), len(code), len(params["order"])))
+            print("\n".join(program))
             
-        self._addrule(nonterm, program, params)
+
+
+        programCompiled = compile("\n".join(program),"<string>","exec")
+        
+        self._addrule(nonterm, programCompiled, params, "\n".join(program) )
                 
 
         return curLine
 
 
-    def _addrule(self, nonterm, program, params):
+    def _addrule(self, nonterm, program, params, info):
         """ Prida zaznam do seznamu pravidel"""
-        rule = Rule(nonterm, program, params)
+        rule = Rule(nonterm, program, params, info)
 
         if not nonterm in self.rules:
             self.rules[nonterm] = []
@@ -205,6 +207,3 @@ class Parser:
                 
 
 
-p = Parser()
-p.loadDir("base")
-p.loadDir("cviceni3")
