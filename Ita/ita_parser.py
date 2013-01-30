@@ -88,7 +88,7 @@ class Parser:
         curLine += 1 # preskocime radku s nonterm
         
         # dict nezachovava poradi vlozenych klicu, tak musime uchovavat oboje
-        params = {"order":[], "defaults":{}, "all": False }
+        params = {"order":[], "defaults":{}, "all": False, "raw":"" }
 
         text = []
         code = []
@@ -108,6 +108,7 @@ class Parser:
                         break
                         
                     if tag == "params":
+                        params["raw"] =  data
                         items = [item for item in map( lambda x: x.strip(),  data.split(",") ) ];
 
                         for item in items:
@@ -162,6 +163,9 @@ class Parser:
 
                 for i in range(len(parts)):
                     part = parts[i]
+
+                    if len(part) == 0: continue # preskocime prazdne party
+                    
                     if i % 2: # liché části jsou vnitřek {{...}}
                         text.append("value.append( str(%s) )" % part )
                     else: # sudé části jsou text
@@ -171,10 +175,12 @@ class Parser:
 
 
         # samotné skládání kódu
-        program = ["def implementation(%s) :" % ( ", ".join(params["order"]) ) ]
+        program = ["def implementation(%s) :" % ( params["raw"] ) ]
 
         # první přijde vložení "code" bloku
         for line in code: program.append( "\t" + line )
+
+        # todo: nepridavat text pokud code obsahuje return na prvni urovni
 
         # nasleduje přijde vložení "text" bloku
         program.append("\tvalue = []");
@@ -184,7 +190,7 @@ class Parser:
 
         if VERBOSE:
             print("parsed nonterminal '%s': %d text, %d code, %d params "%(nonterm, len(text), len(code), len(params["order"])))
-            print("\n".join(program))
+            #print("\n".join(program))
             
 
 
