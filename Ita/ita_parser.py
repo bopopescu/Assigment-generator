@@ -158,6 +158,7 @@ class Parser:
 
             if currentBlock == "text":
                 expr = re.compile("\\{\\{(?P<code>.*?)\\}\\}")
+                identifier = re.compile(r"^[^\d\W]\w*\Z", re.UNICODE)
                 #najdeme vsechny casti
                 parts = expr.split(line)
 
@@ -167,6 +168,9 @@ class Parser:
                     if len(part) == 0: continue # preskocime prazdne party
                     
                     if i % 2: # liché části jsou vnitřek {{...}}
+                        if identifier.match(part):  # vnitrek by mohla byt sablona bez parametru
+                          part = "%s() if callable(%s) else %s"%(part,part,part)
+                        
                         text.append("value.append( str(%s) )" % part )
                     else: # sudé části jsou text
                         text.append("value.append( %s )" % repr(part) )
