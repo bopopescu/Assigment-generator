@@ -131,7 +131,7 @@ class Parser:
                         continue
 
                     if tag == "note":
-                        # todo
+                        currentBlock = "note"
                         continue
 
                     # jedna se o specialni blok [code|text], za dvojteckou uz nic nesmi byt
@@ -151,6 +151,10 @@ class Parser:
                     
             # nevime kam patri aktualni radka
             if currentBlock == None: raise makeException("line doesn't belong to any block", curLine);
+
+            if currentBlock == "note":
+                # poznámka se preskakuje
+                continue
 
             if currentBlock == "code":
                 code.append(line.rstrip() )
