@@ -99,7 +99,7 @@ class Parser:
             curLine += 1
 
             if line.find(":") > 0:  # řádka obsahuje ":" na druhém nebo vyšším znaku (tzn nemůže začínat dvojtečkou)
-                tag,data = map(lambda x: x.strip(), line.split(":",2))
+                tag,data = map(lambda x: x.strip(), line.split(":",1))
 
                 if tag in ("nonterminal","params", "code", "note", "text"):   # je to nějaký z podporovaných segmentů
 
@@ -117,7 +117,7 @@ class Parser:
                                 continue
                             
                             try:
-                                name, value = map(lambda x: x.strip(), item.split("=",2) )
+                                name, value = map(lambda x: x.strip(), item.split("=",1) )
                                 value = eval(value, {})
                                 params["defaults"][ name ] = value
                             except SyntaxError:
@@ -175,9 +175,9 @@ class Parser:
                         if identifier.match(part):  # vnitrek by mohla byt sablona bez parametru
                           part = "%s() if callable(%s) else %s"%(part,part,part)
                         
-                        text.append("value.append( str(%s) )" % part )
+                        text.append("__value.append( str(%s) )" % part )
                     else: # sudé části jsou text
-                        text.append("value.append( %s )" % repr(part) )
+                        text.append("__value.append( %s )" % repr(part) )
                         
                         
 
@@ -188,13 +188,21 @@ class Parser:
         # první přijde vložení "code" bloku
         for line in code: program.append( "\t" + line )
 
-        # todo: nepridavat text pokud code obsahuje return na prvni urovni
+        #todo: nepridavat text pokud code obsahuje return na prvni urovni
+        #todo: sanity check ze je aspon kod nebo text tzn funkce ma telo
 
-        # nasleduje přijde vložení "text" bloku
-        program.append("\tvalue = []");
-        for line in text: program.append( "\t" + line )
+        # vložení textu
+        if len(text) > 0:
+            # definice
+            program.append("\t__value = []");
+            # napumpování obsahu
+            for line in text: program.append( "\t" + line )
+            # odstranění prázdných řádek
+            program.append( "\t" + "while len(__value) > 0 and len(__value[-1].strip()) == 0: __value.pop()" )
+            # samotný návrat
+            program.append( "\t" + "return ''.join( __value )" )  
 
-        program.append( "\t" + "return ''.join( value )" )  
+        
 
         if VERBOSE:
             print("parsed nonterminal '%s': %d text, %d code, %d params "%(nonterm, len(text), len(code), len(params["order"])))
