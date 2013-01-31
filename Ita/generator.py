@@ -28,7 +28,6 @@ class Generator:
                     self.counter += 1
 
                     glob['_idStack'].append( randId )
-                    
                     exec(selected.code, glob, loc)
                     retVal =  loc["implementation"](*args, **kwargs)
 
@@ -80,10 +79,3 @@ class Generator:
         
         
 
-p = Parser()
-
-p.loadDir("base")
-p.loadDir("cviceni3")
-
-g = Generator( p.rules )
-print(g.run("cviceni"))
