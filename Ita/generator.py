@@ -22,7 +22,8 @@ class Generator:
                     glob = self.getScope()
                     loc = {}
 
-                    # pro každé volání vytvoříme unikátní ID začínající názvem at se to dobře debuguje
+                    # pro každé volání vytvoříme unikátní ID
+                    # začínáme názvem, at se to dobře debuguje
                     randId = "".join( (nonterm, "_", str(self.counter) ) )
                     self.counter += 1
 
@@ -51,13 +52,16 @@ class Generator:
 
     def getScope(self):
         """ Vrátí aktuální prostředí pro spouštění generovanýc funkcí
-            V případě potřeby ho vytvoří.
+            V případě potřeby ho vytvoří
         """
         if self.currentScope == None:
-            # builtins, v pripade potrby tu jde orezat funkcionalita
-            self.currentScope = { '__builtins__' : builtins,
-                                  '_idStack' : []  
-                                  }
+            
+            self.currentScope = {
+                                # builtins, v pripade potreby tu jde orezat funkcionalita
+                                '__builtins__' : builtins, 
+                                # používá se pro ukládání "callstacku" šablon
+                                '_idStack' : []
+                                }
 
             self.counter = 0
 
@@ -70,6 +74,7 @@ class Generator:
         self.currentScope = None
 
     def run(self, startNonterminal):
+        """ Spustí daný nonterminál """
         self.clearScope()
         return self.rules[startNonterminal]()
         
