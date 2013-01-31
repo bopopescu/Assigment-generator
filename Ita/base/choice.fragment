@@ -1,0 +1,6 @@
+nonterminal: choice
+params: *args
+code:
+from random import choice
+
+return choice(args)
