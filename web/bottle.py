@@ -2762,6 +2762,7 @@ class SimpleTemplate(BaseTemplate):
                         code("_printlist(_base)")
                 elif cmd == 'rebase':
                     p = cline.split(None, 2)[1:]
+
                     if len(p) == 2:
                         code("globals()['_rebase']=(%s, dict(%s))" % (repr(p[0]), p[1]))
                     elif p:
@@ -2794,7 +2795,10 @@ class SimpleTemplate(BaseTemplate):
             subtpl, rargs = env['_rebase']
             rargs['_base'] = _stdout[:] #copy stdout
             del _stdout[:] # clear stdout
-            return self.subtemplate(subtpl,_stdout,rargs)
+            
+            kwargs.update(rargs)
+            
+            return self.subtemplate(subtpl,_stdout,kwargs)
         return env
 
     def render(self, *args, **kwargs):
