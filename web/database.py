@@ -36,9 +36,9 @@ class SQLitePlugin(object):
     name = 'sqlite'
     api = 2
 
-    def __init__(self, dbfile=':memory:', autocommit=True, dictrows=True,
+    def __init__(self, autocommit=True, dictrows=True,
                  keyword='db'):
-         self.dbfile = dbfile
+         self.dbfile = config.database["path"]
          self.autocommit = autocommit
          self.dictrows = dictrows
          self.keyword = keyword
@@ -63,8 +63,7 @@ class SQLitePlugin(object):
         # Test if the original callback accepts a 'db' keyword.
         # Ignore it if it does not need a database handle.
         args = inspect.getargspec(context.callback)[0]
-        print(context.callback.__name__)
-        print(inspect.getargspec(context.callback))
+
         if keyword not in args:
             return callback
 
@@ -93,6 +92,16 @@ class SQLitePlugin(object):
         return wrapper
         
         
-if config.database["storage"] == "sqlite":        
-  getConnection = getSQliteConnection
-  DBPlugin = SQLitePlugin        
+if config.database["storage"] == "sqlite":   
+    def getConnection():
+        return  getSQliteConnection( config.database["path"] )
+    DBPlugin = SQLitePlugin        
+  
+  
+  
+
+con = getConnection()
+con.execute("DROP TABLE IF EXISTS students")
+con.execute("CREATE TABLE students (login char(8) PRIMARY KEY, name char(80) NOT NULL)")
+con.execute("INSERT INTO students VALUES ('xtomec06','Aleš Tomeček')")
+con.commit()  
