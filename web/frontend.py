@@ -1,10 +1,15 @@
-from bottle import route, default_app, request, template
+from bottle import route, default_app, request, static_file
+from helpers import template,msg
+import os
 
-default_app.push()
+pathToModule = os.path.dirname(__file__)
 
-import user
+#import user
 from user import role
 
+@route('/static/<filename:path>')
+def send_static(filename):
+    return static_file(filename, root = pathToModule+"/static/")
 
 @route('/')
 @role("student")
@@ -13,6 +18,8 @@ def test(db):
   s['test'] = s.get('test',0) + 1
   s.save()
 
+  msg("muhehe")
+  
   return template("index",{"count" : s['test']}) 
 
 
