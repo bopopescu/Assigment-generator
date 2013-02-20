@@ -9,6 +9,12 @@ path = os.path.dirname(__file__)
 sys.path.append(path)
 
 import bottle
+
+# přidáme views z aktuálního adresáře
+bottle.TEMPLATE_PATH.append( path+"/views/")
+
+
+
 from beaker.middleware import SessionMiddleware
 
 from . import config

@@ -1,4 +1,4 @@
-from bottle import route, default_app, request
+from bottle import route, default_app, request, template
 
 default_app.push()
 
@@ -13,7 +13,7 @@ def test(db):
   s['test'] = s.get('test',0) + 1
   s.save()
 
-  return 'Test counter2: %d' % s['test']
+  return template("index",{"count" : s['test']}) 
 
 
 app = default_app.pop()
