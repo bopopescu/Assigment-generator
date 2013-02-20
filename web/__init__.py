@@ -13,8 +13,6 @@ import bottle
 # přidáme views z aktuálního adresáře
 bottle.TEMPLATE_PATH.append( path+"/views/")
 
-
-
 from beaker.middleware import SessionMiddleware
 
 from . import config
@@ -22,12 +20,13 @@ from .frontend import app as frontendApp
 
 from .database import DBPlugin
 
+################################################################################
+
+
 mainApp = frontendApp
 
 db = DBPlugin()
 mainApp.install(db)
-
-
 mainApp = SessionMiddleware(mainApp , config.session_opts)
 
 def run(**kwargs):
