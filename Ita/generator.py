@@ -1,4 +1,3 @@
-from ita_parser import Parser
 from collections import namedtuple
 from random import choice
 from copy import copy

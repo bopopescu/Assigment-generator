@@ -24,7 +24,7 @@ data = None
 
 if name.find(".") > 0:
   import codecs
-  with codecs.open("base/%s"%name,'r', 'utf-8') as f: 
+  with codecs.open("ita/base/%s"%name,'r', 'utf-8') as f: 
       print("otevereno")
       data = f.read()
 else:

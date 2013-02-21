@@ -1,3 +1,3 @@
-import web
+from ita import web
 
 web.run()
