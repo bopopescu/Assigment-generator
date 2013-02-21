@@ -22,14 +22,6 @@
         margin: 30px 0;
       }
 
-
-      /* Supporting marketing content */
-      .marketing {
-        margin: 60px 0;
-      }
-      .marketing p + h4 {
-        margin-top: 28px;
-      }
     </style>
   </head>
 
@@ -66,7 +58,7 @@
       <hr>
 
       <div class="footer">
-        <p>&copy; Company 2013</p>
+        <p>DIP Aleš Tomeček 2013</p>
       </div>
 
     </div> <!-- /container -->

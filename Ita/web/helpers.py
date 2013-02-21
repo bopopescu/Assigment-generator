@@ -8,7 +8,7 @@ def resetLocals():
     """Inicializuje uložiště lokálních dat"""
     request._locals = {}
     
-def addMenu(link, desc, _class, priority = 0):
+def addMenu(link, desc, priority = 0, _class = ""):
     if not "menu" in request._locals:
         request._locals["menu"] = []
         
@@ -16,7 +16,7 @@ def addMenu(link, desc, _class, priority = 0):
 
 def _getMenu():
     #seradime podle priority
-    sorted( request._locals["menu"], key = lambda x: x[-1] )
+    request._locals["menu"] = sorted( request._locals["menu"], key = lambda x: x[-1] )
     
     return request._locals["menu"]
 

@@ -1,0 +1,8 @@
+nonterminal: callerId
+code:
+global _idStack
+#  _idStack
+#  posledni element = -1  id tohoto volani
+#                     -2  id volani ze ktereho byla zavolana tato funkce
+#                     -3  id na ktere se volana funkce pta
+return _idStack[-3]

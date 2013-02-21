@@ -1,0 +1,37 @@
+nonterminal: ulohaWhile
+text:
+S využitím přípravné šablony datového segmentu (viz níže) vytvořte program, který s využitím cyklu a složeného podmíněného výrazu vypočítá (a přehledně vypíše na obrazovku):
+
+a. počet {{pop(list("moznostiString"))}}
+b. počet {{pop(list("moznostiString"))}}
+
+{{dsString}}
+
+nonterminal: ulohaWhile
+text:
+S využitím přípravné šablony datového segmentu (viz níže) proveďte následující (a přehledně vypíše na obrazovku):
+
+a. součet  {{pop(list("moznostiCisla"))}} čísel
+b. počet   {{pop(list("moznostiCisla"))}} čísel 
+
+{{dsCisla}}
+
+
+
+nonterminal: moznostiString
+text:
+velkých písmen
+malých písmen
+číslic
+mezer
+nealfanumerických znaků
+interpunkčních znamének
+
+nonterminal: moznostiCisla
+text:
+všech
+sudých
+lichých
+záporných
+kladných
+nenulových

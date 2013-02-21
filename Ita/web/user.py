@@ -25,12 +25,18 @@ class User:
             pass 
         else:
             #student
+            db = database.getConnection()        
+            c = db.execute('SELECT * FROM students WHERE login = ?', (self.login,))
+            row = c.fetchone()
+            
+            if not row:
+                raise UserException("Student nenalezen")
+
+
             s = request.environ.get('beaker.session')
             s['userLogin'] = self.login
             s['role'] = "student"
             s.save()
-            
-            return True
     
         
         db = database.getConnection()        
@@ -58,7 +64,6 @@ def login():
 def loginSubmit():
     data = request.forms
     usr = User( data["login"] )
-    print(usr)
     
     try: 
         usr.authenticate()
@@ -66,7 +71,7 @@ def loginSubmit():
         msg("Úspěšně přihlášen", "success")
         redirect( request.path if request.path != "/login-post" else "/" )
     except UserException as e:
-        msg("Došlo k chybě při přihlašování", "error")
+        msg("Došlo k chybě při přihlašování - %s" % e, "error")
         redirect("/login")
     
 @route('/logout')
@@ -75,6 +80,7 @@ def logout():
     msg("Odhlášení bylo úspěšné", "success")
     redirect("/")
 
+@route('/unauthorized')
 def unauthorized():
     response.status = 401 # unauthorized    
     return template("unauthorized")
@@ -103,10 +109,10 @@ def role( *allowed ):
         if not role in allowed:
             if role == None:
                 msg("Pro přístup se musíte nejdříve přihlásit")
-                return login()
+                redirect("/login")
             else:
                 msg("Nemáte dostatečná oprávnění", "error")
-                return unauthorized()
+                redirect("/unauthorized")
                 
         
         return f(*args, **kwargs)    
@@ -117,5 +123,5 @@ def getUser():
     s = request.environ.get('beaker.session')
     
     login =  s.get('userLogin',None)
-    print(s)
+
     return User( login ) if login else None
