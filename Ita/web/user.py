@@ -2,6 +2,8 @@ import database
 from bottle import route, post, request, redirect, response, hook
 from helpers import template, msg, addMenu
 
+from hashlib import sha1
+
 from decorator import decorator
 
 
@@ -22,7 +24,17 @@ class User:
     def authenticate(self, psw = None):
         if psw:
             # cvicici
-            pass 
+
+            db = database.getConnection()        
+            c = db.execute('SELECT * FROM lectors WHERE login = ?', (self.login,))
+            row = c.fetchone()            
+            if not row:
+                raise UserException("Cvičící nenalezen")
+
+            if row["password"] != sha1(psw.encode('utf-8')).hexdigest():
+                raise UserException("Špatné heslo")                          
+            
+            role = "lector"
         else:
             #student
             db = database.getConnection()        
@@ -32,12 +44,13 @@ class User:
             if not row:
                 raise UserException("Student nenalezen")
 
+            role = "student"
 
-            s = request.environ.get('beaker.session')
-            s['userLogin'] = self.login
-            s['role'] = "student"
-            s.save()
-    
+        s = request.environ.get('beaker.session')
+        s['userLogin'] = self.login
+        s['role'] = role
+        s.save()
+
         
         db = database.getConnection()        
         #c = db.execute('SELECT title, content FROM posts WHERE id = ?', (post_id,))
@@ -58,21 +71,22 @@ class User:
 
 @route('/login')
 def login():
-    return template("login")    
+    lectorLogin  = request.params.get("lector")	
+    return template("login", {"passworded" : lectorLogin } )    
     
 @post('/login-post')
 def loginSubmit():
-    data = request.forms
+    data = request.forms                                                                         
     usr = User( data["login"] )
-    
+
     try: 
-        usr.authenticate()
+        usr.authenticate( data.get("password") )
         #redirect
         msg("Úspěšně přihlášen", "success")
-        redirect( request.path if request.path != "/login-post" else "/" )
+        redirect( "/" ) #request.path if request.path != "/login-post" else "/"
     except UserException as e:
         msg("Došlo k chybě při přihlašování - %s" % e, "error")
-        redirect("/login")
+        redirect('/login' + ("?lector=1" if data.get("password") else "") )
     
 @route('/logout')
 def logout():

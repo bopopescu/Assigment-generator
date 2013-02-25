@@ -23,7 +23,7 @@ def test(db):
   
 
 @route('/generate')
-@role("student")
+@role("student", "lector")
 def generate(db):
     from .. import ita_parser
     from .. import generator
@@ -50,8 +50,6 @@ def userMenu():
     if usr:
         addMenu("/generate","Zadání",50)
 
-
-   
 
 
 app = default_app.pop()
