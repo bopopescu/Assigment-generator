@@ -7,7 +7,9 @@ from bottle import request
 
 def makeSQLiteconnection(handle):
     """ Vytvoří spojení a uloží na něj odkaz přes handle"""
-    return sqlite3.connect(handle)
+    con = sqlite3.connect(handle)
+    con.row_factory = sqlite3.Row
+    return con
 
 def clearSQLiteconnection(handle):
     """Smaže spojení z požadavku"""
@@ -36,11 +38,9 @@ class SQLitePlugin(object):
     name = 'sqlite'
     api = 2
 
-    def __init__(self, autocommit=True, dictrows=True,
-                 keyword='db'):
+    def __init__(self, autocommit=True, keyword='db'):
          self.dbfile = config.database["path"]
          self.autocommit = autocommit
-         self.dictrows = dictrows
          self.keyword = keyword
 
     def setup(self, app):
@@ -57,7 +57,7 @@ class SQLitePlugin(object):
         conf = context.config.get('sqlite') or {}
         dbfile = conf.get('dbfile', self.dbfile)
         autocommit = conf.get('autocommit', self.autocommit)
-        dictrows = conf.get('dictrows', self.dictrows)
+
         keyword = conf.get('keyword', self.keyword)
 
         # Test if the original callback accepts a 'db' keyword.
@@ -73,7 +73,6 @@ class SQLitePlugin(object):
             # Connect to the database
             db = getSQliteConnection(dbfile)
             # This enables column access by name: row['column_name']
-            if dictrows: db.row_factory = sqlite3.Row
             # Add the connection handle as a keyword argument.
             kwargs[keyword] = db
 
@@ -104,4 +103,12 @@ con = getConnection()
 con.execute("DROP TABLE IF EXISTS students")
 con.execute("CREATE TABLE students (login char(8) PRIMARY KEY, name char(80) NOT NULL)")
 con.execute("INSERT INTO students VALUES ('xtomec06','Aleš Tomeček')")
+
+con.execute("DROP TABLE IF EXISTS lectors")
+con.execute("CREATE TABLE lectors (login char(8) PRIMARY KEY, password char(40) NOT NULL, flags char(40) )")
+
+from hashlib import sha1
+con.execute("INSERT INTO lectors VALUES ('xtomec06','%s', NULL)" % (sha1("test".encode('utf-8')).hexdigest()) )
+
+
 con.commit()  
