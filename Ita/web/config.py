@@ -1,6 +1,7 @@
 session_opts = {
     'session.type': 'file',
-    'session.cookie_expires': 300,
+    'session.cookie_expires': True,
+    'timeout': 60*60*5,
     'session.data_dir': './sessions',
     'session.auto': True
 }
