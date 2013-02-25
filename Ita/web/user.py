@@ -20,41 +20,45 @@ class User:
     
     def chckPassword(self, psw):
         return True
+        
+    def inRole(self, role):
+        s = request.environ.get('beaker.session')
+        if s['userLogin'] == self.login:
+            roles = s.get('roles', tuple() )
+        else:
+            row = self.getRow()
+            roles = row["roles"]
+        
+        return role in roles 
+            
+    def getRow(self):
+
+        db = database.getConnection()        
+        c = db.execute('SELECT * FROM users WHERE login = ?', (self.login,))
+        row = c.fetchone()             
+            
+        return row
+         
+        
 
     def authenticate(self, psw = None):
+        row = self.getRow()
+
+        if not row:
+            raise UserException("Uživatel nenalezen")
+
         if psw:
-            # cvicici
-
-            db = database.getConnection()        
-            c = db.execute('SELECT * FROM lectors WHERE login = ?', (self.login,))
-            row = c.fetchone()            
-            if not row:
-                raise UserException("Cvičící nenalezen")
-
+            #cvicici
             if row["password"] != sha1(psw.encode('utf-8')).hexdigest():
                 raise UserException("Špatné heslo")                          
-            
-            role = "lector"
-        else:
-            #student
-            db = database.getConnection()        
-            c = db.execute('SELECT * FROM students WHERE login = ?', (self.login,))
-            row = c.fetchone()
-            
-            if not row:
-                raise UserException("Student nenalezen")
-
-            role = "student"
 
         s = request.environ.get('beaker.session')
         s['userLogin'] = self.login
-        s['role'] = role
+        # defaultni role je student
+        s['roles'] = row["roles"].split(",") if row["roles"] else ["student"]
         s.save()
 
-        
-        db = database.getConnection()        
-        #c = db.execute('SELECT title, content FROM posts WHERE id = ?', (post_id,))
-        row = c.fetchone()
+
 
     @staticmethod
     def logout():
@@ -72,7 +76,7 @@ class User:
 @route('/login')
 def login():
     lectorLogin  = request.params.get("lector")	
-    return template("login", {"passworded" : lectorLogin } )    
+    return template("login", {"lectorLogin" : lectorLogin } )    
     
 @post('/login-post')
 def loginSubmit():
@@ -118,18 +122,18 @@ def role( *allowed ):
     """ Dekorátor pro oprávnění rolí"""
     def wrapper(f, *args, **kwargs):
         s = request.environ.get('beaker.session')
-        role = s.get('role',None)
         
-        if not role in allowed:
-            if role == None:
-                msg("Pro přístup se musíte nejdříve přihlásit")
-                redirect("/login")
-            else:
-                msg("Nemáte dostatečná oprávnění", "error")
-                redirect("/unauthorized")
-                
+        login =  s.get('userLogin',None)
+        if not login:
+            msg("Pro přístup se musíte nejdříve přihlásit")
+            redirect("/login")
         
-        return f(*args, **kwargs)    
+        for role in s.get('roles', tuple() ):
+            if role in allowed:
+                return f(*args, **kwargs)
+        msg("Nemáte dostatečná oprávnění", "error")
+        redirect("/unauthorized")
+        
     return decorator(wrapper)
         
 

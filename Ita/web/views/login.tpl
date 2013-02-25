@@ -7,7 +7,7 @@
     </div>
 </div>    
 
-%if(passworded):
+%if(lectorLogin):
 <div class="control-group">
     <label class="control-label" for="inputPsw">Heslo</label>
     <div class="controls">
