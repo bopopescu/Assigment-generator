@@ -5,7 +5,9 @@ import os
 
 pathToModule = os.path.dirname(__file__)
 
-#import user
+import user
+import group
+
 from user import role
 
 @route('/static/<filename:path>')
@@ -13,7 +15,7 @@ def send_static(filename):
     return static_file(filename, root = pathToModule+"/static/")
 
 @route('/')
-@role("student")
+@role("student", "lector")
 def test(db):
   s = request.environ.get('beaker.session')
   s['test'] = s.get('test',0) + 1
@@ -23,7 +25,7 @@ def test(db):
   
 
 @route('/generate')
-@role("student", "lector")
+@role("student")
 def generate(db):
     from .. import ita_parser
     from .. import generator
@@ -47,7 +49,7 @@ def generate(db):
 @hook("before_request")
 def userMenu():
     usr = getUser() 
-    if usr:
+    if usr and usr.inRole("student"):
         addMenu("/generate","Zadání",50)
 
 
