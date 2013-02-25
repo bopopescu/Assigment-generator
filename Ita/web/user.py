@@ -109,6 +109,7 @@ def unauthorized():
 
 @hook("before_request")
 def userMenu():
+    print(request.environ.get('beaker.session'))
     usr = getUser() 
     if usr:
         addMenu("/logout","Odhlásit se (%s)"%usr.login,100)
@@ -132,7 +133,7 @@ def role( *allowed ):
             if role in allowed:
                 return f(*args, **kwargs)
         msg("Nemáte dostatečná oprávnění", "error")
-        redirect("/unauthorized")
+        return unauthorized()
         
     return decorator(wrapper)
         
