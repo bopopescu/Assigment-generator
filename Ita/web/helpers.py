@@ -5,16 +5,44 @@ from bottle import hook, request
  
 @hook("before_request")
 def resetLocals():
-    """Inicializuje uložiště lokálních dat"""
+    """Inicializuje uložiště lokálních dat pro každý požadavek"""
     request._locals = {}
     
+############
+
+def form_renderer(form, action = ""):
+    """Vyrenderuje formulář podle zvyklostí bootstrap frameworku"""
+    ret = []
+    ret.append("<form method='post' action='%s' class='form-horizontal'>" % (action,) )
+
+    for item in form.order:
+        itemId = "form"+item
+        item = form[item]
+        
+        ret.append('<div class="control-group">')
+        if item.type != "SubmitField":
+            ret.append('<label class="control-label" for="%s">%s</label>'%(itemId, item.label) )
+        ret.append('<div class="controls">')
+        ret.append( item( id=itemId ) )
+        ret.append('</div>')
+        ret.append('</div>')
+
+    ret.append('</form>')
+    return "\n".join(ret)
+        
+    
+############    
+    
 def addMenu(link, desc, priority = 0, _class = ""):
+    """Přidá položku do menu, které je předáváno při každém generování šablony """
+    
     if not "menu" in request._locals:
         request._locals["menu"] = []
         
     request._locals["menu"].append( (link, desc, _class, priority) )
 
 def _getMenu():
+    """Vrátí seřazené lokální menu """
     #seradime podle priority
     request._locals["menu"] = sorted( request._locals["menu"], key = lambda x: x[-1] )
     
@@ -23,6 +51,8 @@ def _getMenu():
 ############
 
 def msg(txt, type = "info"):
+    """Vloží zprávu k zobrazení"""
+    
     s = request.environ.get('beaker.session')
     if not "msgs" in s:
         s["msgs"] = []
