@@ -103,9 +103,9 @@ from hashlib import sha1
 
 con = getConnection()
 con.execute("DROP TABLE IF EXISTS users")
-con.execute("CREATE TABLE users (user_id INTEGER PRIMARY KEY AUTOINCREMENT,  login char(8) NOT NULL, password char(40) NULL,  roles char(20) NULL, group_id INT NULL)")
-con.execute("INSERT INTO users VALUES (NULL, 'xtomec06', NULL, NULL, 1)")
-con.execute("INSERT INTO users VALUES (NULL, 'xtest', '%s', 'lector' , NULL)" %  (sha1("test".encode('utf-8')).hexdigest(),) )
+con.execute("CREATE TABLE users (login char(8)  PRIMARY KEY NOT NULL, password char(40) NULL,  roles char(20) NULL, group_id INT NULL)")
+con.execute("INSERT INTO users VALUES ('xtomec06', NULL, NULL, 1)")
+con.execute("INSERT INTO users VALUES ('xtest', '%s', 'lector' , NULL)" %  (sha1("test".encode('utf-8')).hexdigest(),) )
 
 con.execute("DROP TABLE IF EXISTS groups")
 con.execute("CREATE TABLE groups (group_id INTEGER PRIMARY KEY AUTOINCREMENT, name char(40) NOT NULL, lector char(8) NOT NULL )")
