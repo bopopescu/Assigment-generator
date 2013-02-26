@@ -1,0 +1,52 @@
+nonterminal: list
+params: name, delimiter = "\n", scope = None
+note:
+Vrátí instanci seznamu v rámci scope (defautlně callerId), tzn při opakovaném volání se vrací stejná instance
+Parametr nazev může být šablona, nebo název souboru 
+todo: potlačit při scope None 
+code:
+global _listCache
+if scope == None: scope = callerId()
+
+# vytvoření listu pokud neexistuje
+try:
+  _listCache
+except NameError:
+   _listCache = {}
+   
+if scope in _listCache:
+  if name in _listCache[scope]: return  _listCache[scope][name]
+else:
+  _listCache[scope] = {}
+  
+
+data = None
+
+if name.find(".") > 0:
+  import codecs
+  with codecs.open("ita/base/%s"%name,'r', 'utf-8') as f: 
+      print("otevereno")
+      data = f.read()
+else:
+  data =  eval("%s()" % name)      
+
+data = [x for x in filter(lambda x: len(x) > 0, map(lambda x: x.strip(), data.split(delimiter) ) ) ]
+
+_listCache[scope][name] = data
+
+return _listCache[scope][name]
+ 
+ 
+nonterminal: pop
+params: list
+note:
+Vrátí a odstraní náhodný prvek ze seznamu
+code:
+from random import random
+from math import floor
+
+i = floor (len(list)*random() )
+
+#todo: kontrola na nelist a na prázdnost
+
+return list.pop(i)
