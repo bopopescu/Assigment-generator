@@ -1,7 +1,7 @@
 from bottle import route, post, request, redirect, response, hook
 import database
 from helpers import template, msg, addMenu, form_renderer
-from user import role, getUser
+from user import role, getUser, User
 
 ################################################################################
 # model
@@ -17,10 +17,19 @@ class Group:
 
     def __getattr__ (self, name):
         # pro pohodlnější přístup a nahrávání do formů 
+        if name == "members": return self.getMembers()
         try:
             return self.data[name]
         except IndexError:
             raise AttributeError()
+
+
+    def getMembers(self):
+        db = database.getConnection()        
+        c = db.execute('SELECT * FROM users WHERE group_id =? ORDER BY login', (self.group_id,) )
+        for row in c.fetchall():
+            yield User( row["login"] )
+        
 
     @staticmethod
     def get(id):
@@ -58,12 +67,37 @@ def list():
     groups = Group.getAll()
     return template("groups", {"groups" : groups } )
 
-@route('/groups/edit/<group_id:int>', methods=['GET', 'POST'])
+@route('/groups/edit/<group_id:int>', method=['GET', 'POST'])
 @role('lector')    
 def edit(group_id):
-    """Úprava specifické skupiny"""
+    """Úprava specifické skupiny včetně přidávání uživatelů"""
     
     group = Group.get( group_id )
+    
+    # vložení studenta
+    if request.forms.get("add"):
+        usr = User( request.forms.get("add") )
+        if usr.insert( group_id ):
+            msg("Student %s vložen" % usr.login,"success")
+        else:
+            msg("Chyba při vkládání studenta","error")
+
+        redirect(request.path)
+    
+    # odstranění studenta
+    if request.query.get("remove"):
+        usr = User( request.query.get("remove") )
+
+        if usr.remove():
+            msg("Student odstraněn","success")
+        else:
+            msg("Student nenalezen","error")
+
+        redirect(request.path)
+        
+    
+    
+    
     
     form = GroupForm(request.POST, group)
     

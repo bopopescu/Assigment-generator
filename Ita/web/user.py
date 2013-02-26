@@ -29,7 +29,18 @@ class User:
             row = self.getRow()
             roles = row["roles"]
         
-        return role in roles 
+        return role in roles
+        
+    def remove(self):         
+        db = database.getConnection()        
+        c = db.execute('DELETE FROM users WHERE login = ?', (self.login,))
+        return c.rowcount     
+
+    def insert(self, group_id):         
+        db = database.getConnection()        
+        c = db.execute('INSERT INTO users(login, group_id) VALUES(?,?)', (self.login,group_id))
+        return c.rowcount                     
+
             
     def getRow(self):
 
@@ -109,7 +120,6 @@ def unauthorized():
 
 @hook("before_request")
 def userMenu():
-    print(request.environ.get('beaker.session'))
     usr = getUser() 
     if usr:
         addMenu("/logout","Odhlásit se (%s)"%usr.login,100)
