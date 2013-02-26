@@ -37,9 +37,14 @@ class User:
         return c.rowcount     
 
     def insert(self, group_id):         
-        db = database.getConnection()        
-        c = db.execute('INSERT INTO users(login, group_id) VALUES(?,?)', (self.login,group_id))
-        return c.rowcount                     
+        db = database.getConnection()       
+        try: 
+            c = db.execute('INSERT INTO users(login, group_id) VALUES(?,?)', (self.login,group_id))
+        except Exception as e:
+            raise UserException("Takový uživatel již existuje")
+                
+        if not c.rowcount:
+            raise UserException("Chyba při vkládání uživatele")                      
 
             
     def getRow(self):
