@@ -96,7 +96,7 @@ def list():
     usr = getUser() 
     
     # vložení nové skupiny
-    if request.forms.get("add"):
+    if request.forms.decode().get("add"):
         grp = Group.insert( request.forms.get("add"), usr.login )
         if grp:
             msg("Skupina %s vytvořena" % grp.name,"success")
@@ -139,7 +139,7 @@ def edit(group_id):
 
         redirect(request.path)
         
-    form = GroupForm(request.POST, group)
+    form = GroupForm(request.forms.decode(), group)
     
     if request.method == 'POST' and form.validate():
         try:

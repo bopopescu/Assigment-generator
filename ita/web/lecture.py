@@ -77,11 +77,12 @@ class Lecture:
         
 ################################################################################
 # Formulář        
-from wtforms import Form, BooleanField, TextField,SubmitField, validators
+from wtforms import Form, BooleanField, TextField,SubmitField,TextAreaField,  validators
 
 class LectureForm(Form):
-    order = ["name", "submit"]
+    order = ["name","text", "submit"]
     name = TextField('Název', [validators.Length(min=1, max=40)])
+    text = TextAreaField('Zadání')
     submit  = SubmitField('Uložit')
         
 ################################################################################
@@ -95,7 +96,7 @@ def list():
     usr = getUser() 
     
     # vložení nového cvičení
-    if request.forms.get("add"):
+    if request.forms.decode().get("add"):
         lec = Lecture.insert( request.forms.get("add"), usr.login )
         if grp:
             msg("Cvičení %s vytvořeno" % lec.name,"success")
@@ -114,8 +115,8 @@ def edit(lecture_id):
     """Úprava specifické skupiny včetně přidávání uživatelů"""
     
     lecture = Lecture.get( lecture_id )
-        
-    form = LectureForm(request.POST, lecture)
+
+    form = LectureForm(request.forms.decode(), lecture)
     
     if request.method == 'POST' and form.validate():
         try:

@@ -31,7 +31,6 @@
 
     <div class="masthead">
     <ul class="nav nav-pills pull-right">
-        %print("url",requestedURL)
         %for ero in getMenu():
         % link, desc = ero[:2]
         %print(link)
