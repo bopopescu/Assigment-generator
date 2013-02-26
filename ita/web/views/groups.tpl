@@ -5,6 +5,9 @@
         <tr>
             <th>Skupina</th>
             <th>Čas</th>
+            %if showLector:
+                <th>Cvičící</th>
+            %end
             <th>Akce</th>
         </tr>
      </thead>
@@ -14,13 +17,16 @@
         <tr>
             <td>{{group.data["name"]}}</td>
             <td></td>
+            %if showLector:
+                <td>{{group.lector}}</td>
+            %end
             <td><a href='/groups/edit/{{group.data["group_id"]}}'><i class="icon-pencil"></i> upravit</a>
                 <a href='/groups/delete/{{group.data["group_id"]}}'><i class="icon-remove"></i> smazat</a> </td>
         </tr>
         %end
         
         %if not group:
-            <td colspan='3'>Zatím zde nejsou žádné skupiny.</td>
+            <td colspan='{{4 if showLector else 3}}'>Zatím zde nejsou žádné skupiny.</td>
         %end
         
     </tbody>

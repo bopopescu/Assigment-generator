@@ -66,7 +66,10 @@ class User:
         if psw:
             #cvicici
             if row["password"] != sha1(psw.encode('utf-8')).hexdigest():
-                raise UserException("Špatné heslo")                          
+                raise UserException("Špatné heslo")
+        else:
+            if row["password"]:
+                raise UserException("Uživatel není student")                           
 
         s = request.environ.get('beaker.session')
         s['userLogin'] = self.login

@@ -49,9 +49,12 @@ class Group:
     
     
     @staticmethod
-    def getAll():
+    def getAll(lector = None):
         db = database.getConnection()        
-        c = db.execute('SELECT * FROM groups WHERE 1' )
+        if lector:
+            c = db.execute('SELECT * FROM groups WHERE lector = ?', (lector,) )
+        else:
+            c = db.execute('SELECT * FROM groups WHERE 1' )            
         
         for row in c.fetchall():
             yield Group(row) 
@@ -73,9 +76,12 @@ class GroupForm(Form):
 @role('lector')
 def list():
     """Seznam skupin"""
+    
+    usr = getUser() 
+    
     # vložení studenta
     if request.forms.get("add"):
-        grp = Group.insert( request.forms.get("add"), getUser().login )
+        grp = Group.insert( request.forms.get("add"), usr.login )
         if grp:
             msg("Skupina %s vytvořena" % grp.name,"success")
             redirect("/groups/edit/%i" % grp.group_id )
@@ -83,10 +89,9 @@ def list():
             msg("Chyba při vytváření skupiny","error")
             redirect(request.path)
         
+    groups = Group.getAll() if usr.inRole("master") else Group.getAll(usr.login) 
     
-    
-    groups = Group.getAll()
-    return template("groups", {"groups" : groups } )
+    return template("groups", {"groups" : groups, "showLector": usr.inRole("master") } )
 
 @route('/groups/edit/<group_id:int>', method=['GET', 'POST'])
 @role('lector')    
