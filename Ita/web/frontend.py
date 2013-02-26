@@ -7,6 +7,7 @@ pathToModule = os.path.dirname(__file__)
 
 import user
 import group
+import lecture
 
 from user import role
 

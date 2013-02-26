@@ -113,6 +113,10 @@ con.execute("CREATE TABLE groups (group_id INTEGER PRIMARY KEY AUTOINCREMENT, na
 con.execute("INSERT INTO groups VALUES (NULL,'Skupina', 'xtest')")
 con.execute("INSERT INTO groups VALUES (NULL,'Skupina', 'master')")
 
-#cviceni, id, jmeno, aktivni, lektor, zadani
+con.execute("DROP TABLE IF EXISTS lectures")
+con.execute("CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTOINCREMENT, name char(40) NOT NULL, lector char(8) NOT NULL, `text` TEXT, state INT NULL, shared INT NULL)")
+con.execute("INSERT INTO lectures(name, lector) VALUES ('Cvičení pondělí', 'xtest')")
+con.execute("INSERT INTO lectures(name, lector) VALUES ('Cvičení úterý', 'xtest')")
+
 
 con.commit()  
