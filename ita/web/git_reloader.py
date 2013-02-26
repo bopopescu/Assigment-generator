@@ -1,3 +1,4 @@
+import bottle
 from bottle import route, default_app, request
 import os
 import sys
@@ -6,6 +7,7 @@ default_app.push()
 
 @route('/reload')
 def gitreload():
+    bottle.close()
     os.system("git pull")
     os.execv(sys.executable, [sys.argv[0]]+sys.argv)
     return 'ok'
