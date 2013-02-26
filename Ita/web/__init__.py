@@ -22,8 +22,10 @@ from .database import DBPlugin
 
 ################################################################################
 
+from git_reloader import app as gitReloader
 
 mainApp = frontendApp
+mainApp.mount("/git/", gitReloader)
 
 db = DBPlugin()
 mainApp.install(db)
