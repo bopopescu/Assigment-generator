@@ -1,3 +1,3 @@
 from ita import web
 
-web.run()
+web.run(host='0.0.0.0', port=8080)
