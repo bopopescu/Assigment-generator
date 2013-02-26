@@ -34,10 +34,10 @@
     
 </table>
 
-<form action="" method="post" class="form-inline" >
-      <input type='text' name='add' id='inputLogin' placeholder="Login">
-      <input type='submit' value='Přidat studenta' class="btn">
 
+<form action="" method="post" class="input-append" >
+      <input type='text' name='add' placeholder="Login">
+      <button class="btn" type="submit"><i class="icon-plus"></i> Přidat studenta</button>
 </form>
 
 
