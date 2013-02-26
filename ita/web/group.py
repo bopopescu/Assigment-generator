@@ -95,7 +95,7 @@ def list():
     
     usr = getUser() 
     
-    # vložení studenta
+    # vložení nové skupiny
     if request.forms.get("add"):
         grp = Group.insert( request.forms.get("add"), usr.login )
         if grp:

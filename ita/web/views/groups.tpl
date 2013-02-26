@@ -13,6 +13,7 @@
      </thead>
     
     <tbody>
+        %group = None
         %for group in groups:
         <tr>
             <td>{{group.data["name"]}}</td>
