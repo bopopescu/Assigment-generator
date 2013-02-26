@@ -24,6 +24,22 @@ class Group:
             raise AttributeError()
 
 
+    def update(self,**kwargs):
+        cmd = []
+        values = []
+        for key in kwargs:
+            cmd.append("%s = ?" % key)
+            values.append(kwargs[key])
+        
+        cmd = ", ".join(cmd)
+        values.append(self.group_id)
+        
+        db = database.getConnection()        
+        c = db.execute('UPDATE groups SET %s WHERE group_id =?' % cmd, values )    
+
+        if not c.rowcount:
+            raise UserException("Chyba při vkládání uživatele")               
+
     def getMembers(self):
         db = database.getConnection()        
         c = db.execute('SELECT * FROM users WHERE group_id =? ORDER BY login', (self.group_id,) )
@@ -123,13 +139,17 @@ def edit(group_id):
 
         redirect(request.path)
         
-    
-    
-    
-    
     form = GroupForm(request.POST, group)
     
-    
+    if request.method == 'POST' and form.validate():
+        try:
+            group.update( name = form.name.data )
+            msg("Skupina aktualizována","success")
+        except Exception as e:
+            msg("Chyba při aktualizaci - %s" % e, "error")
+        
+        redirect(request.path)    
+            
     return template("groups_edit", {"group" : group, "form": form_renderer(form) } )    
     
 ###############################################################################
