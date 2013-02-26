@@ -1,3 +1,0 @@
-Nemáte přístup
-
-%rebase layout
