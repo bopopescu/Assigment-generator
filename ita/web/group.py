@@ -38,6 +38,15 @@ class Group:
         row = c.fetchone()
  
         return Group( row )
+        
+    @staticmethod
+    def insert(name, lector):
+        db = database.getConnection()        
+        c = db.execute('INSERT INTO groups(name, lector) VALUES (?,?)', (name,lector) )
+
+        return Group.get( c.lastrowid )        
+    
+    
     
     @staticmethod
     def getAll():
@@ -60,10 +69,22 @@ class GroupForm(Form):
 ################################################################################
 # stránky
 
-@route('/groups')
+@route('/groups', method=['GET', 'POST'])
 @role('lector')
 def list():
     """Seznam skupin"""
+    # vložení studenta
+    if request.forms.get("add"):
+        grp = Group.insert( request.forms.get("add"), getUser().login )
+        if grp:
+            msg("Skupina %s vytvořena" % grp.name,"success")
+            redirect("/groups/edit/%i" % grp.group_id )
+        else:
+            msg("Chyba při vytváření skupiny","error")
+            redirect(request.path)
+        
+    
+    
     groups = Group.getAll()
     return template("groups", {"groups" : groups } )
 
@@ -77,10 +98,12 @@ def edit(group_id):
     # vložení studenta
     if request.forms.get("add"):
         usr = User( request.forms.get("add") )
-        if usr.insert( group_id ):
+        try:
+            usr.insert( group_id )
             msg("Student %s vložen" % usr.login,"success")
-        else:
-            msg("Chyba při vkládání studenta","error")
+        except Exception as e: 
+            msg("Chyba při vkládání studenta - %s " % e,"error")                   
+                
 
         redirect(request.path)
     
@@ -89,7 +112,7 @@ def edit(group_id):
         usr = User( request.query.get("remove") )
 
         if usr.remove():
-            msg("Student odstraněn","success")
+            msg("Student %s odstraněn"% usr.login ,"success")
         else:
             msg("Student nenalezen","error")
 
