@@ -15,9 +15,7 @@ class UserException ( Exception ):
 
 class User:
     def __init__(self, login):
-    
         self.login = safeASCII(login)
-        print(login, self.login)
 
     
     def chckPassword(self, psw):
