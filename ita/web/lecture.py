@@ -22,6 +22,11 @@ class Lecture:
         except IndexError:
             raise AttributeError()
 
+    def activate(self):
+        self.update(state = 1)
+    
+    def deactivate(self):
+        self.update(state = 0)        
 
     def update(self,**kwargs):
         cmd = []
@@ -95,10 +100,22 @@ def list():
     
     usr = getUser() 
     
+    if request.params.get("activate"):
+        lec = Lecture.get( request.params.get("activate") )
+        lec.activate()
+        msg("Cvičení %s bylo zapnuto" % lec.name,"success")
+        redirect(request.path)
+        
+    if request.params.get("deactivate"):
+        lec = Lecture.get( request.params.get("deactivate") )
+        lec.deactivate()
+        msg("Cvičení %s bylo vypnuto" % lec.name,"success")
+        redirect(request.path)        
+    
     # vložení nového cvičení
     if request.forms.decode().get("add"):
         lec = Lecture.insert( request.forms.get("add"), usr.login )
-        if grp:
+        if lec:
             msg("Cvičení %s vytvořeno" % lec.name,"success")
             redirect("/lectures/edit/%i" % lec.lecture_id )
         else:
