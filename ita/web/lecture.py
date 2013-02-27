@@ -42,13 +42,11 @@ class Lecture:
         c = db.execute('UPDATE lectures SET %s WHERE lecture_id = ?' % cmd, values )    
 
         if not c.rowcount:
-            raise UserException("Chyba při vkládání uživatele")               
+            raise UserException("Chyba při ukládání cvičení")               
 
     def getAssigments(self):
-        db = database.getConnection()        
-        c = db.execute('SELECT * FROM users WHERE lecture_id =? ORDER BY login', (self.lecture_id,) )
-        for row in c.fetchall():
-            yield User( row["login"] )
+        #todo
+        pass
         
 
     @staticmethod
@@ -66,7 +64,14 @@ class Lecture:
 
         return Lecture.get( c.lastrowid )        
     
-    
+    @staticmethod
+    def getAvailable(lector):
+        db = database.getConnection()        
+        c = db.execute('SELECT * FROM lectures WHERE lector = ? AND state != 0', (lector,) )
+
+        for row in c.fetchall():
+            yield Lecture(row) 
+
     
     @staticmethod
     def getAll(lector = None):
