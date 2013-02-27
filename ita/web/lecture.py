@@ -27,14 +27,14 @@ class Lecture:
         cmd = []
         values = []
         for key in kwargs:
-            cmd.append("%s = ?" % key)
+            cmd.append("`%s` = ?" % key)
             values.append(kwargs[key])
         
         cmd = ", ".join(cmd)
         values.append(self.lecture_id)
         
         db = database.getConnection()        
-        c = db.execute('UPDATE lectures SET %s WHERE lecture_id =?' % cmd, values )    
+        c = db.execute('UPDATE lectures SET %s WHERE lecture_id = ?' % cmd, values )    
 
         if not c.rowcount:
             raise UserException("Chyba při vkládání uživatele")               
@@ -115,9 +115,8 @@ def edit(lecture_id):
     """Úprava specifické skupiny včetně přidávání uživatelů"""
     
     lecture = Lecture.get( lecture_id )
-
     form = LectureForm(request.forms.decode(), lecture)
-    
+
     if request.method == 'POST' and form.validate():
         try:
             lecture.update( name = form.name.data, text = form.text.data )
