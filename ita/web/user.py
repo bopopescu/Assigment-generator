@@ -1,6 +1,6 @@
 import database
 from bottle import route, post, request, redirect, response, hook
-from helpers import template, msg, addMenu
+from helpers import template, msg, addMenu, safeASCII
 
 from hashlib import sha1
 
@@ -15,7 +15,9 @@ class UserException ( Exception ):
 
 class User:
     def __init__(self, login):
-        self.login = login
+    
+        self.login = safeASCII(login)
+        print(login, self.login)
 
     
     def chckPassword(self, psw):
