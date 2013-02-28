@@ -57,7 +57,14 @@ class Assigment:
             raise UserException("Chyba při ukládání")    
 
     
-    # statické třídy                
+    # statické třídy
+    
+    @staticmetod
+    def getPending(lector):
+        """Vrátí počet nevyřízená zadání"""
+        #todo
+        pass
+                        
 
     @staticmethod
     def get(id):
@@ -85,17 +92,6 @@ class Assigment:
         c = db.execute('INSERT INTO assigments(login, `text`, lecture_id) VALUES (?, ?, ?)', (login, text, lecture_id) )
 
         return Assigment.get( c.lastrowid )        
-    
-    @staticmethod
-    def getAvailable(lector):
-        """Výpis aktivních cvičení daného cvičícího.
-         Ten se typicky získává ze skupiny, do které je přihlášen student"""
-        db = database.getConnection()        
-        c = db.execute('SELECT * FROM lectures WHERE lector = ? AND state != 0', (lector,) )
-
-        for row in c.fetchall():
-            yield Lecture(row) 
-
     
     @staticmethod
     def getByLecture(lecture_id):

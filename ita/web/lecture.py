@@ -88,6 +88,8 @@ class Lecture:
     
     @staticmethod
     def getAvailable(lector):
+        """Výpis aktivních cvičení daného cvičícího.
+         Ten se typicky získává ze skupiny, do které je přihlášen student"""
         db = database.getConnection()        
         c = db.execute('SELECT * FROM lectures WHERE lector = ? AND state != 0', (lector,) )
 
