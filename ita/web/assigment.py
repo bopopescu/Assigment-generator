@@ -11,10 +11,16 @@ class AssigmentException ( Exception ):
         pass
 
 class Assigment:
+    STATE_NEW = 0
+    STATE_LOCKED = 1
+    STATE_DONE = 2
+
     def __init__(self, row):
         self.data = row
 
     def __getattr__ (self, name):
+        if name == "locked": return (self.state or 0) > Assigment.STATE_NEW
+        
         # pro pohodlnější přístup a nahrávání do formů 
         try:
             return self.data[name]
@@ -37,8 +43,14 @@ class Assigment:
         #todo: updatnout i changed
         if self.locked: raise AssigmentException("Zadání je zamčené proti úpravám")
         
-        self.update( response = response, locked = 1) 
+        self.update( response = response, state = Assigment.STATE_LOCKED) 
 
+    def finalize(self, value):
+        """Ohodnotí a zamkne zadání """
+        if self.state !=  Assigment.STATE_LOCKED: raise AssigmentException("Zadání nelze ohodnotit, protože není zamčené")
+        
+        self.update( points = value, state = Assigment.STATE_DONE)
+    
 
     def update(self,**kwargs):
         cmd = []
@@ -59,7 +71,7 @@ class Assigment:
     
     # statické třídy
     
-    @staticmetod
+    @staticmethod
     def getPending(lector):
         """Vrátí počet nevyřízená zadání"""
         #todo
@@ -93,20 +105,21 @@ class Assigment:
 
         return Assigment.get( c.lastrowid )        
     
-    @staticmethod
-    def getByLecture(lecture_id):
-        db = database.getConnection()        
-        if lector:
-            c = db.execute('SELECT * FROM lectures WHERE lector = ?', (lector,) )
-        else:
-            c = db.execute('SELECT * FROM lectures WHERE 1' )            
-        
-        for row in c.fetchall():
-            yield Lecture(row) 
     
         
 ################################################################################
 # stránky
+@route('/assigments-lector')
+@role('lector')
+def list():
+    """Seznam odevzdaných zadání"""
+    
+    usr = getUser() 
+      
+    lectures = Assigment.getPending( grp.lector ) 
+    
+    return template("assigments_student", {"lectures" : lectures, } )
+
 
 @route('/assigments', method=['GET', 'POST'])
 @role('student')

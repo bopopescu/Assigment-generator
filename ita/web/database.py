@@ -127,7 +127,7 @@ con.execute("""CREATE TABLE assigments (assigment_id INTEGER PRIMARY KEY AUTOINC
                                         changed INT NULL,
                                         `text` TEXT,
                                         `response` TEXT,
-                                        locked INT NULL,
+                                        state INT NULL,
                                         points FLOAT)""")
 #con.execute("INSERT INTO assigments(login, lecture_id, `text`) VALUES ('xtomec06', 1, 'Haleluja')")
 
