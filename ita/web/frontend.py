@@ -8,6 +8,7 @@ pathToModule = os.path.dirname(__file__)
 import user
 import group
 import lecture
+import assigment
 
 from user import role
 
@@ -15,44 +16,8 @@ from user import role
 def send_static(filename):
     return static_file(filename, root = pathToModule+"/static/")
 
-@route('/')
-@role("student", "lector")
-def test(db):
-  s = request.environ.get('beaker.session')
-  s['test'] = s.get('test',0) + 1
-  s.save()
-  
-  return template("index")
-  
-
-@route('/generate')
-@role("student")
-def generate(db):
-    from .. import ita_parser
-    from .. import generator
-
-    p = ita_parser.Parser()
-
-    p.loadDir("ita/base")
-    p.loadDir("ita/cviceni3")
-
-    g = generator.Generator( p.rules )
-    
-    return template("generate", {"cviceni":g.run("cviceni")} )  
-  
-  
-
-
-
-###############################################################################
-# callbacky
-
-@hook("before_request")
-def userMenu():
-    usr = getUser() 
-    if usr and usr.inRole("student"):
-        addMenu("/generate","Zadání",50)
-
-
+@route("/")
+def index():
+    return template("index")
 
 app = default_app.pop()

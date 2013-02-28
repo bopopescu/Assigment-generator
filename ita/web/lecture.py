@@ -134,7 +134,7 @@ def list():
 @route('/lectures/edit/<lecture_id:int>', method=['GET', 'POST'])
 @role('lector')    
 def edit(lecture_id):
-    """Úprava specifické skupiny včetně přidávání uživatelů"""
+    """Úprava specifické cvičení"""
     
     lecture = Lecture.get( lecture_id )
     form = LectureForm(request.forms.decode(), lecture)
