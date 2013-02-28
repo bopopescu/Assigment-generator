@@ -1,8 +1,9 @@
-from bottle import route, post, request, redirect, response, hook
+from bottle import route, post, request, redirect, response, hook, HTTPError
 import database
 from helpers import template, msg, addMenu, form_renderer
 from user import role, getUser, User
 from lecture import Lecture
+from group import Group
 
 ################################################################################
 # model
@@ -34,9 +35,9 @@ class Assigment:
 
         return False
         
-    def getGroup(self):
-        from group import Group
-        return Group.get( self.group_id )
+    def getLecture(self):
+        from lecture import Lecture
+        return Lecture.get( self.lecture_id )
         
     def respond(self, response):
         """Nahraje zadání a zamkneho proti úpravám"""
@@ -45,7 +46,14 @@ class Assigment:
         
         self.update( response = response, state = Assigment.STATE_LOCKED) 
 
-    def finalize(self, value):
+    def unlock(self):
+        """Odemkne"""
+        self.update( state = Assigment.STATE_NEW )        
+        
+    def lock(self):
+        self.update( state = Assigment.STATE_LOCKED )
+
+    def rate(self, value):
         """Ohodnotí a zamkne zadání """
         if self.state !=  Assigment.STATE_LOCKED: raise AssigmentException("Zadání nelze ohodnotit, protože není zamčené")
         
@@ -74,8 +82,15 @@ class Assigment:
     @staticmethod
     def getPending(lector):
         """Vrátí počet nevyřízená zadání"""
-        #todo
-        pass
+        lectures = Lecture.getAll(lector)
+        ids = [ str(lecture.lecture_id) for lecture in lectures ]
+        
+        db = database.getConnection()
+        
+        c = db.execute('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Assigment.STATE_NEW,) )
+        
+        for row in c.fetchall():
+            yield Assigment(row) 
                         
 
     @staticmethod
@@ -109,18 +124,57 @@ class Assigment:
         
 ################################################################################
 # stránky
+
+############### Rozhraní pro lektora 
 @route('/assigments-lector')
 @role('lector')
 def list():
     """Seznam odevzdaných zadání"""
     
     usr = getUser() 
-      
-    lectures = Assigment.getPending( grp.lector ) 
+
+    # zjistíme v jaké jsme skupině
+    assigments = Assigment.getPending( usr.login ) 
     
-    return template("assigments_student", {"lectures" : lectures, } )
+    return template("assigments_lector", {"assigments" : assigments, "showLector" : usr.inRole("master") } )
 
 
+
+@route('/assigments-lector/<assigment_id:int>', method=['GET', 'POST'])
+@role('lector')
+def assigmentRate(assigment_id):
+    """Úprava a obodování zadání"""
+    usr = getUser() 
+
+    assigment = Assigment.get( assigment_id ) 
+    if not assigment: return HTTPError(404, "Cvičení nebylo nalezeno")
+    #todo if ???: return HTTPError(403, "Nemáte oprávnění")
+
+        
+
+    if request.method == 'POST':
+        action = request.forms.get("action")
+        if (not action) or  (not action in ("lock", "rate", "unlock")): HTTPError(400, "Neznámá akce")
+        print("----------action", action)
+        if action == "lock":
+            assigment.lock()
+            msg("Řešení bylo zamčeno", "success")
+        elif action == "rate":
+            assigment.rate(  request.forms.get("points") )
+            msg("Řešení bylo ohodnoceno", "success")
+        elif action == "unlock":
+            assigment.unlock()
+            msg("Řešení bylo odemčeno", "success")            
+            
+        redirect('/assigments-lector')
+
+    return template("assigments_rate", {"assigment" : assigment } )
+
+
+
+
+############### Rozhraní pro studenta
+ 
 @route('/assigments', method=['GET', 'POST'])
 @role('student')
 def list():
@@ -171,4 +225,7 @@ def lectureMenu():
 
     if usr and usr.inRole("student"):
         addMenu("/assigments","Zadání",25)
+        
+    if usr and usr.inRole("lector"):
+        addMenu("/assigments-lector","Zadání",10)        
 
