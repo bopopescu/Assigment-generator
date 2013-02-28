@@ -2,6 +2,7 @@ from bottle import route, post, request, redirect, response, hook
 import database
 from helpers import template, msg, addMenu, form_renderer
 from user import role, getUser, User
+from lecture import Lecture
 
 ################################################################################
 # model
@@ -26,25 +27,43 @@ class Assigment:
         if user.login == self.login: return True
 
         return False
+        
+    def getGroup(self):
+        from group import Group
+        return Group.get( self.group_id )
+        
 
     @staticmethod
     def get(id):
         db = database.getConnection()        
-        c = db.execute('SELECT * FROM assigments WHERE assigments_id =?', (id,) )
+        c = db.execute('SELECT * FROM assigments WHERE assigment_id =?', (id,) )
         row = c.fetchone()
  
-        return Assigment( row )
+        return Assigment( row ) if row else None
+ 
+    @staticmethod
+    # todo lepsí pojmenovani
+    def getUnique(lecture_id, login):
+        
+        db = database.getConnection()        
+        c = db.execute('SELECT * FROM assigments WHERE login = ? AND lecture_id = ?', (login,lecture_id) )
+        row = c.fetchone()
+ 
+        return Assigment( row ) if row else None
+ 
         
     @staticmethod
-    def create(lecture_id, text, for_usr):
+    def create(lecture_id, text, login):
         #todo
         db = database.getConnection()        
-        c = db.execute('INSERT INTO lectures(name, lector) VALUES (?,?)', (name,lector) )
+        c = db.execute('INSERT INTO assigments(login, `text`, lecture_id) VALUES (?, ?, ?)', (login, text, lecture_id) )
 
-        return Lecture.get( c.lastrowid )        
+        return Assigment.get( c.lastrowid )        
     
     @staticmethod
     def getAvailable(lector):
+        """Výpis aktivních cvičení daného cvičícího.
+         Ten se typicky získává ze skupiny, do které je přihlášen student"""
         db = database.getConnection()        
         c = db.execute('SELECT * FROM lectures WHERE lector = ? AND state != 0', (lector,) )
 
@@ -78,17 +97,24 @@ def list():
     grp = usr.getGroup()
     #todo: assert group != None
       
-    assigments = Assigment.getAvailable( grp.lector_id ) 
+    lectures = Lecture.getAvailable( grp.lector ) 
     
-    return template("assigments", {"assigments" : assigments, } )
+    return template("assigments_student", {"lectures" : lectures, } )
 
-@route('/assigments/<assigment_id:int>', method=['GET', 'POST'])
+@route('/assigments/<lecture_id:int>', method=['GET', 'POST'])
 @role('student')    
-def show(assigment_id):
+def show(lecture_id):
     """Zobrazení zadání """
-
-    assigment = Assigment.get( assigment_id )
-    # todo check allowed
+                  
+    usr = getUser()
+    lec = Lecture.get( lecture_id );
+                      
+    assigment = Assigment.getUnique( lecture_id, usr.login ) 
+    
+    if not assigment:
+        assigment = Assigment.create( lec.lecture_id, lec.generate(), usr.login )
+        msg("Cvičení bylo vygenerováno", "success")
+        
 
     if request.method == 'POST' and form.validate():
         try:
@@ -99,7 +125,7 @@ def show(assigment_id):
         
         redirect(request.path)    
             
-    return template("assigments_show", {"assigment" : assigment } )    
+    return template("assigments_show", {"assigment" : assigment, "lecture": lec } )    
     
 ###############################################################################
 # callbacky
