@@ -96,8 +96,8 @@ def list():
     usr = getUser() 
     
     # vložení nové skupiny
-    if request.forms.decode().get("add"):
-        grp = Group.insert( request.forms.get("add"), usr.login )
+    if request.forms.get("add"):
+        grp = Group.insert( request.forms.decode().get("add"), usr.login )
         if grp:
             msg("Skupina %s vytvořena" % grp.name,"success")
             redirect("/groups/edit/%i" % grp.group_id )
