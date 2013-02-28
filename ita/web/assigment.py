@@ -32,6 +32,32 @@ class Assigment:
         from group import Group
         return Group.get( self.group_id )
         
+    def respond(self, response):
+        """Nahraje zadání a zamkneho proti úpravám"""
+        #todo: updatnout i changed
+        if self.locked: raise AssigmentException("Zadání je zamčené proti úpravám")
+        
+        self.update( response = response, locked = 1) 
+
+
+    def update(self,**kwargs):
+        cmd = []
+        values = []
+        for key in kwargs:
+            cmd.append("`%s` = ?" % key)
+            values.append(kwargs[key])
+        
+        cmd = ", ".join(cmd)
+        values.append(self.lecture_id)
+        
+        db = database.getConnection()        
+        c = db.execute('UPDATE assigments SET %s WHERE assigment_id = ?' % cmd, values )    
+
+        if not c.rowcount:
+            raise UserException("Chyba při ukládání")    
+
+    
+    # statické třídy                
 
     @staticmethod
     def get(id):
@@ -104,7 +130,7 @@ def list():
 @route('/assigments/<lecture_id:int>', method=['GET', 'POST'])
 @role('student')    
 def show(lecture_id):
-    """Zobrazení zadání """
+    """Zobrazení a odevzdávání zadání """
                   
     usr = getUser()
     lec = Lecture.get( lecture_id );
@@ -115,15 +141,15 @@ def show(lecture_id):
         assigment = Assigment.create( lec.lecture_id, lec.generate(), usr.login )
         msg("Cvičení bylo vygenerováno", "success")
         
-
-    if request.method == 'POST' and form.validate():
-        try:
-            lecture.update( name = form.name.data, text = form.text.data )
-            msg("Cvičení aktualizováno","success")
+    if request.method == 'POST':
+        try:        
+            assigment.respond( request.forms.decode().get("response") )
+            msg("Řešení bylo odesláno","success")
         except Exception as e:
-            msg("Chyba při aktualizaci - %s" % e, "error")
+            msg("Chyba při odesílání řešení - %s" % e, "error")
+            raise e
         
-        redirect(request.path)    
+        redirect(request.path)
             
     return template("assigments_show", {"assigment" : assigment, "lecture": lec } )    
     
