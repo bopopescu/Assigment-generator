@@ -22,14 +22,23 @@ class User:
         return True
         
     def inRole(self, role):
+        roles = self.get("roles", tuple() )
+        return role in roles
+        
+    def getGroup(self):
+        group_id = self.get("group_id") 
+        # nutno importovat tady kvuli krizove zavislosti 
+        from group import Group
+        return Group.get( group_id )
+ 
+    def get(self, key, default = None):
         s = request.environ.get('beaker.session')
         if s['userLogin'] == self.login:
-            roles = s.get('roles', tuple() )
-        else:
-            row = self.getRow()
-            roles = row["roles"]
+            return s.get(key, default)
         
-        return role in roles
+        row = self.getRow()
+        return row[key] if key in row else default  
+
         
     def remove(self):         
         db = database.getConnection()        
@@ -46,9 +55,8 @@ class User:
         if not c.rowcount:
             raise UserException("Chyba při vkládání uživatele")                      
 
-            
+    #todo: cached            
     def getRow(self):
-
         db = database.getConnection()        
         c = db.execute('SELECT * FROM users WHERE login = ?', (self.login,))
         row = c.fetchone()             
@@ -73,6 +81,7 @@ class User:
 
         s = request.environ.get('beaker.session')
         s['userLogin'] = self.login
+        s['group_id'] = row["group_id"]
         # defaultni role je student
         s['roles'] = row["roles"].split(",") if row["roles"] else ["student"]
         s.save()
