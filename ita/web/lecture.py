@@ -92,7 +92,7 @@ from wtforms import Form, BooleanField, TextField,SubmitField,TextAreaField,  va
 class LectureForm(Form):
     order = ["name","text", "submit"]
     name = TextField('Název', [validators.Length(min=1, max=40)])
-    text = TextAreaField('Zadání')
+    text = TextField('Startovací nonterminál', [validators.Length(min=1, max=40)])
     submit  = SubmitField('Uložit')
         
 ################################################################################
@@ -149,6 +149,30 @@ def edit(lecture_id):
         redirect(request.path)    
             
     return template("lectures_edit", {"lecture" : lecture, "form": form_renderer(form) } )    
+
+@route('/lectures/run/<lecture_id:int>')
+def show(lecture_id):
+    """Spustí zkušební běh"""
+    print("import v modulu lec",  __name__)
+    lecture = Lecture.get( lecture_id )
+
+    from ita import ita_parser
+    from ita import generator
+
+    p = ita_parser.Parser()
+
+    p.loadDir("ita/base")
+    p.loadDir("ita/cviceni3")
+
+    g = generator.Generator( p.rules )
+    
+    try:
+        cviceni = g.run(lecture.text)
+    except Exception as e:
+        cviceni = "Došlo k chybě : \n %s      \n %s" % (type(e).__name__, e)
+            
+    return template("lectures_run", {"lecture" : lecture, "text": cviceni } )    
+    
     
 ###############################################################################
 # callbacky

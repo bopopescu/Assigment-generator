@@ -32,6 +32,7 @@
                 </div>    
             </td>
             <td>     
+                <a href='/lectures/run/{{lecture.lecture_id}}'><i class="icon-eye-open"></i> otestovat</a>
                 <a href='/lectures/edit/{{lecture.lecture_id}}'><i class="icon-pencil"></i> upravit</a>
                 <a href='/lectures/delete/{{lecture.lecture_id}}'><i class="icon-remove"></i> smazat</a>
             </td>
