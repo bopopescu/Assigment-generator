@@ -119,4 +119,17 @@ con.execute("CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTOINCREMENT
 con.execute("INSERT INTO lectures(name, lector) VALUES ('Cvičení 1. - logické operace', 'xtest')")
 con.execute("INSERT INTO lectures(name, lector) VALUES ('Cvičení 2. - hospoda', 'xtest')")
 
+con.execute("DROP TABLE IF EXISTS assigments")
+con.execute("""CREATE TABLE assigments (assigment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        login char(40) NOT NULL,
+                                        lecture_id INT NOT NULL,
+                                        generated INT NULL,
+                                        changed INT NULL,
+                                        `text` TEXT,
+                                        `response` TEXT,
+                                        locked INT NULL,
+                                        points FLOAT)""")
+con.execute("INSERT INTO assigments(login, lecture_id, `text`) VALUES ('xtomec06', 1, 'Haleluja')")
+
+
 con.commit()  
