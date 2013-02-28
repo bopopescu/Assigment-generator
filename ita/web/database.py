@@ -115,7 +115,7 @@ con.execute("INSERT INTO groups VALUES (NULL,'Skupina', 'xtest')")
 con.execute("INSERT INTO groups VALUES (NULL,'Skupina', 'master')")
 
 con.execute("DROP TABLE IF EXISTS lectures")
-con.execute("CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTOINCREMENT, name char(40) NOT NULL, lector char(8) NOT NULL, `text` TEXT, state INT NULL, shared INT NULL)")
+con.execute("CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTOINCREMENT, name char(40) NOT NULL, lector char(8) NOT NULL, `nonterminal` char(32) , state INT NULL, shared INT NULL)")
 con.execute("INSERT INTO lectures(name, lector, state) VALUES ('Cvičení 1. - logické operace', 'xtest', 1)")
 con.execute("INSERT INTO lectures(name, lector) VALUES ('Cvičení 2. - hospoda', 'xtest')")
 

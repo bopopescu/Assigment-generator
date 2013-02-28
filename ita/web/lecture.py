@@ -68,7 +68,7 @@ class Lecture:
     
         g = generator.Generator( p.rules )
         
-        return g.run(self.text)
+        return g.run(self.nonterminal)
         
 
     @staticmethod
@@ -112,9 +112,9 @@ class Lecture:
 from wtforms import Form, BooleanField, TextField,SubmitField,TextAreaField,  validators
 
 class LectureForm(Form):
-    order = ["name","text", "submit"]
+    order = ["name","nonterminal", "submit"]
     name = TextField('Název', [validators.Length(min=1, max=40)])
-    text = TextField('Startovací nonterminál', [validators.Length(min=1, max=40)])
+    nonterminal = TextField('Startovací nonterminál', [validators.Length(min=1, max=40)])
     submit  = SubmitField('Uložit')
         
 ################################################################################
@@ -163,7 +163,7 @@ def edit(lecture_id):
 
     if request.method == 'POST' and form.validate():
         try:
-            lecture.update( name = form.name.data, text = form.text.data )
+            lecture.update( name = form.name.data, nonterminal = form.nonterminal.data )
             msg("Cvičení aktualizováno","success")
         except Exception as e:
             msg("Chyba při aktualizaci - %s" % e, "error")
