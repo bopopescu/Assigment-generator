@@ -48,6 +48,20 @@ class Lecture:
         #todo
         pass
         
+    def generate(self):
+        """Vrátí vygenerované zadání pro toto cvičení """
+        from ita import ita_parser
+        from ita import generator
+    
+        p = ita_parser.Parser()
+    
+        p.loadDir("ita/base")
+        p.loadDir("ita/cviceni3")
+    
+        g = generator.Generator( p.rules )
+        
+        return g.run(self.text)
+        
 
     @staticmethod
     def get(id):
@@ -153,21 +167,11 @@ def edit(lecture_id):
 @route('/lectures/run/<lecture_id:int>')
 def show(lecture_id):
     """Spustí zkušební běh"""
-    print("import v modulu lec",  __name__)
+
     lecture = Lecture.get( lecture_id )
 
-    from ita import ita_parser
-    from ita import generator
-
-    p = ita_parser.Parser()
-
-    p.loadDir("ita/base")
-    p.loadDir("ita/cviceni3")
-
-    g = generator.Generator( p.rules )
-    
     try:
-        cviceni = g.run(lecture.text)
+        cviceni =  lecture.generate() 
     except Exception as e:
         cviceni = "Došlo k chybě : \n %s      \n %s" % (type(e).__name__, e)
             
