@@ -26,7 +26,15 @@ class Lecture:
         self.update(state = 1)
     
     def deactivate(self):
-        self.update(state = 0)        
+        self.update(state = 0)     
+        
+    def remove(self):
+        #todo hooks
+        db = database.getConnection()        
+        c = db.execute('DELETE FROM lectures WHERE lecture_id = ?' , (self.lecture_id,) )            
+        
+        if not c.rowcount:
+            raise UserException("Chyba při mazání cvičení")  
 
     def update(self,**kwargs):
         cmd = []
@@ -132,8 +140,8 @@ def list():
         redirect(request.path)        
     
     # vložení nového cvičení
-    if request.forms.decode().get("add"):
-        lec = Lecture.insert( request.forms.get("add"), usr.login )
+    if request.forms.get("add"):
+        lec = Lecture.insert( request.forms.decode().get("add"), usr.login )
         if lec:
             msg("Cvičení %s vytvořeno" % lec.name,"success")
             redirect("/lectures/edit/%i" % lec.lecture_id )
@@ -177,6 +185,22 @@ def show(lecture_id):
             
     return template("lectures_run", {"lecture" : lecture, "text": cviceni } )    
     
+    
+@route('/lectures/delete/<lecture_id:int>', method=['GET', 'POST'])
+def delete(lecture_id):
+    """Smaže cvičení"""
+
+    lecture = Lecture.get( lecture_id )
+
+    answer = request.forms.get("answer") 
+    if answer:
+        if answer == "Ne": redirect("/lectures")
+        if answer == "Ano":
+            lecture.remove()
+            msg("Cvičení smazáno","success")
+            redirect("/lectures")
+            
+    return template("question", {"question":"Skutečně chcete smazat cvičení '%s'" % lecture.name } )    
     
 ###############################################################################
 # callbacky
