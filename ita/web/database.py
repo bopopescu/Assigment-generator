@@ -116,7 +116,7 @@ con.execute("INSERT INTO groups VALUES (NULL,'Skupina', 'master')")
 
 con.execute("DROP TABLE IF EXISTS lectures")
 con.execute("CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTOINCREMENT, name char(40) NOT NULL, lector char(8) NOT NULL, `nonterminal` char(32) , state INT NULL, shared INT NULL)")
-con.execute("INSERT INTO lectures(name, lector, state) VALUES ('Cvičení 1. - logické operace', 'xtest', 1)")
+con.execute("INSERT INTO lectures(name, lector,nonterminal, state) VALUES ('Cvičení 1. - logické operace', 'xtest','cviceni', 1)")
 con.execute("INSERT INTO lectures(name, lector) VALUES ('Cvičení 2. - hospoda', 'xtest')")
 
 con.execute("DROP TABLE IF EXISTS assigments")
@@ -129,7 +129,7 @@ con.execute("""CREATE TABLE assigments (assigment_id INTEGER PRIMARY KEY AUTOINC
                                         `response` TEXT,
                                         state INT NULL,
                                         points FLOAT)""")
-#con.execute("INSERT INTO assigments(login, lecture_id, `text`) VALUES ('xtomec06', 1, 'Haleluja')")
+con.execute("INSERT INTO assigments(login, lecture_id, `text`, response, state) VALUES ('xtomec06', 1, 'generovany', 'odpoved', 1)")
 
 
 con.commit()  
