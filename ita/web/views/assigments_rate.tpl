@@ -1,7 +1,7 @@
 <div style='float:right;'>
 <div><a href='/assigments'><i class="icon-chevron-left"></i> zpátky na seznam</a></div>
 </div>
-
+%print(assigment.points )
 <h2>{{assigment.login}}</h2>
 
 <pre>
@@ -23,7 +23,7 @@
         
 
         <div class="input-append" style='margin-bottom:0px;'>
-            <input type="text" value="{{assigment.points or 0}}" class='span1'/>
+            <input type="text" value="{{assigment.points or 0}}" class='span1' name="points"/>
             <button type="submit" class="btn btn-inverse" name="action" value="rate"/><i class='icon-thumbs-up icon-white'></i> ohodnotit</button>
         </div>     
     </div>

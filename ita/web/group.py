@@ -10,7 +10,6 @@ class GroupException ( Exception ):
         pass
 
 class Group:
-    
 
     def __init__(self, row):
         self.data = row
@@ -22,7 +21,6 @@ class Group:
             return self.data[name]
         except IndexError:
             raise AttributeError()
-
 
     def update(self,**kwargs):
         cmd = []
@@ -40,6 +38,21 @@ class Group:
         if not c.rowcount:
             raise UserException("Chyba při vkládání uživatele")               
 
+    def getResults(self):
+        db = database.getConnection()
+        logins = [member.login for member in self.getMembers() ]
+        
+        from assigment import Assigment
+        sums = Assigment.getSums(logins)
+        
+        result = { login : 0 for login in logins }
+        
+        for sum in sums:
+            result[sum["login"]] = sum["points"] or 0
+            
+        return result 
+        
+        
     def getMembers(self):
         db = database.getConnection()        
         c = db.execute('SELECT * FROM users WHERE group_id =? ORDER BY login', (self.group_id,) )
@@ -149,6 +162,9 @@ def edit(group_id):
             msg("Chyba při aktualizaci - %s" % e, "error")
         
         redirect(request.path)    
+            
+    
+            
             
     return template("groups_edit", {"group" : group, "form": form_renderer(form) } )    
     

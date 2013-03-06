@@ -55,7 +55,7 @@ class Assigment:
 
     def rate(self, value):
         """Ohodnotí a zamkne zadání """
-        if self.state !=  Assigment.STATE_LOCKED: raise AssigmentException("Zadání nelze ohodnotit, protože není zamčené")
+        #if self.state !=  Assigment.STATE_LOCKED: raise AssigmentException("Zadání nelze ohodnotit, protože není zamčené")
         
         self.update( points = value, state = Assigment.STATE_DONE)
     
@@ -90,8 +90,20 @@ class Assigment:
         c = db.execute('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Assigment.STATE_NEW,) )
         
         for row in c.fetchall():
-            yield Assigment(row) 
-                        
+            yield Assigment(row)
+            
+    @staticmethod
+    def getForLecture(lector):
+        """Vrátí zadaná cvičení """
+        lectures = Lecture.getAll(lector)
+        ids = [ str(lecture.lecture_id) for lecture in lectures ]
+        
+        db = database.getConnection()
+        
+        c = db.execute('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Assigment.STATE_NEW,) )
+        
+        for row in c.fetchall():
+            yield Assigment(row)            
 
     @staticmethod
     def get(id):
@@ -100,6 +112,15 @@ class Assigment:
         row = c.fetchone()
  
         return Assigment( row ) if row else None
+ 
+    @staticmethod
+    def getSums(logins):
+        db = database.getConnection()
+        
+        c = db.execute('SELECT login, SUM(points) AS points FROM assigments WHERE login IN (%s)' % (",".join(map(lambda x: "'%s'"%x,logins ))))
+        for row in c.fetchall():
+            yield row
+    
  
     @staticmethod
     # todo lepsí pojmenovani

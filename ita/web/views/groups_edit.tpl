@@ -12,21 +12,25 @@
     <thead>
         <tr>
             <th>Login</th>
+            <th>Bodů</th>
             <th>Akce</th>
         </tr>
      </thead>
     
     <tbody>
-        %member = None
-        %for member in group.members:
+        %login = None
+        %members = group.getResults()
+        %for login in members:
+        %points = members[login]
         <tr>
-            <td>{{member.login}}</td>
-            <td><a href='?remove={{member.login}}'><i class="icon-remove"></i> smazat</a> </td>
+            <td>{{login}}</td>
+            <td>{{points}}</td>
+            <td><a href='?remove={{login}}'><i class="icon-remove"></i> smazat</a> </td>
         </tr>
         %end
         
-        %if not member:
-            <td colspan='2'>V této skupině nejsou zatím žádní studenti</td>
+        %if not login:
+            <td colspan='3'>V této skupině nejsou zatím žádní studenti</td>
         %end
     </tbody>
     
