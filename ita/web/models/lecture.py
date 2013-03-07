@@ -19,8 +19,9 @@ class Model(BaseModel):
     
         p = ita_parser.Parser()
     
-        p.loadDir("ita/base")
-        p.loadDir("ita/cviceni3")
+        p.loadDir("ita/sablony")
+    
+        print(p.files)
     
         g = generator.Generator( p.rules )
         
