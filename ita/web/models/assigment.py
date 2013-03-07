@@ -1,6 +1,6 @@
 import database
 from .base import BaseModel;
-
+from exception import *
 from .lecture import Model as Lecture
 
 class Model(BaseModel):
@@ -12,8 +12,6 @@ class Model(BaseModel):
 
     def __getattr__ (self, name):
         if name == "locked": return (self.state or 0) > Model.STATE_NEW
-        
-        # pro pohodlnější přístup a nahrávání do formů 
         return super(Model, self).__getattr__(name)
 
     def isAllowed(self, usr = None):
