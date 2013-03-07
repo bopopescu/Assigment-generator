@@ -121,7 +121,7 @@ con.execute("INSERT INTO lectures(name, lector) VALUES ('Cvičení 2. - hospoda'
 
 con.execute("DROP TABLE IF EXISTS assigments")
 con.execute("""CREATE TABLE assigments (assigment_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                        login char(40) NOT NULL,
+                                        login char(8) NOT NULL,
                                         lecture_id INT NOT NULL,
                                         generated INT NULL,
                                         changed INT NULL,
