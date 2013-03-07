@@ -38,24 +38,33 @@ class Parser:
         self.files = {}
         
     
-    def loadDir(self, path):
-        files = os.listdir(path)
-        for file in files:
-            if not file.endswith(".fragment"):
-                if VERBOSE: print("skipping ".ljust(10)+file)
-                continue
-            
-            if VERBOSE: print("opening ".ljust(10)+file)
-            
-            with codecs.open(path+"/"+file,'r', 'utf-8') as f:
-                try:
-                    # readlines je sice narocnejsi na pamet, ale vyvazuje to zlo ktery by bylo potreba pri wrapovani bufferedreader
-                   self._parse( f.readlines(), path )
-                except SyntaxError as e:
-                    #todo: udelat z toho warn
-
-                    e.filename = file
-                    raise e
+    def loadDir(self, startPath):
+        todo = [startPath]
+        while len(todo) > 0:
+            path = todo.pop()
+            files = os.listdir(path)
+            for file in files:
+                if file in (".",".."): continue
+                absPath = path+"/"+file
+                if os.path.isdir(absPath):
+                    todo.append(absPath)
+                    continue
+                    
+                if not file.endswith(".fragment"):
+                    if VERBOSE: print("skipping ".ljust(10)+file)
+                    continue
+                
+                if VERBOSE: print("opening ".ljust(10)+file)
+                
+                with codecs.open(absPath,'r', 'utf-8') as f:
+                    try:
+                        # readlines je sice narocnejsi na pamet, ale vyvazuje to zlo ktery by bylo potreba pri wrapovani bufferedreader
+                       self._parse( f.readlines(), absPath )
+                    except SyntaxError as e:
+                        #todo: udelat z toho warn
+    
+                        e.filename = file
+                        raise e
                     
 
 
