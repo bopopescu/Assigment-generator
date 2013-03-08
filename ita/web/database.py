@@ -111,8 +111,8 @@ con.execute("INSERT INTO users VALUES ('master', '%s', 'master,lector' , NULL)" 
 
 con.execute("DROP TABLE IF EXISTS groups")
 con.execute("CREATE TABLE groups (group_id INTEGER PRIMARY KEY AUTOINCREMENT, name char(40) NOT NULL, lector char(8) NOT NULL )")
-con.execute("INSERT INTO groups VALUES (NULL,'Skupina', 'xtest')")
-con.execute("INSERT INTO groups VALUES (NULL,'Skupina', 'master')")
+con.execute("INSERT INTO groups VALUES (NULL,'Skupina 01', 'xtest')")
+con.execute("INSERT INTO groups VALUES (NULL,'Skupina náhradní', 'master')")
 
 con.execute("DROP TABLE IF EXISTS lectures")
 con.execute("CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTOINCREMENT, name char(40) NOT NULL, lector char(8) NOT NULL, `nonterminal` char(32) , state INT NULL, shared INT NULL)")
