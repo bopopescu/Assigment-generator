@@ -46,7 +46,7 @@ class BaseModel(object):
     def remove(self):
         #todo hooks
         db = database.getConnection()        
-        c = db.execute('DELETE FROM %s WHERE %s = ?' % (self.getTable(), self.getPrimaryName() ), self.getPrimary()  )            
+        c = db.execute('DELETE FROM %s WHERE %s = ?' % (self.getTable(), self.getPrimaryName() ), (self.getPrimary(),)  )            
         
         if not c.rowcount:
             raise UserException("Chyba při mazání cvičení")  
