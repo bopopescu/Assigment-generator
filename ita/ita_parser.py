@@ -31,44 +31,57 @@ class Rule:
 #############################################################################    
 
 class Parser:
+    
 
     def __init__(self):
         self.rules = {}
-        pass
+        self.files = {}
+        
     
-    def loadDir(self, path):
-        files = os.listdir(path)
-        for file in files:
-            if not file.endswith(".fragment"):
-                if VERBOSE: print("skipping ".ljust(10)+file)
-                continue
-            
-            if VERBOSE: print("opening ".ljust(10)+file)
-            
-            with codecs.open(path+"/"+file,'r', 'utf-8') as f:
-                try:
-                    # readlines je sice narocnejsi na pamet, ale vyvazuje to zlo ktery by bylo potreba pri wrapovani bufferedreader
-                   self._parse( f.readlines() )
-                except SyntaxError as e:
-                    #todo: udelat z toho warn
-
-                    e.filename = file
-                    raise e
+    def loadDir(self, startPath):
+        todo = [startPath]
+        while len(todo) > 0:
+            path = todo.pop()
+            files = os.listdir(path)
+            for file in files:
+                if file in (".",".."): continue
+                absPath = path+"/"+file
+                if os.path.isdir(absPath):
+                    todo.append(absPath)
+                    continue
+                    
+                if not file.endswith(".fragment"):
+                    if VERBOSE: print("skipping ".ljust(10)+file)
+                    continue
+                
+                if VERBOSE: print("opening ".ljust(10)+file)
+                
+                with codecs.open(absPath,'r', 'utf-8') as f:
+                    try:
+                        # readlines je sice narocnejsi na pamet, ale vyvazuje to zlo ktery by bylo potreba pri wrapovani bufferedreader
+                       self._parse( f.readlines(), absPath )
+                    except SyntaxError as e:
+                        #todo: udelat z toho warn
+    
+                        e.filename = file
+                        raise e
                     
 
 
-    def _parse(self, content):
+    def _parse(self, content, path):
         curLine = 0
 
         #todo: handle bom
 
         endLine = len(content)
+        
+        self.files[path] = {}
 
         while curLine != endLine:
-            curLine = self._consume(content, curLine)
+            curLine = self._consume(content, curLine, path)
 
 
-    def _consume(self, content, curLine):
+    def _consume(self, content, curLine, path):
         """Zpracuje text souboru"""
 
         # preskocime prazdne radky
@@ -203,6 +216,7 @@ class Parser:
             program.append( "\t" + "return ''.join( __value )" )  
 
         
+        self.files[path][nonterm] = self.files[path].get(nonterm,0)+1 
 
         if VERBOSE:
             print("parsed nonterminal '%s': %d text, %d code, %d params "%(nonterm, len(text), len(code), len(params["order"])))

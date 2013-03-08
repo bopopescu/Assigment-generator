@@ -6,74 +6,7 @@ from user import role, getUser, User
 ################################################################################
 # model
 
-class GroupException ( Exception ):
-        pass
-
-class Group:
-    
-
-    def __init__(self, row):
-        self.data = row
-
-    def __getattr__ (self, name):
-        # pro pohodlnější přístup a nahrávání do formů 
-        if name == "members": return self.getMembers()
-        try:
-            return self.data[name]
-        except IndexError:
-            raise AttributeError()
-
-
-    def update(self,**kwargs):
-        cmd = []
-        values = []
-        for key in kwargs:
-            cmd.append("%s = ?" % key)
-            values.append(kwargs[key])
-        
-        cmd = ", ".join(cmd)
-        values.append(self.group_id)
-        
-        db = database.getConnection()        
-        c = db.execute('UPDATE groups SET %s WHERE group_id =?' % cmd, values )    
-
-        if not c.rowcount:
-            raise UserException("Chyba při vkládání uživatele")               
-
-    def getMembers(self):
-        db = database.getConnection()        
-        c = db.execute('SELECT * FROM users WHERE group_id =? ORDER BY login', (self.group_id,) )
-        for row in c.fetchall():
-            yield User( row["login"] )
-        
-
-    @staticmethod
-    def get(id):
-        db = database.getConnection()        
-        c = db.execute('SELECT * FROM groups WHERE group_id =?', (id,) )
-        row = c.fetchone()
- 
-        return Group( row )
-        
-    @staticmethod
-    def insert(name, lector):
-        db = database.getConnection()        
-        c = db.execute('INSERT INTO groups(name, lector) VALUES (?,?)', (name,lector) )
-
-        return Group.get( c.lastrowid )        
-    
-    
-    
-    @staticmethod
-    def getAll(lector = None):
-        db = database.getConnection()        
-        if lector:
-            c = db.execute('SELECT * FROM groups WHERE lector = ?', (lector,) )
-        else:
-            c = db.execute('SELECT * FROM groups WHERE 1' )            
-        
-        for row in c.fetchall():
-            yield Group(row) 
+from models import Group
     
         
 ################################################################################
@@ -96,8 +29,8 @@ def list():
     usr = getUser() 
     
     # vložení nové skupiny
-    if request.forms.decode().get("add"):
-        grp = Group.insert( request.forms.get("add"), usr.login )
+    if request.forms.get("add"):
+        grp = Group.insert( request.forms.decode().get("add"), usr.login )
         if grp:
             msg("Skupina %s vytvořena" % grp.name,"success")
             redirect("/groups/edit/%i" % grp.group_id )
@@ -149,6 +82,9 @@ def edit(group_id):
             msg("Chyba při aktualizaci - %s" % e, "error")
         
         redirect(request.path)    
+            
+    
+            
             
     return template("groups_edit", {"group" : group, "form": form_renderer(form) } )    
     

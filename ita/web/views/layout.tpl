@@ -33,7 +33,6 @@
     <ul class="nav nav-pills pull-right">
         %for ero in getMenu():
         % link, desc = ero[:2]
-        %print(link)
             <li class="{{"active" if requestedURL.startswith(link) else ""}}"><a href="{{link}}">{{desc}}</a></li>
         %end
     </ul>

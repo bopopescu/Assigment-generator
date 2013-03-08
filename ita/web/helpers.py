@@ -47,6 +47,12 @@ def _getMenu():
     request._locals["menu"] = sorted( request._locals["menu"], key = lambda x: x[-1] )
     
     return request._locals["menu"]
+    
+import unicodedata
+def safeASCII(title):
+    return title
+    #todo
+    return unicodedata.normalize('NFKD', title).encode('ascii','ignore').decode("ascii","translate")
 
 ############
 

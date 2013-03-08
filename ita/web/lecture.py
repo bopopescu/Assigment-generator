@@ -5,84 +5,16 @@ from user import role, getUser, User
 
 ################################################################################
 # model
-
-class LectureException ( Exception ):
-        pass
-
-class Lecture:
-
-    def __init__(self, row):
-        self.data = row
-
-    def __getattr__ (self, name):
-        # pro pohodlnější přístup a nahrávání do formů 
-        if name == "assigments": return self.getAssigments()
-        try:
-            return self.data[name]
-        except IndexError:
-            raise AttributeError()
-
-
-    def update(self,**kwargs):
-        cmd = []
-        values = []
-        for key in kwargs:
-            cmd.append("%s = ?" % key)
-            values.append(kwargs[key])
-        
-        cmd = ", ".join(cmd)
-        values.append(self.lecture_id)
-        
-        db = database.getConnection()        
-        c = db.execute('UPDATE lectures SET %s WHERE lecture_id =?' % cmd, values )    
-
-        if not c.rowcount:
-            raise UserException("Chyba při vkládání uživatele")               
-
-    def getAssigments(self):
-        db = database.getConnection()        
-        c = db.execute('SELECT * FROM users WHERE lecture_id =? ORDER BY login', (self.lecture_id,) )
-        for row in c.fetchall():
-            yield User( row["login"] )
-        
-
-    @staticmethod
-    def get(id):
-        db = database.getConnection()        
-        c = db.execute('SELECT * FROM lectures WHERE lecture_id =?', (id,) )
-        row = c.fetchone()
- 
-        return Lecture( row )
-        
-    @staticmethod
-    def insert(name, lector):
-        db = database.getConnection()        
-        c = db.execute('INSERT INTO lectures(name, lector) VALUES (?,?)', (name,lector) )
-
-        return Lecture.get( c.lastrowid )        
-    
-    
-    
-    @staticmethod
-    def getAll(lector = None):
-        db = database.getConnection()        
-        if lector:
-            c = db.execute('SELECT * FROM lectures WHERE lector = ?', (lector,) )
-        else:
-            c = db.execute('SELECT * FROM lectures WHERE 1' )            
-        
-        for row in c.fetchall():
-            yield Lecture(row) 
-    
+from models import Lecture
         
 ################################################################################
 # Formulář        
 from wtforms import Form, BooleanField, TextField,SubmitField,TextAreaField,  validators
 
 class LectureForm(Form):
-    order = ["name","text", "submit"]
+    order = ["name","nonterminal", "submit"]
     name = TextField('Název', [validators.Length(min=1, max=40)])
-    text = TextAreaField('Zadání')
+    nonterminal = TextField('Startovací nonterminál', [validators.Length(min=1, max=40)])
     submit  = SubmitField('Uložit')
         
 ################################################################################
@@ -95,10 +27,22 @@ def list():
     
     usr = getUser() 
     
+    if request.params.get("activate"):
+        lec = Lecture.get( request.params.get("activate") )
+        lec.activate()
+        msg("Cvičení %s bylo zapnuto" % lec.name,"success")
+        redirect(request.path)
+        
+    if request.params.get("deactivate"):
+        lec = Lecture.get( request.params.get("deactivate") )
+        lec.deactivate()
+        msg("Cvičení %s bylo vypnuto" % lec.name,"success")
+        redirect(request.path)        
+    
     # vložení nového cvičení
-    if request.forms.decode().get("add"):
-        lec = Lecture.insert( request.forms.get("add"), usr.login )
-        if grp:
+    if request.forms.get("add"):
+        lec = Lecture.insert( request.forms.decode().get("add"), usr.login )
+        if lec:
             msg("Cvičení %s vytvořeno" % lec.name,"success")
             redirect("/lectures/edit/%i" % lec.lecture_id )
         else:
@@ -112,15 +56,14 @@ def list():
 @route('/lectures/edit/<lecture_id:int>', method=['GET', 'POST'])
 @role('lector')    
 def edit(lecture_id):
-    """Úprava specifické skupiny včetně přidávání uživatelů"""
+    """Úprava specifické cvičení"""
     
     lecture = Lecture.get( lecture_id )
-
     form = LectureForm(request.forms.decode(), lecture)
-    
+
     if request.method == 'POST' and form.validate():
         try:
-            lecture.update( name = form.name.data, text = form.text.data )
+            lecture.update( name = form.name.data, nonterminal = form.nonterminal.data )
             msg("Cvičení aktualizováno","success")
         except Exception as e:
             msg("Chyba při aktualizaci - %s" % e, "error")
@@ -128,6 +71,36 @@ def edit(lecture_id):
         redirect(request.path)    
             
     return template("lectures_edit", {"lecture" : lecture, "form": form_renderer(form) } )    
+
+@route('/lectures/run/<lecture_id:int>')
+def show(lecture_id):
+    """Spustí zkušební běh"""
+
+    lecture = Lecture.get( lecture_id )
+
+    try:
+        cviceni =  lecture.generate() 
+    except Exception as e:
+        cviceni = "Došlo k chybě : \n %s      \n %s" % (type(e).__name__, e)
+            
+    return template("lectures_run", {"lecture" : lecture, "text": cviceni } )    
+    
+    
+@route('/lectures/delete/<lecture_id:int>', method=['GET', 'POST'])
+def delete(lecture_id):
+    """Smaže cvičení"""
+
+    lecture = Lecture.get( lecture_id )
+
+    answer = request.forms.get("answer") 
+    if answer:
+        if answer == "Ne": redirect("/lectures")
+        if answer == "Ano":
+            lecture.remove()
+            msg("Cvičení smazáno","success")
+            redirect("/lectures")
+            
+    return template("question", {"question":"Skutečně chcete smazat cvičení '%s'" % lecture.name } )    
     
 ###############################################################################
 # callbacky

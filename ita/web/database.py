@@ -8,6 +8,7 @@ from bottle import request
 def makeSQLiteconnection(handle):
     """ Vytvoří spojení a uloží na něj odkaz přes handle"""
     con = sqlite3.connect(handle)
+    con.isolation_level = None
     con.row_factory = sqlite3.Row
     return con
 
@@ -110,13 +111,25 @@ con.execute("INSERT INTO users VALUES ('master', '%s', 'master,lector' , NULL)" 
 
 con.execute("DROP TABLE IF EXISTS groups")
 con.execute("CREATE TABLE groups (group_id INTEGER PRIMARY KEY AUTOINCREMENT, name char(40) NOT NULL, lector char(8) NOT NULL )")
-con.execute("INSERT INTO groups VALUES (NULL,'Skupina', 'xtest')")
-con.execute("INSERT INTO groups VALUES (NULL,'Skupina', 'master')")
+con.execute("INSERT INTO groups VALUES (NULL,'Skupina 01', 'xtest')")
+con.execute("INSERT INTO groups VALUES (NULL,'Skupina náhradní', 'master')")
 
 con.execute("DROP TABLE IF EXISTS lectures")
-con.execute("CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTOINCREMENT, name char(40) NOT NULL, lector char(8) NOT NULL, `text` TEXT, state INT NULL, shared INT NULL)")
-con.execute("INSERT INTO lectures(name, lector) VALUES ('Cvičení pondělí', 'xtest')")
-con.execute("INSERT INTO lectures(name, lector) VALUES ('Cvičení úterý', 'xtest')")
+con.execute("CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTOINCREMENT, name char(40) NOT NULL, lector char(8) NOT NULL, `nonterminal` char(32) , state INT NULL, shared INT NULL)")
+con.execute("INSERT INTO lectures(name, lector,nonterminal, state) VALUES ('Cvičení 1. - logické operace', 'xtest','cviceni', 1)")
+con.execute("INSERT INTO lectures(name, lector) VALUES ('Cvičení 2. - hospoda', 'xtest')")
+
+con.execute("DROP TABLE IF EXISTS assigments")
+con.execute("""CREATE TABLE assigments (assigment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        login char(8) NOT NULL,
+                                        lecture_id INT NOT NULL,
+                                        generated INT NULL,
+                                        changed INT NULL,
+                                        `text` TEXT,
+                                        `response` TEXT,
+                                        state INT NULL,
+                                        points FLOAT)""")
+con.execute("INSERT INTO assigments(login, lecture_id, `text`, response, state) VALUES ('xtomec06', 1, 'generovany', 'odpoved', 1)")
 
 
 con.commit()  

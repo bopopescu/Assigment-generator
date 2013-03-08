@@ -52,7 +52,7 @@ class Generator:
         """ Vrátí aktuální prostředí pro spouštění generovanýc funkcí
             V případě potřeby ho vytvoří
         """
-        if self.currentScope == None:
+        if not self.currentScope:
             
             self.currentScope = {
                                 # builtins, v pripade potreby tu jde orezat funkcionalita
@@ -74,6 +74,7 @@ class Generator:
     def run(self, startNonterminal):
         """ Spustí daný nonterminál """
         self.clearScope()
+        if not startNonterminal in self.rules: raise RuntimeError("Startovaci nonterminal %s nenalezen" % startNonterminal)
         return self.rules[startNonterminal]()
         
         
