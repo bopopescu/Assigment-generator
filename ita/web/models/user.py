@@ -14,22 +14,22 @@ class Model(BaseModel):
     model = "user"
         
     def inRole(self, role):
-        roles = self.read("roles", tuple() )
+        roles = self.read("roles")
         return role in roles
         
     def getGroup(self):
-        group_id = self.get("group_id") 
+        group_id = self.read("group_id") 
         # nutno importovat tady kvuli krizove zavislosti 
         from . import Group
         return Group.get( group_id )
  
     def read(self, key, default = None):
-        s = request.environ.get('beaker.session')
-        if s['userLogin'] == self.login:
-            return s.get(key, default)
-        
-        row = self.getRow()
-        return row[key] if key in row else default  
+        if key == "roles":
+            #defaultní role je student
+            roles = self.data[key] or "student"
+            return roles.split(",")
+
+        return self.data[key] or default
 
     def insert(self, group_id):         
         db = database.getConnection()       
@@ -57,9 +57,6 @@ class Model(BaseModel):
 
         s = request.environ.get('beaker.session')
         s['userLogin'] = self.login
-        s['group_id'] = row["group_id"]
-        # defaultni role je student
-        s['roles'] = row["roles"].split(",") if row["roles"] else ["student"]
         s.save()
 
 
