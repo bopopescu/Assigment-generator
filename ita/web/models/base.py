@@ -53,7 +53,7 @@ class BaseModel(object):
              
     @classmethod
     def get(cls, id):
-        print('SELECT * FROM %s WHERE %s =?' % (cls.getTable(), cls.getPrimaryName() ))
+        print('SELECT * FROM %s WHERE %s =?' % (cls.getTable(), cls.getPrimaryName() ), id)
         db = database.getConnection()        
         c = db.execute('SELECT * FROM %s WHERE %s =?' % (cls.getTable(), cls.getPrimaryName() ), (id,) )
         row = c.fetchone()
