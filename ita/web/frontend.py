@@ -9,7 +9,7 @@ import user
 import group
 import lecture
 import assigment
-import template
+import template as templateWeb  # abychom se vyhnuli kolizi s helper fnc
 
 @route('/static/<filename:path>')
 def send_static(filename):
