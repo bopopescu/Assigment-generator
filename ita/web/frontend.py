@@ -1,4 +1,4 @@
-from bottle import route, default_app, request, static_file, hook
+from bottle import route, default_app, request, static_file, hook, redirect
 from helpers import template, msg, addMenu
 from user import getUser
 import os
@@ -17,6 +17,9 @@ def send_static(filename):
 
 @route("/")
 def index():
+    usr = getUser()
+    if usr and usr.inRole("student"):
+        redirect("/assigments")
     return template("index")
 
 app = default_app.pop()
