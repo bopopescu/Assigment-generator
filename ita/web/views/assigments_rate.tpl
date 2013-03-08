@@ -20,7 +20,6 @@
         %else:
             <button type="submit" class="btn btn-danger " name="action" value="lock"><i class='icon-lock'></i> zamknout</button>
         %end
-        
 
         <div class="input-append" style='margin-bottom:0px;'>
             <input type="text" value="{{assigment.points or 0}}" class='span1' name="points"/>
