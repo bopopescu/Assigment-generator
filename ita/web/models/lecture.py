@@ -12,6 +12,9 @@ class Model(BaseModel):
     def deactivate(self):
         self.update(state = 0)     
         
+    def isActive(self):
+        return self.data["state"] == 1
+        
     def generate(self):
         """Vrátí vygenerované zadání pro toto cvičení """
         from ita import ita_parser
@@ -21,7 +24,6 @@ class Model(BaseModel):
     
         p.loadDir("ita/sablony")
     
-        print(p.files)
     
         g = generator.Generator( p.rules )
         

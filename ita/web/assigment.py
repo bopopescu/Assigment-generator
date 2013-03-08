@@ -86,6 +86,12 @@ def show(lecture_id):
                   
     usr = getUser()
     lec = Lecture.get( lecture_id );
+    
+    if not lec: return HTTPError(404, "Cvičení nebylo nalezeno")
+
+    if not lec.isActive():
+        msg("Cvičení není aktivní", "error")
+        redirect("/assigments");
                       
     assigment = Assigment.getUnique( lecture_id, usr.login ) 
     
