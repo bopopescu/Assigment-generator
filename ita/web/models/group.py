@@ -16,7 +16,6 @@ class Model(BaseModel):
         if name == "members": return self.getMembers()
         return super(Model, self).__getattr__(name)
  
- 
     def getResults(self):
         db = database.getConnection()
         logins = [member.login for member in self.getMembers() ]
