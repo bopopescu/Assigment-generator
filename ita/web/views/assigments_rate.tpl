@@ -1,5 +1,5 @@
 <div style='float:right;'>
-<div><a href='/assigments'><i class="icon-chevron-left"></i> zpátky na seznam</a></div>
+<div><a href='/assigments-lector'><i class="icon-chevron-left"></i> zpátky na seznam</a></div>
 </div>
 %print(assigment.points )
 <h2>{{assigment.login}}</h2>
