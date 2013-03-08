@@ -9,8 +9,7 @@ import user
 import group
 import lecture
 import assigment
-
-from user import role
+import template
 
 @route('/static/<filename:path>')
 def send_static(filename):
