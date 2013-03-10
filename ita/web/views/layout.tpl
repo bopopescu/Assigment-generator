@@ -58,11 +58,14 @@
       <hr>
 
       <div class="footer">
-        <p>DIP Aleš Tomeček 2013</p>
+        <div class="pull-right">DIP Aleš Tomeček 2013</div>
+        
         %if not user:
+            <div>
             <a href="/login?lector=1">
                 přihlášení cvičící
             </a>
+            </div>
         %end
       </div>
 

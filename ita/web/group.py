@@ -82,11 +82,24 @@ def edit(group_id):
             msg("Chyba při aktualizaci - %s" % e, "error")
         
         redirect(request.path)    
-            
+
+    return template("groups_edit", {"group" : group, "form": form_renderer(form) } )
     
+@route('/groups/delete/<group_id:int>', method=['GET', 'POST'])
+def delete(group_id):
+    """Smaže skupinu"""
+
+    group = Group.get( group_id )
+
+    answer = request.forms.get("answer") 
+    if answer:
+        if answer == "Ne": redirect("/groups")
+        if answer == "Ano":
+            group.remove()
+            msg("Skupina smazána","success")
+            redirect("/groups")
             
-            
-    return template("groups_edit", {"group" : group, "form": form_renderer(form) } )    
+    return template("question", {"question":"Skutečně chcete smazat skupinu '%s'" % group.name } )            
     
 ###############################################################################
 # callbacky

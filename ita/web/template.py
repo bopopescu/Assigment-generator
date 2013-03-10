@@ -34,9 +34,16 @@ def edit(filename):
     if not filename in allowed:
         msg("Integrita narušena","error");
         redirect("/templates");
-    
 
-    return template("templates_edit", root = pathToModule+"/static/")
+    if request.forms.get("content"):
+        msg("Nemáte oprávnění ukládat šablony","error")
+        redirect(request.path)
+    
+    
+    with open(filename, "rb") as f:
+        content = b"".join( f.readlines() ) 
+
+    return template("templates_edit", content = content )
 
     
 ###############################################################################
