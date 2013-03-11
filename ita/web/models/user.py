@@ -31,15 +31,18 @@ class Model(BaseModel):
 
         return self.data[key] or default
 
-    def insert(self, group_id):         
+    @staticmethod
+    def insert(login,  group_id):         
         db = database.getConnection()       
         try: 
-            c = db.execute('INSERT INTO users(login, group_id) VALUES(?,?)', (self.login,group_id))
+            c = db.execute('INSERT INTO users(login, group_id) VALUES(?,?)', (login,group_id))
         except Exception as e:
             raise UserException("Takový uživatel již existuje")
                 
         if not c.rowcount:
-            raise UserException("Chyba při vkládání uživatele")                      
+            raise UserException("Chyba při vkládání uživatele")
+            
+        return Model.get( login )                              
 
     def authenticate(self, psw = None):
         row = self.data
