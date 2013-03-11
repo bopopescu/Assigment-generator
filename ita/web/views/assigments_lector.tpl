@@ -1,5 +1,5 @@
 <h2>Zadání</h2>
-
+<h2>Čekající na ohodnocení</h2>
 <table class="table table-hover">
     <thead>
         <tr>
@@ -44,7 +44,7 @@
 </table>
 
 
-<h2>Vyřízená zadání</h2>
+<h2>Ostatní zadání</h2>
 <table class="table table-hover muted">
     <thead>
         <tr>
