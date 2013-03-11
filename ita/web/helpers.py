@@ -33,13 +33,13 @@ def form_renderer(form, action = ""):
     
 ############    
     
-def addMenu(link, desc, priority = 0, _class = ""):
+def addMenu(link, desc, priority = 0, counter = None):
     """Přidá položku do menu, které je předáváno při každém generování šablony """
     
     if not "menu" in request._locals:
         request._locals["menu"] = []
         
-    request._locals["menu"].append( (link, desc, _class, priority) )
+    request._locals["menu"].append( (link, desc, counter, priority) )
 
 def _getMenu():
     """Vrátí seřazené lokální menu """

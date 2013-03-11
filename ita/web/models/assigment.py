@@ -68,7 +68,7 @@ class Model(BaseModel):
         db = database.getConnection()
         c = db.execute('SELECT COUNT(*) AS cnt FROM assigments WHERE (state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_LOCKED,) )
         
-        return c["cnt"]
+        return c.fetchone()["cnt"]
             
     @staticmethod
     def getSilent(lector):

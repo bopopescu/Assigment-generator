@@ -124,5 +124,5 @@ def lectureMenu():
         addMenu("/assigments","Zadání",25)
         
     if usr and usr.inRole("lector"):
-        addMenu("/assigments-lector","Zadání",10)        
+        addMenu("/assigments-lector","Zadání",10, Assigment.getPendingCount(usr.login) )        
 
