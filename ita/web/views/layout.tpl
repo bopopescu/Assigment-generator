@@ -32,8 +32,15 @@
     <div class="masthead">
     <ul class="nav nav-pills pull-right">
         %for ero in getMenu():
-        % link, desc = ero[:2]
-            <li class="{{"active" if requestedURL.startswith(link) else ""}}"><a href="{{link}}">{{desc}}</a></li>
+        % link, desc, counter = ero[:3]
+            <li class="{{"active" if requestedURL.startswith(link) else ""}}">
+                <a href="{{link}}">{{desc}}
+                %if counter != None:
+                    <span class="badge{{" badge-warning" if counter > 0 else ""}}">{{counter}}</span>
+                %end
+                </a>
+            
+            </li>
         %end
     </ul>
     

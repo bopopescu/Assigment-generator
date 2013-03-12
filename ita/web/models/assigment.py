@@ -49,16 +49,39 @@ class Model(BaseModel):
     
     @staticmethod
     def getPending(lector):
-        """Vrátí počet nevyřízená zadání"""
+        """Vrátí nevyřízená zadání"""
         lectures = Lecture.getAll(lector)
         ids = [ str(lecture.lecture_id) for lecture in lectures ]
         
         db = database.getConnection()
         
-        c = db.execute('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_NEW,) )
+        c = db.execute('SELECT * FROM assigments WHERE (state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_LOCKED,) )
         
         for row in c.fetchall():
             yield Model(row)
+            
+    @staticmethod
+    def getPendingCount(lector):
+        """Vrátí počet nevyřízených zadání"""
+        lectures = Lecture.getAll(lector)
+        ids = [ str(lecture.lecture_id) for lecture in lectures ]
+        db = database.getConnection()
+        c = db.execute('SELECT COUNT(*) AS cnt FROM assigments WHERE (state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_LOCKED,) )
+        
+        return c.fetchone()["cnt"]
+            
+    @staticmethod
+    def getSilent(lector):
+        """Vrátí zadání, která nepotřebují vyřídit"""
+        lectures = Lecture.getAll(lector)
+        ids = [ str(lecture.lecture_id) for lecture in lectures ]
+        
+        db = database.getConnection()
+        
+        c = db.execute('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)  ORDER BY generated DESC, state ASC' % (",".join(ids)) , (Model.STATE_LOCKED,) )
+        
+        for row in c.fetchall():
+            yield Model(row)            
             
     @staticmethod
     def getForLector(lector):

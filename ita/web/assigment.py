@@ -21,11 +21,13 @@ def list():
     """Seznam odevzdaných zadání"""
     
     usr = getUser() 
+    #todo pro mastera zobrazit všechny
 
     # zjistíme v jaké jsme skupině
     assigments = Assigment.getPending( usr.login ) 
+    silent = Assigment.getSilent( usr.login ) 
     
-    return template("assigments_lector", {"assigments" : assigments, "showLector" : usr.inRole("master") } )
+    return template("assigments_lector", {"assigments" : assigments, "silent" : silent, "showLector" : usr.inRole("master") } )
 
 
 
@@ -122,5 +124,5 @@ def lectureMenu():
         addMenu("/assigments","Zadání",25)
         
     if usr and usr.inRole("lector"):
-        addMenu("/assigments-lector","Zadání",10)        
+        addMenu("/assigments-lector","Zadání",10, Assigment.getPendingCount(usr.login) )        
 

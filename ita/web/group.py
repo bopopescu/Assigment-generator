@@ -47,13 +47,14 @@ def list():
 def edit(group_id):
     """Úprava specifické skupiny včetně přidávání uživatelů"""
     
+    #todo: is allowed
+    
     group = Group.get( group_id )
     
     # vložení studenta
     if request.forms.get("add"):
-        usr = User( request.forms.get("add") )
         try:
-            usr.insert( group_id )
+            usr = User.insert( request.forms.get("add"), group_id )
             msg("Student %s vložen" % usr.login,"success")
         except Exception as e: 
             msg("Chyba při vkládání studenta - %s " % e,"error")                   
