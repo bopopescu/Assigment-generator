@@ -117,7 +117,7 @@ con.execute("INSERT INTO groups VALUES (NULL,'Skupina náhradní', 'master')")
 con.execute("DROP TABLE IF EXISTS lectures")
 con.execute("CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTOINCREMENT, name char(40) NOT NULL, lector char(8) NOT NULL, `nonterminal` char(32) , state INT NULL, shared INT NULL)")
 con.execute("INSERT INTO lectures(name, lector,nonterminal, state) VALUES ('Cvičení 1. - logické operace', 'xtest','cviceni', 1)")
-con.execute("INSERT INTO lectures(name, lector) VALUES ('Cvičení 2. - hospoda', 'xtest')")
+con.execute("INSERT INTO lectures(name, lector, nonterminal) VALUES ('Cvičení 2. - hospoda', 'xtest', 'cislo')")
 
 con.execute("DROP TABLE IF EXISTS assigments")
 con.execute("""CREATE TABLE assigments (assigment_id INTEGER PRIMARY KEY AUTOINCREMENT,
