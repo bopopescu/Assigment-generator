@@ -18,8 +18,6 @@ from beaker.middleware import SessionMiddleware
 from . import config
 from .frontend import app as frontendApp
 
-from .database import DBPlugin
-
 ################################################################################
 
 from git_reloader import app as gitReloader
@@ -27,8 +25,6 @@ from git_reloader import app as gitReloader
 mainApp = frontendApp
 #mainApp.mount("/git/", gitReloader)
 
-db = DBPlugin()
-mainApp.install(db)
 mainApp = SessionMiddleware(mainApp , config.session_opts)
 
 def run(**kwargs):
