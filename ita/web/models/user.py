@@ -29,10 +29,13 @@ class Model(BaseModel):
         return self.data[key] or default
 
     @staticmethod
-    def insert(login,  group_id):         
+    def insert(login,  group_id = None, roles = None, psw = None):
+        if psw:
+            psw = sha1(psw.encode('utf-8')).hexdigest()         
         try: 
-            c = query('INSERT INTO users(login, group_id) VALUES(?,?)', (login,group_id))
+            c = query('INSERT INTO users(login, group_id, roles, password) VALUES(?,?,?,?)', (login, group_id, roles, psw))
         except Exception as e:
+            print(e)
             raise UserException("Takový uživatel již existuje")
                 
         if not c.rowcount:
