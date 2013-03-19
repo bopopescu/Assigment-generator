@@ -35,6 +35,30 @@ def getUser():
 ################################################################################
 # stránky
 
+
+@route('/users', method=['GET', 'POST'])
+@role('master')
+def list():
+    """Seznam lektorů """
+    
+    # vložení nové skupiny
+    if request.forms.get("add"):
+        login =  request.forms.decode().get("add")
+        usr = User.insert(login, psw = login, roles = "lector" )
+        if usr:
+            msg("Lektor '%s' vytvořen" % usr.login, "success")
+        else:
+            msg("Chyba při vytváření lektora","error")
+        redirect("/users")
+        
+    lectors = User.getLectors() 
+    
+    return template("lectors", {"lectors" : lectors } )
+
+
+############
+# správa přihlášení atp
+
 @route('/login')
 def login():
     lectorLogin  = request.params.get("lector")	
@@ -78,6 +102,10 @@ def userMenu():
     usr = getUser() 
     if usr:
         addMenu("/logout","Odhlásit se (%s)" % usr.login, 100)
+        
+        if usr.inRole("master"):
+            addMenu("/users", "Uživatelé", 95)
+        
     else:    
         addMenu("/login","Přihlásit se", 100)    
 
