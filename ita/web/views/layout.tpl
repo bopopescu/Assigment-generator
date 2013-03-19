@@ -44,7 +44,7 @@
         %end
     </ul>
     
-    <h3 class="muted">GZZA</h3>
+    <h3 class="muted"><a href='/'><abbr title="Generátor Zákeřných Asemblerových Zadání">GZAZ</abbr></a></h3>
 
 
     </div>
