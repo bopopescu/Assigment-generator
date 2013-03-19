@@ -1,4 +1,4 @@
-import database
+from database import query
 from .base import BaseModel;
 from exception import *
 from .lecture import Model as Lecture
@@ -53,9 +53,7 @@ class Model(BaseModel):
         lectures = Lecture.getAll(lector)
         ids = [ str(lecture.lecture_id) for lecture in lectures ]
         
-        db = database.getConnection()
-        
-        c = db.execute('SELECT * FROM assigments WHERE (state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_LOCKED,) )
+        c = query('SELECT * FROM assigments WHERE (state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_LOCKED,) )
         
         for row in c.fetchall():
             yield Model(row)
@@ -65,8 +63,8 @@ class Model(BaseModel):
         """Vrátí počet nevyřízených zadání"""
         lectures = Lecture.getAll(lector)
         ids = [ str(lecture.lecture_id) for lecture in lectures ]
-        db = database.getConnection()
-        c = db.execute('SELECT COUNT(*) AS cnt FROM assigments WHERE (state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_LOCKED,) )
+
+        c = query('SELECT COUNT(*) AS cnt FROM assigments WHERE (state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_LOCKED,) )
         
         return c.fetchone()["cnt"]
             
@@ -76,9 +74,7 @@ class Model(BaseModel):
         lectures = Lecture.getAll(lector)
         ids = [ str(lecture.lecture_id) for lecture in lectures ]
         
-        db = database.getConnection()
-        
-        c = db.execute('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)  ORDER BY generated DESC, state ASC' % (",".join(ids)) , (Model.STATE_LOCKED,) )
+        c = query('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)  ORDER BY generated DESC, state ASC' % (",".join(ids)) , (Model.STATE_LOCKED,) )
         
         for row in c.fetchall():
             yield Model(row)            
@@ -89,18 +85,14 @@ class Model(BaseModel):
         lectures = Lecture.getAll(lector)
         ids = [ str(lecture.lecture_id) for lecture in lectures ]
         
-        db = database.getConnection()
-        
-        c = db.execute('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_NEW,) )
+        c = query('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_NEW,) )
         
         for row in c.fetchall():
             yield Model(row)            
 
     @staticmethod
     def getSums(logins):
-        db = database.getConnection()
-        
-        c = db.execute('SELECT login, SUM(points) AS points FROM assigments WHERE login IN (%s)' % (",".join(map(lambda x: "'%s'"%x,logins ))))
+        c = query('SELECT login, SUM(points) AS points FROM assigments WHERE login IN (%s)' % (",".join(map(lambda x: "'%s'"%x,logins ))))
         for row in c.fetchall():
             yield row
     
@@ -109,8 +101,7 @@ class Model(BaseModel):
     # todo lepsí pojmenovani
     def getUnique(lecture_id, login):
         
-        db = database.getConnection()        
-        c = db.execute('SELECT * FROM assigments WHERE login = ? AND lecture_id = ?', (login,lecture_id) )
+        c = query('SELECT * FROM assigments WHERE login = ? AND lecture_id = ?', (login,lecture_id) )
         row = c.fetchone()
  
         return Model( row ) if row else None
@@ -119,9 +110,7 @@ class Model(BaseModel):
     @staticmethod
     def create(lecture_id, text, login):
         #todo
-        db = database.getConnection()        
-        c = db.execute('INSERT INTO assigments(login, `text`, lecture_id) VALUES (?, ?, ?)', (login, text, lecture_id) )
-
+        c = query('INSERT INTO assigments(login, `text`, lecture_id) VALUES (?, ?, ?)', (login, text, lecture_id) )
         return Model.get( c.lastrowid )        
     
     

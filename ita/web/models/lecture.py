@@ -1,4 +1,4 @@
-import database
+from database import query
 from .base import BaseModel;
 
 
@@ -32,8 +32,7 @@ class Model(BaseModel):
         
     @staticmethod
     def insert(name, lector):
-        db = database.getConnection()        
-        c = db.execute('INSERT INTO lectures(name, lector) VALUES (?,?)', (name,lector) )
+        c = query('INSERT INTO lectures(name, lector) VALUES (?,?)', (name,lector) )
 
         return Model.get( c.lastrowid )        
     
@@ -41,8 +40,7 @@ class Model(BaseModel):
     def getAvailable(lector):
         """Výpis aktivních cvičení daného cvičícího.
          Ten se typicky získává ze skupiny, do které je přihlášen student"""
-        db = database.getConnection()        
-        c = db.execute('SELECT * FROM lectures WHERE lector = ? AND state != 0', (lector,) )
+        c = query('SELECT * FROM lectures WHERE lector = ? AND state != 0', (lector,) )
 
         for row in c.fetchall():
             yield Model(row) 
@@ -50,11 +48,10 @@ class Model(BaseModel):
     
     @staticmethod
     def getAll(lector = None):
-        db = database.getConnection()        
         if lector:
-            c = db.execute('SELECT * FROM lectures WHERE lector = ?', (lector,) )
+            c = query('SELECT * FROM lectures WHERE lector = ?', (lector,) )
         else:
-            c = db.execute('SELECT * FROM lectures WHERE 1' )            
+            c = query('SELECT * FROM lectures WHERE 1' )            
         
         for row in c.fetchall():
             yield Model(row) 
