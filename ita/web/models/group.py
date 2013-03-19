@@ -1,4 +1,4 @@
-import database
+from database import query
 from .base import BaseModel
 from .user import Model as User
 from exception import *
@@ -17,7 +17,6 @@ class Model(BaseModel):
         return super(Model, self).__getattr__(name)
  
     def getResults(self):
-        db = database.getConnection()
         logins = [member.login for member in self.getMembers() ]
         
         from assigment import Assigment
@@ -37,18 +36,16 @@ class Model(BaseModel):
         
     @staticmethod
     def insert(name, lector):
-        db = database.getConnection()        
-        c = db.execute('INSERT INTO groups(name, lector) VALUES (?,?)', (name,lector) )
+        c = query('INSERT INTO groups(name, lector) VALUES (?,?)', (name,lector) )
 
         return Model.get( c.lastrowid )        
     
     @staticmethod
     def getAll(lector = None):
-        db = database.getConnection()        
         if lector:
-            c = db.execute('SELECT * FROM groups WHERE lector = ?', (lector,) )
+            c = query('SELECT * FROM groups WHERE lector = ?', (lector,) )
         else:
-            c = db.execute('SELECT * FROM groups WHERE 1' )            
+            c = query('SELECT * FROM groups WHERE 1' )            
         
         for row in c.fetchall():
             yield Model(row) 

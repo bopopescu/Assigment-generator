@@ -2,7 +2,7 @@ import database
 from bottle import request
 from hashlib import sha1
 
-import database
+from database import query
 from exception import *
 from .base import BaseModel
 
@@ -33,9 +33,8 @@ class Model(BaseModel):
 
     @staticmethod
     def insert(login,  group_id):         
-        db = database.getConnection()       
         try: 
-            c = db.execute('INSERT INTO users(login, group_id) VALUES(?,?)', (login,group_id))
+            c = query('INSERT INTO users(login, group_id) VALUES(?,?)', (login,group_id))
         except Exception as e:
             raise UserException("Takový uživatel již existuje")
                 
@@ -97,8 +96,7 @@ class Model(BaseModel):
      
     @staticmethod
     def getByGroup(group_id): 
-        db = database.getConnection()  
-        c = db.execute('SELECT * FROM users WHERE group_id = ? ORDER BY login', (group_id,) )
+        c = query('SELECT * FROM users WHERE group_id = ? ORDER BY login', (group_id,) )
         for row in c.fetchall():
             yield Model( row )
    

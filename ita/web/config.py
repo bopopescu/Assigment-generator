@@ -8,6 +8,14 @@ session_opts = {
 
 
 database = {
-  "storage" : "sqlite",
-  "path" : "test.db"
+    "storage" : "sqlite",
+    "path" : "test.db"
 }
+
+#database = {
+#    "storage" : "mysql",
+#    "user" : "root",
+#    "password" : "",
+#    "host" : "localhost",
+#    "database" : "test"
+#}           

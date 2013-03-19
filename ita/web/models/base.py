@@ -1,4 +1,4 @@
-import database
+from database import query
 
 class ModelException ( Exception ):
         pass
@@ -37,25 +37,22 @@ class BaseModel(object):
         cmd = ", ".join(cmd)
         values.append(self.getPrimary())
         
-        db = database.getConnection()        
-        c = db.execute('UPDATE %s SET %s WHERE %s = ?' % (self.getTable(), cmd, self.getPrimaryName() ), values )    
+        c = query('UPDATE %s SET %s WHERE %s = ?' % (self.getTable(), cmd, self.getPrimaryName() ), values )    
 
         if not c.rowcount:
             raise ModelException("Chyba při ukládání")
             
     def remove(self):
         #todo hooks
-        db = database.getConnection()        
-        c = db.execute('DELETE FROM %s WHERE %s = ?' % (self.getTable(), self.getPrimaryName() ), (self.getPrimary(),)  )            
+        c = query('DELETE FROM %s WHERE %s = ?' % (self.getTable(), self.getPrimaryName() ), (self.getPrimary(),)  )            
         
         if not c.rowcount:
             raise UserException("Chyba při mazání cvičení")  
              
     @classmethod
     def get(cls, id):
-        print('SELECT * FROM %s WHERE %s =?' % (cls.getTable(), cls.getPrimaryName() ), id)
-        db = database.getConnection()        
-        c = db.execute('SELECT * FROM %s WHERE %s =?' % (cls.getTable(), cls.getPrimaryName() ), (id,) )
+        print('SELECT * FROM %s WHERE %s = ?' % (cls.getTable(), cls.getPrimaryName() ), id)
+        c = query('SELECT * FROM %s WHERE %s = ?' % (cls.getTable(), cls.getPrimaryName() ), (id,) )
         row = c.fetchone()
  
         return cls( row ) if row else None             
