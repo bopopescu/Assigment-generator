@@ -100,8 +100,7 @@ def queryMySQL(*args, **kwargs):
         request._dbCursor = c
     
     c.execute(*args)
-  
-        
+
     return c 
 
 

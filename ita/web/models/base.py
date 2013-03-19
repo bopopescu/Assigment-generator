@@ -51,8 +51,8 @@ class BaseModel(object):
              
     @classmethod
     def get(cls, id):
-        print('SELECT * FROM %s WHERE %s =?' % (cls.getTable(), cls.getPrimaryName() ), id)
-        c = query('SELECT * FROM %s WHERE %s =?' % (cls.getTable(), cls.getPrimaryName() ), (id,) )
+        print('SELECT * FROM %s WHERE %s = ?' % (cls.getTable(), cls.getPrimaryName() ), id)
+        c = query('SELECT * FROM %s WHERE %s = ?' % (cls.getTable(), cls.getPrimaryName() ), (id,) )
         row = c.fetchone()
  
         return cls( row ) if row else None             
