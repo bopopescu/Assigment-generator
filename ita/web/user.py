@@ -6,7 +6,31 @@ from decorator import decorator
 
 from models import User
 from exception import *
-    
+
+
+###############################################################################
+# funkce pro komunikaci s vnějškem
+
+def role( *allowed ):
+    """ Dekorátor pro oprávnění rolí"""
+    def wrapper(f, *args, **kwargs):
+        usr = User.getCurrent();
+
+        if not usr:
+            msg("Pro přístup se musíte nejdříve přihlásit")
+            redirect("/login")
+        
+        for role in usr.read('roles', tuple() ):
+            if role in allowed:
+                return f(*args, **kwargs)
+        msg("Nemáte dostatečná oprávnění", "error")
+        return unauthorized()
+        
+    return decorator(wrapper)
+        
+
+def getUser():
+    return User.getCurrent()    
         
 ################################################################################
 # stránky
@@ -20,6 +44,10 @@ def login():
 def loginSubmit():
     data = request.forms                                                                         
     usr = User.get( data["login"] )
+
+    if not usr:
+     msg("Uživatel '%s' nenalezen" % data["login"], "error")
+     redirect('/login' + ("?lector=1" if data.get("password") else "") )
 
     try: 
         usr.authenticate( data.get("password") )
@@ -49,30 +77,8 @@ def unauthorized():
 def userMenu():
     usr = getUser() 
     if usr:
-        addMenu("/logout","Odhlásit se (%s)"%usr.login,100)
+        addMenu("/logout","Odhlásit se (%s)" % usr.login, 100)
     else:    
         addMenu("/login","Přihlásit se", 100)    
 
-###############################################################################
-# funkce pro komunikaci s vnějškem
 
-def role( *allowed ):
-    """ Dekorátor pro oprávnění rolí"""
-    def wrapper(f, *args, **kwargs):
-        usr = User.getCurrent();
-
-        if not usr:
-            msg("Pro přístup se musíte nejdříve přihlásit")
-            redirect("/login")
-        
-        for role in usr.read('roles', tuple() ):
-            if role in allowed:
-                return f(*args, **kwargs)
-        msg("Nemáte dostatečná oprávnění", "error")
-        return unauthorized()
-        
-    return decorator(wrapper)
-        
-
-def getUser():
-    return User.getCurrent()
