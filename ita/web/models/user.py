@@ -5,10 +5,7 @@ from hashlib import sha1
 from database import query
 from exception import *
 from .base import BaseModel
-
-_cache = {}
-
-
+from bottle import request
 
 class Model(BaseModel):
     model = "user"
@@ -88,11 +85,16 @@ class Model(BaseModel):
     @classmethod
     def get(cls, id):
         try:
-            return _cache[id]
+            request._locals["userCache"]
         except KeyError:
-            _cache[id] = super(Model,cls).get(id)
+            request._locals["userCache"] = {} 
+
+        try:            
+            return request._locals["userCache"][id]
+        except KeyError:
+            request._locals["userCache"][id] = super(Model,cls).get(id)
             
-        return _cache[id]
+        return request._locals["userCache"][id]
      
     @staticmethod
     def getByGroup(group_id): 
