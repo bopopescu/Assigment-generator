@@ -136,7 +136,10 @@ def cleanUp():
 from hashlib import sha1
 
 query("DROP TABLE IF EXISTS users")
-query("CREATE TABLE users (login char(8) PRIMARY KEY NOT NULL, password char(40) NULL,  roles char(20) NULL, group_id INT NULL)")
+query("""CREATE TABLE users (login char(8) PRIMARY KEY NOT NULL,
+                             password char(40) NULL,
+                             roles char(20) NULL,
+                             group_id INT NULL)""")
 query("INSERT INTO users VALUES ('xtomec06', NULL, NULL, 1)")
 query("INSERT INTO users VALUES ('xtest', '%s', 'lector' , NULL)" %  (sha1("test".encode('utf-8')).hexdigest(),) )
 query("INSERT INTO users VALUES ('master', '%s', 'master,lector' , NULL)" %  (sha1("test".encode('utf-8')).hexdigest(),) )
