@@ -13,7 +13,7 @@
         %for lector in lectors:
         <tr>
             <td>{{lector.login}}</td>
-            <td><a href='/groups/delete/{{lector.login}}'><i class="icon-remove"></i> smazat</a> </td>
+            <td><a href='/users/delete/{{lector.login}}'><i class="icon-remove"></i> smazat</a> </td>
         </tr>
         %end
     </tbody>

@@ -54,6 +54,27 @@ def list():
     lectors = User.getLectors() 
     
     return template("lectors", {"lectors" : lectors } )
+    
+@route('/users/delete/<login>', method=['GET', 'POST'])
+def delete(login):
+    """Smazání lektora"""
+
+    usr = User.get( login )
+    
+    if login == getUser().login:
+        msg("Nelze smazat sama sebe","error")
+        redirect("/users")
+        
+
+    answer = request.forms.get("answer") 
+    if answer:
+        if answer == "Ne": redirect("/users")
+        if answer == "Ano":
+            usr.remove()
+            msg("Uživatel smazán","success")
+            redirect("/users")
+            
+    return template("question", {"question":"Skutečně chcete smazat lektora '%s'" % usr.login } )      
 
 
 ############
@@ -61,6 +82,8 @@ def list():
 
 @route('/login')
 def login():
+    if getUser(): redirect("/")
+        
     lectorLogin  = request.params.get("lector")	
     return template("login", {"lectorLogin" : lectorLogin } )    
     
