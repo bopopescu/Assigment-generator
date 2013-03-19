@@ -64,9 +64,11 @@ def edit(group_id):
     
     # odstranění studenta
     if request.query.get("remove"):
-        usr = User( request.query.get("remove") )
+        usr = User.get( request.query.get("remove") )
 
-        if usr.remove():
+        if not usr:
+            msg("Student nenalezen","error")
+        elif usr.remove():
             msg("Student %s odstraněn"% usr.login ,"success")
         else:
             msg("Student nenalezen","error")

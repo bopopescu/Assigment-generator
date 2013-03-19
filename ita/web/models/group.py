@@ -25,6 +25,8 @@ class Model(BaseModel):
         result = { login : 0 for login in logins }
         
         for sum in sums:
+            #todo: docasny fix dokud se nebudou mazat pri uzivateli i vysledky
+            if not sum["login"] in logins: continue 
             result[sum["login"]] = sum["points"] or 0
             
         return result 

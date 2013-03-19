@@ -95,6 +95,12 @@ class Model(BaseModel):
             request._locals["userCache"][id] = super(Model,cls).get(id)
             
         return request._locals["userCache"][id]
+
+    @staticmethod
+    def getLectors():
+        c = query('SELECT * FROM users WHERE NOT password IS NULL',  )
+        for row in c.fetchall():
+            yield Model(row) 
      
     @staticmethod
     def getByGroup(group_id): 
