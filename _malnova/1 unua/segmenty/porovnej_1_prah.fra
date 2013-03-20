@@ -1,8 +1,0 @@
-nonterminal:porovnej_1
-priznaky: compare
-text:
-Jesliže je výsledek
-	< X, vypište na samostatnýřádek text "mensi"
-	= X, vypište na samostatnýřádek text "rovno"
-	> X, vypište na samostatnýřádek text "vetsi"
-kde X = {cislo 50-200}

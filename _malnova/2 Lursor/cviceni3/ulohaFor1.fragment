@@ -1,3 +1,0 @@
-nonterminal: ulohaFor
-text:
-Pomocí cyklu s pevným počtem opakování for … vypište na obrazovku všechny {choice("symboly velké abecedy", "symboly malé abecedy", "symboly velké a malé abecedy", "číslice od 0-9")}.

@@ -1,5 +1,0 @@
-nonterminal:nacti_2
-priznaky: xlogin, d_segment, read_byte
-text:
-Číslo A je dekadická hodnota  {cislo 0-7}. znaku vašeho xloginu.
-Číslo B načtěte z klávesnice pomocí read_byte.

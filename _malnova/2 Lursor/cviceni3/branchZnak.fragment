@@ -1,7 +1,0 @@
-nonterminal: branchZnak
-text:
-
-- z klávesnice načtěte znak
-- v případě že se jedná o symbol reprezentující číslo, vypište "cislo"
-- v případě že se jedná o symbol "{choice("velké", "malé")}" abecedy, vypište "abeceda"
-- ve všech ostatnich připadech vypište text "{choice("jine", "ostatni")}"

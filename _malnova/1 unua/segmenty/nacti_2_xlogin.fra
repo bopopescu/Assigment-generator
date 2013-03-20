@@ -1,5 +1,0 @@
-nonterminal:nacti_2
-priznaky: xlogin, d_segment
-text:
-Do datového segmentu ve vašem programu zapište váš xlogin.
-Dále použijte dekadickou reprezentaci {cislo 0-4}. a {cislo 4-7}. znak jako čísla A a B.

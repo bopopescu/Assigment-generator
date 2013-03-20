@@ -1,6 +1,0 @@
-nonterminal: cislo
-params: min=0,max=10
-code:
-from random import random
-
-return int(random()*(max-min)+min)                    

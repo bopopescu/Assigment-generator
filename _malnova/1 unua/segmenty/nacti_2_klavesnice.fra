@@ -1,4 +1,0 @@
-nonterminal:nacti_2
-priznaky: d_segment, read_byte
-text:
-Z klávesnice načtěte 2 hodnoty (první označíme A, druhou B) typu byte (pomocí Read_Byte) a uložte je do datového segmentu

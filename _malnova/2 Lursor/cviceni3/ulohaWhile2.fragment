@@ -1,8 +1,0 @@
-nonterminal: ulohaWhile
-text:
-S využitím přípravné šablony datového segmentu (viz níže) proveďte následující (a přehledně vypíše na obrazovku):
-
-a. součet {choice("všech","sudých","lichých")} čísel
-b. počet {choice("záporných","sudých","lichých","kladných","nenulových")} čísel 
-
-{data-cisla}

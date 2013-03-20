@@ -1,3 +1,0 @@
-nonterminal: ulohaFor
-text:
-S využitím cyklu for … vypište součet {choice("všech","sudých","lichých")} čísel od 1 do {choice(50,60,70,80,90,100)}.
