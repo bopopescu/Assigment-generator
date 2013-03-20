@@ -27,6 +27,10 @@ class Model(BaseModel):
             return roles.split(",")
 
         return self.data[key] or default
+        
+    def setPassword(self, psw):
+        self.update( password = sha1(psw.encode('utf-8')).hexdigest() )
+        
 
     @staticmethod
     def insert(login,  group_id = None, roles = None, psw = None):

@@ -35,6 +35,25 @@ def getUser():
 ################################################################################
 # stránky
 
+@route("/chosenOne",  method=['GET', 'POST'])
+@role('master', 'lector')
+def profil():
+    """Nastavení hesla"""
+    
+    usr = getUser()
+    
+    psw = request.forms.get("psw")
+    
+    if psw:
+        pswControl = request.forms.get("pswControl")
+        if psw == pswControl:
+            usr.setPassword(psw)
+            msg("Hesla nastaveno","success")
+        else:
+            msg("Hesla se neshodují","error") 
+        redirect("/chosenOne")
+        
+    return template("profil", {"user":usr} )
 
 @route('/users', method=['GET', 'POST'])
 @role('master')
@@ -47,6 +66,7 @@ def list():
         usr = User.insert(login, psw = login, roles = "lector" )
         if usr:
             msg("Lektor '%s' vytvořen" % usr.login, "success")
+            msg("Heslo pro nového lektora bylo nastaveno na '%s'" % usr.login, "info")
         else:
             msg("Chyba při vytváření lektora","error")
         redirect("/users")
@@ -62,7 +82,7 @@ def delete(login):
     usr = User.get( login )
     
     if login == getUser().login:
-        msg("Nelze smazat sama sebe","error")
+        msg("Nelze smazat sama sebe", "error")
         redirect("/users")
         
 
@@ -71,7 +91,7 @@ def delete(login):
         if answer == "Ne": redirect("/users")
         if answer == "Ano":
             usr.remove()
-            msg("Uživatel smazán","success")
+            msg("Uživatel smazán", "success")
             redirect("/users")
             
     return template("question", {"question":"Skutečně chcete smazat lektora '%s'" % usr.login } )      
@@ -124,8 +144,13 @@ def unauthorized():
 def userMenu():
     usr = getUser() 
     if usr:
-        addMenu("/logout","Odhlásit se (%s)" % usr.login, 100)
         
+        addMenu("/logout","Odhlásit se (%s)" % usr.login, 100)
+    
+        # vsem krome studentu umoznime pristup 
+        if not usr.inRole("student"):
+            addMenu("/chosenOne", "Profil", 97)
+            
         if usr.inRole("master"):
             addMenu("/users", "Uživatelé", 95)
         
