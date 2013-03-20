@@ -50,9 +50,14 @@ def _getMenu():
     return request._locals["menu"]
     
 import unicodedata
+import re
 def slug(val):
     """Převede string na znaky bez diakritiky""" 
-    return unicodedata.normalize('NFKD', val).encode('ascii', 'ignore').decode('utf-8')
+    ret = unicodedata.normalize('NFKD', val).encode('ascii', 'ignore').decode('utf-8')
+    ret = re.sub("[^a-z0-9_]", "-", ret, flags = re.IGNORECASE)
+    ret = re.sub("-{2,}", "-", ret, flags = re.IGNORECASE)
+    
+    return ret.strip("-") 
 
 import datetime
 def today():

@@ -3,6 +3,7 @@ from bottle import request
 from hashlib import sha1
 
 from database import query
+from helpers import slug
 from exception import *
 from .base import BaseModel
 from bottle import request
@@ -34,6 +35,8 @@ class Model(BaseModel):
 
     @staticmethod
     def insert(login,  group_id = None, roles = None, psw = None):
+        login = slug(login)
+        
         if psw:
             psw = sha1(psw.encode('utf-8')).hexdigest()         
         try: 

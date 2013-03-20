@@ -1,6 +1,6 @@
 import database
 from bottle import route, post, request, redirect, response, hook
-from helpers import template, msg, addMenu, safeASCII
+from helpers import *
 
 from decorator import decorator
 
