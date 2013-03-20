@@ -54,6 +54,11 @@ def slug(val):
     """Převede string na znaky bez diakritiky""" 
     return unicodedata.normalize('NFKD', val).encode('ascii', 'ignore').decode('utf-8')
 
+import datetime
+def today():
+    """Vrátí textovou reprezentaci dneška db podobě"""
+    now = datetime.datetime.now()
+    return "%s-%s-%s" % (now.year, now.month, now.day) 
 ############
 
 def msg(txt, type = "info"):
