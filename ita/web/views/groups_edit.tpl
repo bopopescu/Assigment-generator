@@ -33,10 +33,11 @@
         %end
     </tbody>
     
-    
-    
 </table>
 
+<div class='pull-right'>
+    <a class='btn' href='/groups/download/{{group.group_id}}'><i class="icon-download"></i> stáhnout výsledky</a>
+</div>
 
 <form action="" method="post" class="input-append" >
       <input type='text' name='add' placeholder="Login">
