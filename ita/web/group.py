@@ -1,7 +1,7 @@
-from bottle import route, post, request, redirect, response, hook
+from bottle import route, post, request, redirect, response, hook, HTTPResponse
 import database
-from helpers import template, msg, addMenu, form_renderer
-from user import role, getUser, User
+from helpers import *
+from user import role, getUser, User, unauthorized
 
 ################################################################################
 # model
@@ -42,6 +42,33 @@ def list():
     
     return template("groups", {"groups" : groups, "showLector": usr.inRole("master") } )
 
+@route('/groups/download/<group_id:int>', method=['GET'])
+@role('lector')    
+def download(group_id):
+    """Stažení výsledků skupiny ve wis formátu"""
+    
+    user = getUser()
+    group = Group.get( group_id )
+    
+    if not ( user.inRole("master") or group.lector == user.login):
+        return unauthorized()
+
+    headers = {}
+    headers['Content-Type'] = "text/csv"
+    headers['Content-Disposition'] = 'attachment; filename="%s.csv"' %  slug(group.name)
+
+    #Formát CSV: 1. ID, 2. jméno, 3. login, 4. body, 5. celk.body, 6. datum, 7. login zadávajícího
+    #při importu musí být zachováno pořadí sloupců, stačí vyplnit sloupce 3. a 4., případně 6.
+    date = today()
+    data = []
+    results = group.getResults()
+    for login, points in results.items():
+        data.append(";;%s;%s;;%s;%s;" % (login, points, date, group.lector) );
+
+    data = "\n".join(data)
+
+    return HTTPResponse(data, **headers)
+    
 @route('/groups/edit/<group_id:int>', method=['GET', 'POST'])
 @role('lector')    
 def edit(group_id):

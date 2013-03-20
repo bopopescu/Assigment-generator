@@ -21,8 +21,12 @@
             %if showLector:
                 <td>{{group.lector}}</td>
             %end
-            <td><a href='/groups/edit/{{group.data["group_id"]}}'><i class="icon-pencil"></i> upravit</a>
-                <a href='/groups/delete/{{group.data["group_id"]}}'><i class="icon-remove"></i> smazat</a> </td>
+            <td>
+            
+                <a href='/groups/download/{{group.data["group_id"]}}'><i class="icon-download"></i> výsledky</a>
+                <a href='/groups/edit/{{group.data["group_id"]}}'><i class="icon-pencil"></i> upravit</a>
+                <a href='/groups/delete/{{group.data["group_id"]}}'><i class="icon-remove"></i> smazat</a>
+            </td>
         </tr>
         %end
         
