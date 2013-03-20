@@ -8,6 +8,7 @@ def resetLocals():
     """Inicializuje uložiště lokálních dat pro každý požadavek"""
     request._locals = {}
     
+    
 ############
 
 def form_renderer(form, action = ""):
@@ -49,10 +50,9 @@ def _getMenu():
     return request._locals["menu"]
     
 import unicodedata
-def safeASCII(title):
-    return title
-    #todo
-    return unicodedata.normalize('NFKD', title).encode('ascii','ignore').decode("ascii","translate")
+def slug(val):
+    """Převede string na znaky bez diakritiky""" 
+    return unicodedata.normalize('NFKD', val).encode('ascii', 'ignore').decode('utf-8')
 
 ############
 
