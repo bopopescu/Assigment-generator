@@ -19,9 +19,8 @@
     
     <tbody>
         %login = None
-        %members = group.getResults()
-        %for login in members:
-        %points = members[login]
+        %results = group.getResults()
+        %for login, points in results.items():
         <tr>
             <td>{{login}}</td>
             <td>{{points}}</td>
