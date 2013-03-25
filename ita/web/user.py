@@ -55,7 +55,7 @@ def profil():
         
     return template("profil", {"user":usr} )
 
-@route('/users', method=['GET', 'POST'])
+@route('/lectors', method=['GET', 'POST'])
 @role('master')
 def list():
     """Seznam lektorů """
@@ -69,13 +69,13 @@ def list():
             msg("Heslo pro nového lektora bylo nastaveno na '%s'" % usr.login, "info")
         else:
             msg("Chyba při vytváření lektora","error")
-        redirect("/users")
+        redirect("/lectors")
         
     lectors = User.getLectors() 
     
     return template("lectors", {"lectors" : lectors } )
     
-@route('/users/delete/<login>', method=['GET', 'POST'])
+@route('/lectors/delete/<login>', method=['GET', 'POST'])
 def delete(login):
     """Smazání lektora"""
 
@@ -83,16 +83,16 @@ def delete(login):
     
     if login == getUser().login:
         msg("Nelze smazat sama sebe", "error")
-        redirect("/users")
+        redirect("/lectors")
         
 
     answer = request.forms.get("answer") 
     if answer:
-        if answer == "Ne": redirect("/users")
+        if answer == "Ne": redirect("/lectors")
         if answer == "Ano":
             usr.remove()
             msg("Uživatel smazán", "success")
-            redirect("/users")
+            redirect("/lectors")
             
     return template("question", {"question":"Skutečně chcete smazat lektora '%s'" % usr.login } )      
 
@@ -152,7 +152,7 @@ def userMenu():
             addMenu("/chosenOne", "Profil", 97)
             
         if usr.inRole("master"):
-            addMenu("/users", "Uživatelé", 95)
+            addMenu("/lectors", "Cvičící", 95)
         
     else:    
         addMenu("/login","Přihlásit se", 100)    
