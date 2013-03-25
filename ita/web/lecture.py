@@ -74,27 +74,14 @@ def edit(lecture_id):
             msg("Chyba při aktualizaci - %s" % e, "error")
         
         redirect(request.path)    
-            
-    return template("lectures_edit", {"lecture" : lecture, "form": form_renderer(form) } )    
-
-@route('/lectures/run/<lecture_id:int>')
-def show(lecture_id):
-    """Spustí zkušební běh"""
-
-    lecture = Lecture.get( lecture_id )
-    user = getUser()
-
-    if not ( user.inRole("master") or lecture.lector == user.login):
-        return unauthorized()
-
+        
     try:
-        cviceni =  lecture.generate() 
+        text =  lecture.generate() 
     except Exception as e:
-        cviceni = "Došlo k chybě : \n %s      \n %s" % (type(e).__name__, e)
-            
-    return template("lectures_run", {"lecture" : lecture, "text": cviceni } )    
-    
-    
+        text = "Došlo k chybě : \n %s      \n %s" % (type(e).__name__, e)        
+         
+    return template("lectures_edit", {"lecture" : lecture, "form": form_renderer(form), "text": text } )    
+
 @route('/lectures/delete/<lecture_id:int>', method=['GET', 'POST'])
 def delete(lecture_id):
     """Smaže cvičení"""
