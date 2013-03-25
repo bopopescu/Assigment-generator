@@ -6,10 +6,10 @@
 
 <form method="post" action="" >
 <div>
-    <textarea name='content' style='width:100%' rows='20'>{{content}}</textarea>
+    <textarea name='content' style='width:100%; font-family:"Courier New", Courier, monospace;' rows='20'>{{content}}</textarea>
 </div>
 <div>
-    <input class="btn"  id="formsubmit" name="submit" type="submit" value="Uložit">
+    <input class="btn" id="formsubmit" name="submit" type="submit" value="Uložit">
 </div>
 
 </form>
