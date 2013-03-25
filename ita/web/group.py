@@ -74,9 +74,11 @@ def download(group_id):
 def edit(group_id):
     """Úprava specifické skupiny včetně přidávání uživatelů"""
     
-    #todo: is allowed
-    
+    user = getUser()
     group = Group.get( group_id )
+    
+    if not ( user.inRole("master") or group.lector == user.login):
+        return unauthorized()
     
     # vložení studenta
     if request.forms.get("add"):
@@ -119,7 +121,11 @@ def edit(group_id):
 def delete(group_id):
     """Smaže skupinu"""
 
+    user = getUser()
     group = Group.get( group_id )
+
+    if not ( user.inRole("master") or group.lector == user.login):
+        return unauthorized()
 
     answer = request.forms.get("answer") 
     if answer:

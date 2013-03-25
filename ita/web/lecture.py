@@ -1,7 +1,7 @@
 from bottle import route, post, request, redirect, response, hook
 import database
 from helpers import template, msg, addMenu, form_renderer
-from user import role, getUser, User
+from user import role, getUser, unauthorized
 
 ################################################################################
 # model
@@ -26,6 +26,7 @@ def list():
     """Seznam cvičení"""
     
     usr = getUser() 
+    
     
     if request.params.get("activate"):
         lec = Lecture.get( request.params.get("activate") )
@@ -60,6 +61,10 @@ def edit(lecture_id):
     
     lecture = Lecture.get( lecture_id )
     form = LectureForm(request.forms.decode(), lecture)
+    user = getUser()
+
+    if not ( user.inRole("master") or lecture.lector == user.login):
+        return unauthorized()
 
     if request.method == 'POST' and form.validate():
         try:
@@ -77,6 +82,10 @@ def show(lecture_id):
     """Spustí zkušební běh"""
 
     lecture = Lecture.get( lecture_id )
+    user = getUser()
+
+    if not ( user.inRole("master") or lecture.lector == user.login):
+        return unauthorized()
 
     try:
         cviceni =  lecture.generate() 
@@ -91,6 +100,11 @@ def delete(lecture_id):
     """Smaže cvičení"""
 
     lecture = Lecture.get( lecture_id )
+    user = getUser()
+
+    if not ( user.inRole("master") or lecture.lector == user.login):
+        return unauthorized()
+
 
     answer = request.forms.get("answer") 
     if answer:
