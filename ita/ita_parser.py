@@ -31,43 +31,23 @@ class Rule:
 #############################################################################    
 
 class Parser:
-    
 
-    def __init__(self):
+    def __init__(self, loader):
         self.rules = {}
         self.files = {}
+        self.loader = loader
+        
+        #automaticky načteme data, pokud je k dispozici parser
+        if self.loader:
+            self.parse()
         
     
-    def loadDir(self, startPath):
-        todo = [startPath]
-        while len(todo) > 0:
-            path = todo.pop()
-            files = os.listdir(path)
-            for file in files:
-                if file in (".",".."): continue
-                absPath = path+"/"+file
-                if os.path.isdir(absPath):
-                    todo.append(absPath)
-                    continue
-                    
-                if not file.endswith(".fragment"):
-                    if VERBOSE: print("skipping ".ljust(10)+file)
-                    continue
-                
-                if VERBOSE: print("opening ".ljust(10)+file)
-                
-                with codecs.open(absPath,'r', 'utf-8') as f:
-                    try:
-                        # readlines je sice narocnejsi na pamet, ale vyvazuje to zlo ktery by bylo potreba pri wrapovani bufferedreader
-                       self._parse( f.readlines(), absPath )
-                    except SyntaxError as e:
-                        #todo: udelat z toho warn
+    def parse(self):
+        
+        for path, data in self.loader:
+            self._parse( data, path )
+        return self
     
-                        e.filename = file
-                        raise e
-                    
-
-
     def _parse(self, content, path):
         curLine = 0
 

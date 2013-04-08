@@ -9,7 +9,7 @@ class Generator:
     currentScope = None
     counter = None
     
-    def __init__(self, rules):
+    def __init__(self, parser):
         def convertRules(rules):
             """ Převede slovnik nonterminálů na funkce které náhodně vyberou jednu z možných implementací """
 
@@ -46,7 +46,7 @@ class Generator:
             return calls
         
         # samotné převedení
-        self.rules = convertRules( rules )
+        self.rules = convertRules( parser.rules )
 
     def getScope(self):
         """ Vrátí aktuální prostředí pro spouštění generovanýc funkcí
