@@ -21,7 +21,6 @@ class FileLoader:
         self.todo.append(path)
         # fluent rozhraní
         return self
-        
     
     def __iter__(self):
         todo = self.todo
