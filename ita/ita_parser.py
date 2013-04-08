@@ -7,7 +7,7 @@ from collections import namedtuple
 from random import choice
 from copy import copy
 
-VERBOSE = True
+from . import VERBOSE
 
 
 def makeException(_msg, _lineno = None ):

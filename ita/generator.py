@@ -2,7 +2,7 @@ from collections import namedtuple
 from random import choice
 from copy import copy
 import builtins 
-VERBOSE = False
+from . import VERBOSE
 
 
 class Generator:
