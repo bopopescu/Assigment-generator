@@ -25,7 +25,6 @@ data = None
 if name.find(".") > 0:
   import codecs
   with codecs.open("ita/sablony/base/%s"%name,'r', 'utf-8') as f: 
-      print("otevereno")
       data = f.read()
 else:
   data =  eval("%s()" % name)      
