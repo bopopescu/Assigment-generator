@@ -12,16 +12,16 @@ def run(nonterminal, interval, path):
     while True:
         try:
             l = Loader().add(path)
-            p = Parser( l )
             try:            
+                p = Parser( l )
                 g = Generator( p )
                 print( g.run(nonterminal) )
             except Exception as e:
                 print(e)
                 
         
-            filesToBeWatched = { fileName : os.path.getmtime(fileName) for fileName in p.processedPaths.keys()}
-    
+            filesToBeWatched = { fileName : os.path.getmtime(fileName) for fileName, data in l.getPathsOnly() }
+
             changed = False
             while not changed:
                 sleep(interval)
