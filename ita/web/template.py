@@ -16,7 +16,6 @@ def list():
     from ita import Loader, Parser, Generator
     l = Loader().add(root)
     p = Parser( l )
-    p.parse()
 
     return template("templates", {"files" : p.processedPaths, "root":root})
 
