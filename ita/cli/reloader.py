@@ -16,8 +16,8 @@ def run(nonterminal, interval, path):
                 p = Parser( l )
                 g = Generator( p )
                 print( g.run(nonterminal) )
-            except Exception as e:
-                print(e)
+            except SyntaxError as e:
+                print("Syntax error",e)
                 
         
             filesToBeWatched = { fileName : os.path.getmtime(fileName) for fileName, data in l.getPathsOnly() }
