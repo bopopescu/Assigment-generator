@@ -79,7 +79,7 @@ class Parser:
         curLine += 1 # preskocime radku s nonterm
         
         # dict nezachovava poradi vlozenych klicu, tak musime uchovavat oboje
-        params = {"order":[], "defaults":{}, "all": False, "raw":"" }
+        params = ""; #{"order":[], "defaults":{}, "all": False, "raw":"" }
 
         text = []
         code = []
@@ -99,27 +99,7 @@ class Parser:
                         break
                         
                     if tag == "params":
-                        # todo: params pouzivaji uz jenom raw, zbytek muzeme zahodit...
-                        params["raw"] =  data
-                        items = [item for item in map( lambda x: x.strip(),  data.split(",") ) ];
-
-                        for item in items:
-                            if item.strip() == "*":
-                                params["all"] = True
-                                continue
-                            
-                            try:
-                                name, value = map(lambda x: x.strip(), item.split("=",1) )
-                                value = eval(value, {})
-                                params["defaults"][ name ] = value
-                            except SyntaxError:
-                                raise SyntaxError(" ".join("Error parsing default value for parameter %s"%name, "-", e.msg) )
-                            except ValueError:
-                                name = item.strip()
-                                params["defaults"][ name ] = None
-
-                            params["order"].append(name);
-                                
+                        params =  data
                         continue
 
                     if tag == "note":
@@ -140,7 +120,7 @@ class Parser:
                         continue
 
                 # zadny z nasich tagu, ignorujeme
-                    
+
             # nevime kam patri aktualni radka
             if currentBlock == None: raise makeException("line doesn't belong to any block", curLine);
 
@@ -175,7 +155,7 @@ class Parser:
 
 
         # samotné skládání kódu
-        program = ["def implementation(%s) :" % ( params["raw"] ) ]
+        program = ["def implementation(%s) :" % params ]
 
         # první přijde vložení "code" bloku
         for line in code: program.append( "\t" + line )
@@ -198,7 +178,7 @@ class Parser:
         self.processedPaths[path][nonterm] = self.processedPaths[path].get(nonterm,0)+1 
 
         if ita.VERBOSE:
-            print("parsed nonterminal '%s': %d text, %d code, %d params "%(nonterm, len(text), len(code), len(params["order"])))
+            print("parsed nonterminal '%s': %d text, %d code, %s"%(nonterm, len(text), len(code), params))
             #print("\n".join(program))
             
 
