@@ -34,7 +34,7 @@ class Parser:
 
     def __init__(self, loader):
         self.rules = {}
-        self.files = {}
+        self.processedPaths = {}
         self.loader = loader
         
         #automaticky načteme data, pokud je k dispozici parser
@@ -43,7 +43,6 @@ class Parser:
         
     
     def parse(self):
-        
         for path, data in self.loader:
             self._parse( data, path )
         return self
@@ -55,7 +54,7 @@ class Parser:
 
         endLine = len(content)
         
-        self.files[path] = {}
+        self.processedPaths[path] = {}
 
         while curLine != endLine:
             curLine = self._consume(content, curLine, path)
@@ -196,7 +195,7 @@ class Parser:
             program.append( "\t" + "return ''.join( __value )" )  
 
         
-        self.files[path][nonterm] = self.files[path].get(nonterm,0)+1 
+        self.processedPaths[path][nonterm] = self.processedPaths[path].get(nonterm,0)+1 
 
         if VERBOSE:
             print("parsed nonterminal '%s': %d text, %d code, %d params "%(nonterm, len(text), len(code), len(params["order"])))

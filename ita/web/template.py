@@ -13,12 +13,12 @@ def list():
     root = "ita/sablony"
     
     #todo: hezci pristup k parsovani
-    from ita import ita_parser
-    from ita import generator
-    p = ita_parser.Parser()
-    p.loadDir(root)
+    from ita import Loader, Parser, Generator
+    l = Loader().add(root)
+    p = Parser( l )
+    p.parse()
 
-    return template("templates", {"files" : p.files, "root":root})
+    return template("templates", {"files" : p.processedPaths, "root":root})
 
 
 @route('/templates/<filename:path>', method=['GET', 'POST'])

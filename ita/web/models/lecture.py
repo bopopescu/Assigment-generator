@@ -17,16 +17,11 @@ class Model(BaseModel):
         
     def generate(self):
         """Vrátí vygenerované zadání pro toto cvičení """
-        from ita import ita_parser
-        from ita import generator
-    
-        p = ita_parser.Parser()
-    
-        p.loadDir("ita/sablony")
-    
-    
-        g = generator.Generator( p.rules )
-        
+        from ita import Loader, Parser, Generator
+        l = Loader().add("ita/sablony")
+        p = Parser( l )
+        g = Generator( p )
+
         return g.run(self.nonterminal)
         
         
