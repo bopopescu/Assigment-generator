@@ -4,11 +4,12 @@ import re
 import ita
 
 
-def makeException(_msg, _lineno = None ):
+def makeException(_msg, _lineno = None, file = None ):
     e = SyntaxError()
 
     e.msg  = _msg
     e.lineno = _lineno
+    e.filename = file
 
     return e
 
@@ -50,8 +51,12 @@ class Parser:
         
         self.processedPaths[path] = {}
 
-        while curLine != endLine:
-            curLine = self._consume(content, curLine, path)
+        try:
+            while curLine != endLine:
+                curLine = self._consume(content, curLine, path)
+        except SyntaxError as e:
+            e.filename = path
+            raise e
 
 
     def _consume(self, content, curLine, path):
@@ -94,6 +99,7 @@ class Parser:
                         break
                         
                     if tag == "params":
+                        # todo: params pouzivaji uz jenom raw, zbytek muzeme zahodit...
                         params["raw"] =  data
                         items = [item for item in map( lambda x: x.strip(),  data.split(",") ) ];
 
