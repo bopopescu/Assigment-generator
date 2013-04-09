@@ -2,26 +2,38 @@ import ita
 from time import sleep
 import os.path
 
-def run():
+def run(nonterminal, interval, path):
     from ita import Loader, Parser, Generator
     ita.VERBOSE = False
 
+    print("Pro ukonceni testovaciho rezimu pouzijte CTRL+C")
+
 
     while True:
-        l = Loader().add("ita/sablony")
-        p = Parser( l )
-        g = Generator( p )
-        print( g.run("cviceni") )
+        try:
+            l = Loader().add(path)
+            p = Parser( l )
+            try:            
+                g = Generator( p )
+                print( g.run(nonterminal) )
+            except Exception as e:
+                print(e)
+                
+        
+            filesToBeWatched = { fileName : os.path.getmtime(fileName) for fileName in p.processedPaths.keys()}
     
-        filesToBeWatched = { path : os.path.getmtime(path) for path in p.processedPaths.keys()}
-
-        changed = False
-        while not changed:
-            sleep(1)
-            for path, mtime in filesToBeWatched.items():
-                if os.path.getmtime(path) != mtime:
-                    changed = True
-                    break
+            changed = False
+            while not changed:
+                sleep(interval)
+                for fileName, mtime in filesToBeWatched.items():
+                    if os.path.getmtime(fileName) != mtime:
+                        changed = True
+                        break
+            print("-"*20)
+        except KeyboardInterrupt:
+            print("-"*20)
+            break 
+        
     
     
     
