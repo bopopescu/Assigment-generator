@@ -1,13 +1,15 @@
-import ita
+from .helpers import consoleFriendly
 from time import sleep
 import os.path
 
-def run(nonterminal, interval, path):
+def run(nonterminal, interval, path, toAscii = True):
+    import ita
     from ita import Loader, Parser, Generator
     ita.VERBOSE = False
 
     print("Pro ukonceni testovaciho rezimu pouzijte CTRL+C")
-
+    if toAscii:
+        print("Vystup bude preved do cisteho ASCII")
 
     while True:
         try:
@@ -15,7 +17,10 @@ def run(nonterminal, interval, path):
             try:            
                 p = Parser( l )
                 g = Generator( p )
-                print( g.run(nonterminal) )
+                
+                text = g.run(nonterminal) 
+                
+                print( consoleFriendly(text) if toAscii else text )
             except SyntaxError as e:
                 print("Syntax error",e)
                 
