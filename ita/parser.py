@@ -1,13 +1,7 @@
-import os
 import re
-import codecs
-import warnings
-import tokenize
-from collections import namedtuple
-from random import choice
-from copy import copy
 
-from . import VERBOSE
+# pro učely VERBOSE
+import ita
 
 
 def makeException(_msg, _lineno = None ):
@@ -197,7 +191,7 @@ class Parser:
         
         self.processedPaths[path][nonterm] = self.processedPaths[path].get(nonterm,0)+1 
 
-        if VERBOSE:
+        if ita.VERBOSE:
             print("parsed nonterminal '%s': %d text, %d code, %d params "%(nonterm, len(text), len(code), len(params["order"])))
             #print("\n".join(program))
             

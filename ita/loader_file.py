@@ -7,7 +7,8 @@ from collections import namedtuple
 from random import choice
 from copy import copy
 
-from . import VERBOSE
+# pro učely VERBOSE
+import ita
 
 #############################################################################    
 
@@ -40,10 +41,10 @@ class FileLoader:
                  
                 # preskocime soubory nekoncici fragment
                 if not file.endswith(".fragment"):
-                    if VERBOSE: print("skipping ".ljust(10)+file)
+                    if ita.VERBOSE: print("skipping ".ljust(10)+file)
                     continue
                 
-                if VERBOSE: print("opening ".ljust(10)+file)
+                if ita.VERBOSE: print("opening ".ljust(10)+file)
             
                 self.files.append(absPath)
                 
