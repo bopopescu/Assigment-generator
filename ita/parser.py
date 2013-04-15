@@ -26,6 +26,10 @@ class Rule:
 #############################################################################    
 
 class Parser:
+    # nežravá verze
+    reInlineCode = re.compile("\\{\\{(.*?)\\}\\}")
+    reCapture = re.compile("(?P<code>.*?)>>(?P<target>[^\d\W]\w*\Z)")
+    reIdentifier = re.compile(r"^[^\d\W]\w*\Z", re.UNICODE)
 
     def __init__(self, loader):
         self.rules = {}
@@ -133,22 +137,28 @@ class Parser:
                 continue
 
             if currentBlock == "text":
-                expr = re.compile("\\{\\{(?P<code>.*?)\\}\\}")
-                identifier = re.compile(r"^[^\d\W]\w*\Z", re.UNICODE)
                 #najdeme vsechny casti
-                parts = expr.split(line)
+                parts = self.reInlineCode.split(line)
 
                 for i in range(len(parts)):
                     part = parts[i]
 
                     if len(part) == 0: continue # preskocime prazdne party
                     
-                    if i % 2: # liché části jsou vnitřek {{...}}
-                        if identifier.match(part):  # vnitrek by mohla byt sablona bez parametru
-                          part = "%s() if callable(%s) else %s"%(part,part,part)
+                    if i % 2: # sudé (v indexech jsou to ale liché) části jsou vnitřek {{...}}
+                        capture = self.reCapture.match(part)
+                        
+                        # specialni syntax pro zachyceni promenne 
+                        if capture:
+                            data = capture.groupdict();
+                            text.append("%s = (%s); __value.append( str(%s) )" % (data["target"], data["code"], data["target"]));
+                        
+                        elif self.reIdentifier.match(part):  # vnitrek by mohla byt sablona bez parametru
+                                                           # tu pozname tak ze to vypada jeko identifikator a je volatelny 
+                          part = "(%s() if callable(%s) else %s)"%(part,part,part)
                         
                         text.append("__value.append( str(%s) )" % part )
-                    else: # sudé části jsou text
+                    else: # liché části jsou text (v indexech to jsou ale sudé)
                         text.append("__value.append( %s )" % repr(part) )
                         
                         
