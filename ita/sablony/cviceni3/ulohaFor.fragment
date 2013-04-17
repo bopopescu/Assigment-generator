@@ -20,10 +20,8 @@ S využitím cyklu for … vypište součet {{choice("všech","sudých","lichýc
 
 nonterminal: ulohaFor
 note: možná zavést lepší syntaxi pro zachytávání {{cislo(5,10)>>cil}}
-code:
-cil = cislo(5,10)
 text:
-S využitím cyklu for …  spočítejte součin čísel 1 až {{cil}} (tzn. faktoriál čísla {{cil}}).
+S využitím cyklu for …  spočítejte součin čísel 1 až {{cislo(5,10)>>cil}} (tzn. faktoriál čísla {{cil}}).
 Výsledek vypište na obrazovku.
 
 nonterminal: ulohaFor
@@ -33,5 +31,6 @@ text:
 S využitím cyklu s pevným počtem opakování for … vypište čísla 0 až {{cil}} v dekadické a binární podobě. 
 Každé číslo na vlastní řádek ve tvaru:
 0 00000000
+1 {{binarne(1)}}
 ...
 {{cil}} {{binarne(cil)}}
