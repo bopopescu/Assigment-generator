@@ -44,7 +44,8 @@ def run(nonterminal, interval, path, toAscii = True):
     from ita import Loader, Parser, Generator
     ita.VERBOSE = False
 
-    print("Pro ukonceni testovaciho rezimu pouzijte CTRL+C")
+    print("Stistknutim ENTER se provede pregenerovani")
+    print("Pro ukonceni programu pouzijte CTRL+C")
     if toAscii:
         print("Vystup bude preved do cisteho ASCII")
 
@@ -53,6 +54,8 @@ def run(nonterminal, interval, path, toAscii = True):
     
     # vlakno pro odchytavani zmacknuti enter
     inputing = None
+    # vlakno pro timeout
+    waiting = None
 
     while True:
         try:
@@ -64,23 +67,26 @@ def run(nonterminal, interval, path, toAscii = True):
                 text = g.run(nonterminal) 
                 
                 print( consoleFriendly(text) if toAscii else text )
+                
             except SyntaxError as e:
                 print("Syntax error",e)
-                
         
+            # seznam souborů , které budou hlídány
             filesToBeWatched = { fileName : os.path.getmtime(fileName) for fileName, data in l.getPathsOnly() }
 
-            
-            waiting = WaitingThread(changed, interval)
-            waiting.start()
-            
             if not inputing:
                 # vlákno inputing muže existovat, 
-                # input nelze spustit 2x (jde ale bude se čekat na ukončeni prvniho) a pokud dojde k reload z duvodu změny souboru
-                # puvodni input porad bezi
-                # to je take duvod proc se pozuziva stejny event
+                # input nelze spustit 2x (jde ale bude se čekat na ukončeni prvniho)
+                # pokud dojde k reload z duvodu změny souboru puvodni input porad bezi
+                # to je take duvod proc se pouziva stejny event
                 inputing = InputThread(changed)
                 inputing.start()
+
+            if not waiting:
+                # timeout vlakno, startujeme jen když je není z dřívějška
+                waiting = WaitingThread(changed, interval)
+                waiting.start()
+
             
             immortal = True
             while immortal:
@@ -94,17 +100,21 @@ def run(nonterminal, interval, path, toAscii = True):
                         if os.path.getmtime(fileName) != mtime:
                             immortal = False
                             break
-                    #restartujeme cekani
+                    # force smazani
                     del waiting
-                    waiting = WaitingThread(changed, interval)
-                    waiting.start()   
+                    # nutno zachovat existenci promenne
+                    waiting = None
+                    
+                    if immortal:
+                    # pokud doslo k timeoutu ale ne ke zmene souboru, musime nastartovat vlakno znovu
+                        waiting = WaitingThread(changed, interval)
+                        waiting.start()   
                 
                 elif inputing.fired: # vlákno vstupu => keypress
-                    #restartovat ho nemá cenu, protože bude stejně přepsáno
                     immortal = False
-                    #force smazani
+                    # force smazani
                     del inputing
-                    #nastavime, aby se priste smazal 
+                    # nutno zachovat existenci promenne 
                     inputing = None
             
             changed.clear()      
