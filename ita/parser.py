@@ -42,11 +42,13 @@ class Parser:
         
     
     def parse(self):
+        """ Naparsuje všechny zdroje z loaderu """
         for path, data in self.loader:
             self._parse( data, path )
         return self
     
     def _parse(self, content, path):
+        """Naparsuje jeden zdroj """
         curLine = 0
 
         #todo: handle bom
@@ -64,7 +66,9 @@ class Parser:
 
 
     def _consume(self, content, curLine, path):
-        """Zpracuje text souboru"""
+        """Zpracuje content od řádky curLine načtením nonterminálu
+            path se používá na záznam jako klíč pro záznam které nonterminály byly z této cesty načteny 
+            vrací řádku na které skončil  """
 
         # preskocime prazdne radky
         while len( content[ curLine ].strip() ) == 0: curLine += 1
