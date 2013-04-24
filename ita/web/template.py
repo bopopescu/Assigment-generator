@@ -33,10 +33,17 @@ def edit(filename):
         msg("Integrita narušena","error");
         redirect("/templates");
 
-    if request.forms.get("content"):
-        msg("Nemáte oprávnění ukládat šablony","error")
+    content = request.forms.get("content");
+    if content:
+        try:
+            save = l.save
+        except AttributeError:
+            msg("Současný Loader nepodporuje ukládání","error")
+            redirect(request.path)
+        save(filename, content)
+       
+        msg("Změny uloženy","success")
         redirect(request.path)
-    
     
     with open(filename, "rb") as f:
         content = b"".join( f.readlines() ) 
