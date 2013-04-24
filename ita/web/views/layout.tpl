@@ -4,25 +4,11 @@
     <meta charset="utf-8">
     <title>{{title+" - " if defined("title") else ""}}ASM</title>
     <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/mia.css" rel="stylesheet">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Le styles -->
-    <style type="text/css">
-      body {
-        padding-top: 20px;
-        padding-bottom: 40px;
-      }
 
-      /* Custom container */
-      .container-narrow {
-        margin: 0 auto;
-        max-width: 700px;
-      }
-      .container-narrow > hr {
-        margin: 30px 0;
-      }
-
-    </style>
   </head>
 
   <body>
@@ -75,6 +61,11 @@
       </div>
 
     </div> <!-- /container -->
+
+<script src="/static/jquery-1.9.1.min.js" type="text/javascript" language="JavaScript"></script>
+
+%if defined("scripts"): scripts()
+
 
 
 <html>
