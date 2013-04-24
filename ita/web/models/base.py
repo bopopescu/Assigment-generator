@@ -10,7 +10,6 @@ class BaseModel(object):
         self.data = row
     
     def __getattr__ (self, name):
-        #print("chci precist %s"%name, dict(self.data))
         try:
             return self.data[name]
         except IndexError:
@@ -51,7 +50,6 @@ class BaseModel(object):
              
     @classmethod
     def get(cls, id):
-        print('SELECT * FROM %s WHERE %s = ?' % (cls.getTable(), cls.getPrimaryName() ), id)
         c = query('SELECT * FROM %s WHERE %s = ?' % (cls.getTable(), cls.getPrimaryName() ), (id,) )
         row = c.fetchone()
  
