@@ -27,6 +27,11 @@ class FileLoader:
         """Vrátí pouze soubory, které by byly přečteny"""
         return self.__iter__(False)
         
+    def save(self, path, content):
+        """Uloží content pod path. Volitelné rozšíření loaderu"""
+        with codecs.open(path,'wb', 'utf-8') as f:
+            f.write(content)
+        
     def __iter__(self, includeContent = True):
         """Poskytuje iterátor. Povinná funkce pro loader."""
         # lokalni kopie todo
@@ -53,7 +58,7 @@ class FileLoader:
                 if ita.VERBOSE: print("opening ".ljust(10)+fileName)
                 
                 if includeContent:
-                    with codecs.open(absPath,'r', 'utf-8') as f:
+                    with codecs.open(absPath,'rb', 'utf-8') as f:
                         # readlines je sice narocnejsi na pamet, ale vyvazuje to zlo ktery by bylo potreba pri wrapovani bufferedreader
                        yield (absPath, f.readlines())
                 else:
