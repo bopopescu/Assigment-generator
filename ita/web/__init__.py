@@ -18,6 +18,7 @@ from beaker.middleware import SessionMiddleware
 from . import config
 from .frontend import app as frontendApp
 
+
 ################################################################################
 
 from git_reloader import app as gitReloader
@@ -28,10 +29,20 @@ mainApp = frontendApp
 mainApp = SessionMiddleware(mainApp , config.session_opts)
 
 def run(**kwargs):
-    kwargs["app"] = mainApp
-
-    bottle.debug(True)
-    bottle.run(**kwargs)
+    params = {"host": "0.0.0.0", "port": "8080", "app": mainApp, "server": "rocket", "debug":True }
+    params.update(kwargs)
+    
+    bottle.debug(params["debug"])
+    
+    if params["server"] == "default":
+        params.pop("server")
+        bottle.run(**params)
+    elif params["server"] == "rocket":
+        from ita.web.rocket  import Rocket
+        server = Rocket((params["host"], params["port"]), 'wsgi', { 'wsgi_app' : mainApp })
+        server.start()
+    else:
+        raise RuntimeException("Nerozpoznany server");
 
 
 
