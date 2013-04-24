@@ -12,9 +12,9 @@
 %if assigment.locked:
 <pre>
 %try:
-    {{assigment.response or ""}}
+{{assigment.response or ""}}
 %except UnicodeDecodeError:
-    Binární soubor
+Binární soubor
 %end
 </pre>
 
@@ -122,10 +122,14 @@ $('#dropzone').filedrop({
     },
     
     uploadFinished: function(i, file, response, time) {
+        var currentdate = new Date();
+        var timeMsg = "<strong>" + currentdate.getHours() + ":" + currentdate.getMinutes() + "</strong> ";
+    
+    
         var msg = $("<div>");
         msg.addClass("alert fade in");
         msg.addClass("alert-"+response.type);
-        msg.html('<button type="button" class="close" data-dismiss="alert">&times;</button> ' + response.msg );
+        msg.html('<button type="button" class="close" data-dismiss="alert">&times;</button> ' + timeMsg + response.msg );
         $("#dragMessages").prepend(msg);
     },
     progressUpdated: function(i, file, progress) {
