@@ -119,13 +119,22 @@ def show(lecture_id):
         assigment = Assigment.create( lec.lecture_id, lec.generate(), usr.login )
         msg("Cvičení bylo vygenerováno", "success")
         
-    if request.method == 'POST':
+    if request.method == 'POST' and request.files.response:
         try:        
-            assigment.respond( request.forms.decode().get("response") )
-            msg("Řešení bylo odesláno","success")
+            assigment.respond( request.files.response.file.read() )
+            msgTxt = "Řešení bylo úspěšně odesláno";
+
+            if request.is_xhr:
+                 return HTTPResponse({"type": "success", "msg": msgTxt});
+            msg(msgTxt ,"success")
+            
         except Exception as e:
-            msg("Chyba při odesílání řešení - %s" % e, "error")
-            raise e
+           msgTxt = "Chyba při odesílání řešení - %s" % e 
+           
+           if request.is_xhr:
+                 return HTTPResponse({"type": "error", "msg": msgTxt});
+                 
+           msg(msgTxt, "error")
         
         redirect(request.path)
             
