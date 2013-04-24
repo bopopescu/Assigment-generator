@@ -32,6 +32,7 @@
             %end
             <td>{{assigment.login}}</td>
             <td>     
+                <a href='/assigments-lector/download/{{assigment.assigment_id}}'><i class="icon-download"></i> stáhnout</a>
                 <a href='/assigments-lector/{{assigment.assigment_id}}'><i class="icon-wrench"></i> spravovat</a>
             </td>
         </tr>

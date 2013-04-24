@@ -1,4 +1,4 @@
-from bottle import route, post, request, redirect, response, hook, HTTPError
+from bottle import route, post, request, redirect, response, hook, HTTPError, HTTPResponse
 import database
 from helpers import template, msg, addMenu, form_renderer
 from user import role, getUser, User
@@ -60,6 +60,24 @@ def assigmentRate(assigment_id):
         redirect('/assigments-lector')
 
     return template("assigments_rate", {"assigment" : assigment } )
+
+@route('/assigments-lector/download/<assigment_id:int>', method=['GET', 'POST'])
+@role('lector')
+def assigmentDownload(assigment_id):
+    """Stažení zadání"""
+    usr = getUser() 
+
+    assigment = Assigment.get( assigment_id ) 
+    if not assigment: return HTTPError(404, "Cvičení nebylo nalezeno")
+    #todo if ???: return HTTPError(403, "Nemáte oprávnění")
+
+    headers = {}
+    headers['Content-Type'] = "text/txt"
+    headers['Content-Disposition'] = 'attachment; filename="%s.asm"' % assigment.login
+
+    data = assigment.response
+
+    return HTTPResponse(data, **headers)
 
 
 
