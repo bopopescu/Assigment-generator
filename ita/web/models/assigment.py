@@ -53,6 +53,8 @@ class Model(BaseModel):
         lectures = Lecture.getAll(lector)
         ids = [ str(lecture.lecture_id) for lecture in lectures ]
         
+        if len(ids) == 0: raise StopIteration
+        
         c = query('SELECT * FROM assigments WHERE (state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_LOCKED,) )
         
         for row in c.fetchall():
@@ -63,6 +65,8 @@ class Model(BaseModel):
         """Vrátí počet nevyřízených zadání"""
         lectures = Lecture.getAll(lector)
         ids = [ str(lecture.lecture_id) for lecture in lectures ]
+    
+        if len(ids) == 0: return 0
 
         c = query('SELECT COUNT(*) AS cnt FROM assigments WHERE (state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_LOCKED,) )
         
@@ -74,6 +78,8 @@ class Model(BaseModel):
         lectures = Lecture.getAll(lector)
         ids = [ str(lecture.lecture_id) for lecture in lectures ]
         
+        if len(ids) == 0: raise StopIteration
+        
         c = query('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)  ORDER BY generated DESC, state ASC' % (",".join(ids)) , (Model.STATE_LOCKED,) )
         
         for row in c.fetchall():
@@ -84,6 +90,8 @@ class Model(BaseModel):
         """Vrátí zadaná cvičení """
         lectures = Lecture.getAll(lector)
         ids = [ str(lecture.lecture_id) for lecture in lectures ]
+        
+        if len(ids) == 0: raise StopIteration
         
         c = query('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_NEW,) )
         
