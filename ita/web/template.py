@@ -23,12 +23,11 @@ def list():
 @route('/templates/<filename:path>', method=['GET', 'POST'])
 @role('lector')
 def edit(filename):
+    
+    from ita import Loader
+    l = Loader().add("ita/sablony")
 
-    from ita import ita_parser
-    from ita import generator
-    p = ita_parser.Parser()
-    p.loadDir("ita/sablony")
-    allowed = p.files.keys()
+    allowed = (path for path, content in l.getPathsOnly() )
     
     if not filename in allowed:
         msg("Integrita narušena","error");
