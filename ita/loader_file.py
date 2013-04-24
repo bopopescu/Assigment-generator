@@ -18,14 +18,17 @@ class FileLoader:
         self.data = {}
     
     def add(self, path):
+        """Přidá cestu ke zpracování. Povinná funkce pro loader."""
         self.todo.append(path)
         # fluent rozhraní
         return self
         
     def getPathsOnly(self):
+        """Vrátí pouze soubory, které by byly přečteny"""
         return self.__iter__(False)
         
     def __iter__(self, includeContent = True):
+        """Poskytuje iterátor. Povinná funkce pro loader."""
         # lokalni kopie todo
         todo = copy(self.todo)
         while len(todo) > 0:
