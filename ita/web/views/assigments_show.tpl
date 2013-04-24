@@ -11,7 +11,11 @@
 
 %if assigment.locked:
 <pre>
+%try:
     {{assigment.response or ""}}
+%except UnicodeDecodeError:
+    Binární soubor
+%end
 </pre>
 
 <div> <i class="icon-lock"></i> Možnost odpovídat je zamčená</div>
@@ -30,7 +34,7 @@
                     <div><input type='submit' value="Nahrát" class="btn" /></div>
                 </div>
                 <div class="ebleco notFirst" id="dragKajDrop">
-                    <div><i class="icon-hand-up"></i> Přetáhnětě soubor se zadáním</div>
+                    <div><i class="icon-hand-up"></i> Přetáhnětě soubor se řešením</div>
                     <div id="dropzone">
                     <div id="dragHint" >umístěte soubor zde</div>
                      </div>

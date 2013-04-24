@@ -9,7 +9,11 @@
 </pre>
 
 <pre>
+%try:
     {{assigment.response or "Zatím bez řešení"}}
+%except UnicodeDecodeError:
+    Binární soubor
+%end
 </pre>
 
 <form action='' method='post'>
