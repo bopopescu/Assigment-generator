@@ -4,7 +4,7 @@
 %paths = list(files.keys())
 %paths.sort()
 
-%stack = [root, root]
+%stack = ["", ""]
 
 <table class="table ">
     <thead>

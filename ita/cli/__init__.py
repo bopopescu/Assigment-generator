@@ -53,7 +53,7 @@ def getParams(defaults):
     return defaults    
 
 def reloader():
-    params = getParams({"nonterminal" : "cviceni", "interval" : 1, "path" : "ita/sablony", "toAscii":True})
+    params = getParams({"nonterminal" : "cviceni", "interval" : 1, "path" : "sablony", "toAscii":True})
     params["interval"] = int(params["interval"])
     
     cli_reloader.run(**params);

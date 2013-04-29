@@ -9,15 +9,12 @@ from user import role, getUser, User
 @role('lector')
 def list():
     """Seznam šablon a možnost jejich úpravy"""
-    #todo: do configu ?
-    root = "ita/sablony"
-    
-    #todo: hezci pristup k parsovani
+
     from ita import Loader, Parser, Generator
-    l = Loader().add(root)
+    l = Loader().add("sablony")
     p = Parser( l )
 
-    return template("templates", {"files" : p.processedPaths, "root":root})
+    return template("templates", {"files" : p.processedPaths})
 
 
 @route('/templates/<filename:path>', method=['GET', 'POST'])
@@ -25,7 +22,7 @@ def list():
 def edit(filename):
     
     from ita import Loader
-    l = Loader().add("ita/sablony")
+    l = Loader().add("sablony")
 
     allowed = (path for path, content in l.getPathsOnly() )
     
