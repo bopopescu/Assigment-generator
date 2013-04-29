@@ -32,7 +32,13 @@ class InputThread(threading.Thread):
         self.fired = False
 
     def run(self):
-        input()
+        try:
+            input()
+        except EOFError:
+            # pokud dojde k zavření stdin během čekání,
+            # tak při race condition s uzavíráním hlavního vlákna může dojít k vyhození EOFError výjimky
+            # dochází k ní jenom při ukončování programu, takže nemusíme nic nastavovat a prostě skončíme
+            return 
         self.fired = True
         self._event.set()
 
