@@ -3,6 +3,7 @@ from random import choice
 from copy import copy
 import builtins 
 from . import VERBOSE
+from . import MODULE_PATH
 
 
 class Generator:
@@ -27,7 +28,9 @@ class Generator:
                     self.counter += 1
 
                     glob['_idStack'].append( randId )
+                    # provedeme kód
                     exec(selected.code, glob, loc)
+                    # kod vytvoril funkci implementace
                     retVal =  loc["implementation"](*args, **kwargs)
 
                     glob['_idStack'].pop()
@@ -58,7 +61,9 @@ class Generator:
                                 # builtins, v pripade potreby tu jde orezat funkcionalita
                                 '__builtins__' : builtins, 
                                 # používá se pro ukládání "callstacku" šablon
-                                '_idStack' : []
+                                '_idStack' : [],
+                                # absolutní cesta k modulu, hodí se pro načítání souborů
+                                "MODULE_PATH" : MODULE_PATH,
                                 }
 
             self.counter = 0

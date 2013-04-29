@@ -1,11 +1,10 @@
+import os
+MODULE_PATH = os.path.dirname(__file__)
 VERBOSE = True
 
 from ita import loader_file
 from ita import parser
 from ita import generator
-
-import os
-MODULE_PATH = os.path.dirname(__file__)
 
 FileLoader = loader_file.FileLoader
 Loader = loader_file.FileLoader

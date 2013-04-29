@@ -22,9 +22,10 @@ else:
 
 data = None
 
+# pokud je v názvu tečka, zkusíme načíst jakou soubor
 if name.find(".") > 0:
   import codecs
-  with codecs.open("ita/sablony/base/%s"%name,'r', 'utf-8') as f: 
+  with codecs.open(MODULE_PATH+"/template_lib/%s" % name, 'r', 'utf-8') as f: 
       data = f.read()
 else:
   data =  eval("%s()" % name)      
