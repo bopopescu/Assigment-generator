@@ -31,20 +31,28 @@ class Parser:
     reCapture = re.compile("(?P<code>.*?)>>(?P<target>[^\d\W]\w*\Z)")
     reIdentifier = re.compile(r"^[^\d\W]\w*\Z", re.UNICODE)
 
-    def __init__(self, loader):
+    def __init__(self, *args, standardLib = True ):
         self.rules = {}
         self.processedPaths = {}
-        self.loader = loader
+        self.loaders = list(args)
+        
+        if standardLib  :
+            from ita import FileLoader
+            self.loaders.append( FileLoader().add(ita.MODULE_PATH+"/template_lib") )
+
         
         #automaticky načteme data, pokud je k dispozici parser
-        if self.loader:
+        if len(self.loaders) > 0:
             self.parse()
         
     
     def parse(self):
         """ Naparsuje všechny zdroje z loaderu """
-        for path, data in self.loader:
-            self._parse( data, path )
+        for loader in self.loaders:
+            for path, data in loader:
+                # pokud zkoušíme načíst zdroj s id který již existuje, tak ho přeskočíme
+                if path in self.processedPaths: continue
+                self._parse( data, path )
         return self
     
     def _parse(self, content, path):
