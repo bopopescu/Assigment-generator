@@ -65,7 +65,7 @@ def run(nonterminal, interval, path, toAscii = True):
 
     while True:
         try:
-            l = Loader().add(path)
+            l = Loader(path)
             try:            
                 p = Parser( l )
                 g = Generator( p )

@@ -11,7 +11,7 @@ def list():
     """Seznam šablon a možnost jejich úpravy"""
 
     from ita import Loader, Parser, Generator
-    l = Loader().add("sablony")
+    l = Loader("sablony")
     p = Parser( l )
 
     return template("templates", {"files" : p.processedPaths})
@@ -22,7 +22,7 @@ def list():
 def edit(filename):
     
     from ita import Loader
-    l = Loader().add("sablony")
+    l = Loader("sablony")
 
     allowed = (path for path, content in l.getPathsOnly() )
     

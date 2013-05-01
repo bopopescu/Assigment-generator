@@ -13,16 +13,10 @@ import ita
 #############################################################################    
 
 class FileLoader:
-    def __init__(self):
-        self.todo = [] 
-        self.data = {}
+    def __init__(self, *args):
+        """Konstruktor, poziční argumenty jsou použity jako identifikátory pro načtení"""
+        self.todo = list(args) 
     
-    def add(self, path):
-        """Přidá cestu ke zpracování. Povinná funkce pro loader."""
-        self.todo.append(path)
-        # fluent rozhraní
-        return self
-        
     def getPathsOnly(self):
         """Vrátí pouze soubory, které by byly přečteny"""
         return self.__iter__(False)
