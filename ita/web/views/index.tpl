@@ -4,6 +4,7 @@
  <li> omezit bahrávání velkých souborů
  <li> formátování 
  <li> zvyraznovani syntaxe u editace sablony
+ <li> odstranit WTforms
 
 </ul>
 
