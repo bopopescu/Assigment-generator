@@ -38,13 +38,12 @@ class Parser:
         
         if standardLib  :
             from ita import FileLoader
-            self.loaders.append( FileLoader().add(ita.MODULE_PATH+"/template_lib") )
+            self.loaders.append( FileLoader(ita.MODULE_PATH+"/template_lib") )
 
         
         #automaticky načteme data, pokud je k dispozici parser
         if len(self.loaders) > 0:
             self.parse()
-        
     
     def parse(self):
         """ Naparsuje všechny zdroje z loaderu """
