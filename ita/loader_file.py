@@ -52,7 +52,7 @@ class FileLoader:
                 if ita.VERBOSE: print("opening ".ljust(10)+fileName)
                 
                 if includeContent:
-                    with codecs.open(absPath,'rb', 'utf-8') as f:
+                    with codecs.open(absPath,'rb', 'utf-8-sig') as f:
                         # readlines je sice narocnejsi na pamet, ale vyvazuje to zlo ktery by bylo potreba pri wrapovani bufferedreader
                        yield (absPath, f.readlines())
                 else:
