@@ -75,7 +75,11 @@ def run(nonterminal, interval, path, toAscii = True):
                 print( consoleFriendly(text) if toAscii else text )
                 
             except SyntaxError as e:
-                print("Syntax error",e)
+                # chyba při parsování šablony
+                print("Syntax error: ", e)
+            except NameError as e:
+                # neexistující nonterminál při run
+                print("Nonterminal not found: ", e)
         
             # seznam souborů , které budou hlídány
             filesToBeWatched = { fileName : os.path.getmtime(fileName) for fileName, data in l.getPathsOnly() }
