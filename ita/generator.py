@@ -49,7 +49,7 @@ class Generator:
             return calls
         
         # samotné převedení
-        self.rules = convertRules( parser.rules )
+        self.rules = convertRules( parser.getRules() )
 
     def getScope(self):
         """ Vrátí aktuální prostředí pro spouštění generovanýc funkcí

@@ -39,13 +39,18 @@ class Parser:
         if standardLib  :
             from ita import FileLoader
             self.loaders.append( FileLoader(ita.MODULE_PATH+"/template_lib") )
-
         
         #automaticky načteme data, pokud je k dispozici parser
-        if len(self.loaders) > 0:
-            self.parse()
+        if len(self.loaders) < 0:
+            raise TypeError("Parser requires at least one Loader implementation to be passed")
+        
+        self._parseAll()
+        
+    def getRules(self):
+        """Vrátí všechny načtená pravidla. Povinná metoda."""
+        return self.rules
     
-    def parse(self):
+    def _parseAll(self):
         """ Naparsuje všechny zdroje z loaderu """
         for loader in self.loaders:
             for path, data in loader:
