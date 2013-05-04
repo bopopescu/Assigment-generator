@@ -17,11 +17,15 @@ ret = " ".join( (ret[i:i+pad] for i in range(0,delka, pad) ) )
 
 return ret   
 
+nonterminal: hexa
+params: cislo
+code:
+h = hex( int(cislo) )
+return "0x"+h[2:].upper()
+
 nonterminal: znak
 params: znak
-code:
-hodnota = ord(znak)
 text:
-znak '{{znak}}' (ASCII hodnota {{hodnota}})
+znak '{{znak}}' (ASCII hodnota {{ord(znak)}} nebo {{hexa(ord(znak))}})
 
 
