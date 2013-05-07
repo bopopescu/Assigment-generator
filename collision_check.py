@@ -73,6 +73,8 @@ try:
             collisions_count += 1
         pendingResolve.task_done()
         
+        sys.stdout.flush()
+        
 except KeyboardInterrupt:
     pass
 
