@@ -18,7 +18,6 @@ Implementujte následující program
 - v případě že se jedná o symbol {{choice("velké", "malé","")}} abecedy, vypište "abeceda"
 - ve všech ostatnich připadech vypište text "{{choice("jine", "ostatni")}}
 
-
 {{choice("v případě poslední možnosti program skončí, jinak pokračuje znovu od zadání vstupu","")}}
 
 

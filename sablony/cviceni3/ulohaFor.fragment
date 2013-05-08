@@ -4,7 +4,7 @@ Pomocí cyklu s pevným počtem opakování for … vypište na obrazovku všech
 
 nonterminal: ulohaFor
 text:
-S využitím cyklu for … vypište součet čísel od 1 do 100.
+S využitím cyklu for … vypište součet čísel od 1 do {{cislo(10,20)*10}}.
 
 nonterminal: ulohaFor
 code:
@@ -19,16 +19,13 @@ text:
 S využitím cyklu for … vypište součet {{choice("všech","sudých","lichých")}} čísel od 1 do {{cislo(5,10)*10}}.
 
 nonterminal: ulohaFor
-note: možná zavést lepší syntaxi pro zachytávání {{cislo(5,10)>>cil}}
 text:
-S využitím cyklu for …  spočítejte součin čísel 1 až {{cislo(5,10)>>cil}} (tzn. faktoriál čísla {{cil}}).
+S využitím cyklu for …  spočítejte součin čísel 1 až {{cislo(5,12)>>cil}} (tzn. faktoriál čísla {{cil}}).
 Výsledek vypište na obrazovku.
 
 nonterminal: ulohaFor
-code:
-cil = cislo(10,25)
 text:
-S využitím cyklu s pevným počtem opakování for … vypište čísla 0 až {{cil}} v dekadické a binární podobě. 
+S využitím cyklu s pevným počtem opakování for … vypište čísla 0 až {{cislo(10,65)>>cil}} v dekadické a binární podobě. 
 Každé číslo na vlastní řádek ve tvaru:
 0 00000000
 1 {{binarne(1)}}
