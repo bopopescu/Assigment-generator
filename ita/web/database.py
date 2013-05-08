@@ -24,8 +24,12 @@ def getConnectionSQLite():
 
 def querySQLite(*args, **kwargs):
     args = list(args)
-    # SQLite nepodporuje charset
-    args[0] = args[0].replace("CHARACTER SET utf8 COLLATE utf8_czech_ci ","")
+    
+    if args[0].startswith("CREATE TABLE"):
+        # dotaz je v dialektu MySQL
+        args[0] = args[0].replace("AUTO_INCREMENT","AUTOINCREMENT")
+        # SQLite nepodporuje charset
+        args[0] = args[0].replace("CHARACTER SET utf8 COLLATE utf8_czech_ci ","")
 
     try:
         c = request._dbCursor
@@ -89,9 +93,9 @@ def getConnectionMySQL():
 def queryMySQL(*args, **kwargs):
     args = list(args)
     # fix SQLite dialect > MySql
+    # sice %s umozni i formatovani ale zase se tluce s vestavenym % formatovanim
     args[0] = args[0].replace("?","%s")
-    if args[0].startswith("CREATE TABLE"):
-        args[0] = args[0].replace("AUTOINCREMENT","AUTO_INCREMENT")    
+    
     
     try:
         c = request._dbCursor
@@ -145,14 +149,14 @@ query("INSERT INTO users VALUES ('xtest', '%s', 'lector' , NULL)" %  (sha1("test
 query("INSERT INTO users VALUES ('master', '%s', 'master,lector' , NULL)" %  (sha1("test".encode('utf-8')).hexdigest(),) )
 
 query("DROP TABLE IF EXISTS groups")
-query("""CREATE TABLE groups (group_id INTEGER PRIMARY KEY AUTOINCREMENT,
+query("""CREATE TABLE groups (group_id INTEGER PRIMARY KEY AUTO_INCREMENT,
                               name char(40) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
                               lector char(8) NOT NULL )""")
 query("INSERT INTO groups VALUES (NULL,'Skupina 01', 'xtest')")
 query("INSERT INTO groups VALUES (NULL,'Skupina náhradní', 'master')")
 
 query("DROP TABLE IF EXISTS lectures")
-query("""CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTOINCREMENT,
+query("""CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTO_INCREMENT,
                                 name char(40) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
                                 lector char(8) NOT NULL,
                                 `nonterminal` char(32),
@@ -162,7 +166,7 @@ query("INSERT INTO lectures(name, lector,nonterminal, state) VALUES ('Cvičení 
 query("INSERT INTO lectures(name, lector, nonterminal) VALUES ('Cvičení 2. - hospoda', 'xtest', 'cislo')")
 
 query("DROP TABLE IF EXISTS assigments")
-query("""CREATE TABLE assigments (assigment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+query("""CREATE TABLE assigments (assigment_id INTEGER PRIMARY KEY AUTO_INCREMENT,
                                         login char(8) NOT NULL,
                                         lecture_id INT NOT NULL,
                                         generated INT NULL,
