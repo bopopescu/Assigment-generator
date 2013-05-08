@@ -3,6 +3,9 @@ from .base import BaseModel;
 from exception import *
 from .lecture import Model as Lecture
 
+import datetime
+import time
+
 class Model(BaseModel):
     STATE_NEW = 0
     STATE_LOCKED = 1
@@ -12,7 +15,18 @@ class Model(BaseModel):
 
     def __getattr__ (self, name):
         if name == "locked": return (self.state or 0) > Model.STATE_NEW
+        if name in ("changed", "generated"):
+             print(self.data[name])
+             return datetime.datetime.fromtimestamp(int(self.data[name])).strftime('%Y-%m-%d %H:%M') if self.data[name] else ""
         return super(Model, self).__getattr__(name)
+
+    def update(self, **kwargs):
+        """ Aktualizuje záznam, ale přidá k němu záznam o změně """
+        if not "changed" in kwargs:
+            kwargs["changed"] = str(time.time()).split('.')[0]
+            super(Model, self).update(**kwargs)
+        
+        return super(Model, self).update(**kwargs)
 
     def isAllowed(self, usr = None):
         if not usr: usr = getUser()
@@ -55,7 +69,7 @@ class Model(BaseModel):
         
         if len(ids) == 0: raise StopIteration
         
-        c = query('SELECT * FROM assigments WHERE (state = ?) AND lecture_id IN (%s)' % (",".join(ids)) , (Model.STATE_LOCKED,) )
+        c = query('SELECT * FROM assigments WHERE (state = ?) AND lecture_id IN (%s) ORDER BY changed ASC' % (",".join(ids)) , (Model.STATE_LOCKED,) )
         
         for row in c.fetchall():
             yield Model(row)
@@ -80,7 +94,7 @@ class Model(BaseModel):
         
         if len(ids) == 0: raise StopIteration
         
-        c = query('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)  ORDER BY generated DESC, state ASC' % (",".join(ids)) , (Model.STATE_LOCKED,) )
+        c = query('SELECT * FROM assigments WHERE (NOT state = ?) AND lecture_id IN (%s)  ORDER BY state ASC, generated DESC' % (",".join(ids)) , (Model.STATE_LOCKED,) )
         
         for row in c.fetchall():
             yield Model(row)            
@@ -117,8 +131,8 @@ class Model(BaseModel):
         
     @staticmethod
     def create(lecture_id, text, login):
-        #todo
-        c = query('INSERT INTO assigments(login, `text`, lecture_id) VALUES (?, ?, ?)', (login, text, lecture_id) )
+        now = str(time.time()).split('.')[0]
+        c = query('INSERT INTO assigments(login, generated `text`, lecture_id) VALUES (?, ?, ?, ?)', (login, now, text, lecture_id) )
         return Model.get( c.lastrowid )        
     
     

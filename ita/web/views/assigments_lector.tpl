@@ -20,7 +20,7 @@
         %for assigment in assigments:
         %lecture = assigment.getLecture()
         <tr>
-            <td></td>
+            <td>{{assigment.changed or assigment.generated}}</td>
             <td>
                 %if assigment.locked:
                     <i class="icon-lock"></i>
@@ -66,7 +66,7 @@
         %for assigment in silent:
         %lecture = assigment.getLecture()
         <tr>
-            <td></td>
+            <td>{{assigment.changed or assigment.generated}}</td>
             <td>
                 %if assigment.locked:
                     <i class="icon-lock"></i>
