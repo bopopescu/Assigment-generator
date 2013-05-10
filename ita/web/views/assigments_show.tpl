@@ -58,7 +58,6 @@ Binární soubor
 
 
 %def scripts():
-<script src="/static/bootstrap.min.js" type="text/javascript" language="JavaScript"></script>
 <script src="/static/jquery.filedrop.js" type="text/javascript" language="JavaScript"></script>
 
 <script type="text/javascript" language="JavaScript">

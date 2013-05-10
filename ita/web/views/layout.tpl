@@ -19,10 +19,11 @@
         <ul class="nav nav-pills pull-right">
             %for ero in getMenu():
             % link, desc, counter = ero[:3]
+            % safe_name = slug(desc)
                 <li class="{{"active" if requestedURL.startswith(link) else ""}}">
                     <a href="{{link}}">{{desc}}
                     %if counter != None:
-                        <span class="badge{{" badge-warning" if counter > 0 else ""}}">{{counter}}</span>
+                        <span id="badge_{{safe_name}}"" class="badge{{" badge-warning" if counter > 0 else ""}}">{{counter}}</span>
                     %end
                     </a>
                 
@@ -63,6 +64,43 @@
     </div> <!-- /container -->
 
 <script src="/static/jquery-1.9.1.min.js" type="text/javascript" language="JavaScript"></script>
+
+<script src="/static/bootstrap.min.js" type="text/javascript" language="JavaScript"></script>
+
+%if user and user.inRole("lector"):
+<script>
+
+var checkCounter = function(){
+    $.ajax( { url: "/assigments-lector/counter",
+              cache: false,
+            } ).done(function( data ) {
+                        var status = data.status;
+                        var count  = data.count;
+                        var badge = $("#badge_Zadani");
+                        var current = badge.html();
+                        
+                        if( status == "ok" ){
+                            if(current != count){
+                                badge.slideUp(400, function() {
+                                                       if(count > 0) badge.addClass("badge-warning")
+                                                       else badge.removeClass("badge-warning")
+                                                       badge.html(data.count);
+                                                    } );
+                                badge.slideDown(400);
+                            }
+                        }else{
+                            badge.removeClass("badge-warning").addClass("badge-important");
+                        }
+
+                        setTimeout(checkCounter, 5000);
+                        }
+                    );
+    };
+
+setTimeout(checkCounter, 5000);
+
+</script>
+%end
 
 %if defined("scripts"): scripts()
 

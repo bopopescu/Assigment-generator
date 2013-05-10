@@ -79,8 +79,14 @@ def assigmentDownload(assigment_id):
 
     return HTTPResponse(data, **headers)
 
-
-
+@route('/assigments-lector/counter')
+def assigmentCount():
+    """ Vrácení počtu nevyřízených zadání, použito pro aktualizaci v menu"""
+    usr = getUser() 
+    if (not usr) or (not usr.inRole("lector")):
+        return {"status" : "error", "count" : "!"}
+        
+    return { "status" : "ok", "count" : Assigment.getPendingCount(usr.login) }        
 
 ############### Rozhraní pro studenta
  

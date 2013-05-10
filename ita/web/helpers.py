@@ -97,7 +97,7 @@ def template(*args, **kwargs):
     kwargs["user"] = getUser()
     
     ### menu
-    
+    kwargs["slug"] = slug
     kwargs["getMenu"] = _getMenu
     kwargs["requestedURL"] = request.path
         
