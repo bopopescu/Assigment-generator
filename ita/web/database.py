@@ -150,9 +150,8 @@ query("INSERT INTO lectors VALUES ('master', '%s', 'lector,master' , NULL)" %  (
 
 query("DROP TABLE IF EXISTS students")
 query("""CREATE TABLE students (login char(8) PRIMARY KEY NOT NULL,
-                             password char(40) NULL,
                              group_id INT NULL)""")
-query("INSERT INTO students VALUES ('xtomec06', NULL,  1)")
+query("INSERT INTO students VALUES ('xtomec06', 1)")
 
 query("DROP TABLE IF EXISTS groups")
 query("""CREATE TABLE groups (group_id INTEGER PRIMARY KEY AUTO_INCREMENT,
