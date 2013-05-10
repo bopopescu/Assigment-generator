@@ -79,6 +79,7 @@ $('#dropzone').filedrop({
                 alert("Je povolen pouze 1 soubor");
                 break;
             case 'FileTooLarge':
+                alert("Soubor je příliš veliký.\n Maximální velikost je 1MB.");
                 // program encountered a file whose size is greater than 'maxfilesize'
                 // FileTooLarge also has access to the file which was too large
                 // use file.name to reference the filename of the culprit file
@@ -90,7 +91,7 @@ $('#dropzone').filedrop({
         }
     },
     maxfiles: 1,
-    maxfilesize: 2,    // max file size in MBs
+    maxfilesize: 1,    // max file size in MBs
     dragOver: function() {
         // user dragging files over #dropzone
     },
