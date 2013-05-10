@@ -8,14 +8,26 @@ from exception import *
 from .base import BaseModel
 from bottle import request
 
+
 class Model(BaseModel):
-    model = "user"
+    
+    def __init__(self, row, lector = None):
+        self.data = row        
+        self.isLector = self.detectLector(lector)
+
+    def detectLector(self, par):
+        if par in (True, False): return par
+        
+        if "password" in dict(self.data).keys() : return True
+        
+        return False
         
     def inRole(self, role):
         roles = self.read("roles")
         return role in roles
         
     def getGroup(self):
+        print(self.isLector , self.read("roles"))
         group_id = self.read("group_id") 
         # nutno importovat tady kvuli krizove zavislosti 
         from . import Group
@@ -23,9 +35,11 @@ class Model(BaseModel):
  
     def read(self, key, default = None):
         if key == "roles":
-            #defaultní role je student
-            roles = self.data[key] or "student"
-            return roles.split(",")
+            # pokud se jedná o lektora, má role přiděleny
+            if self.isLector:  return self.data["roles"].split(",")
+
+            #jinak o studenta                
+            return ("student",)
 
         return self.data[key] or default
         
@@ -34,21 +48,34 @@ class Model(BaseModel):
         
 
     @staticmethod
-    def insert(login,  group_id = None, roles = None, psw = None):
+    def insertLector(login, psw, roles = "lector"):
         login = slug(login)
         
-        if psw:
-            psw = sha1(psw.encode('utf-8')).hexdigest()         
+        psw = sha1(psw.encode('utf-8')).hexdigest()
+                 
         try: 
-            c = query('INSERT INTO users(login, group_id, roles, password) VALUES(?,?,?,?)', (login, group_id, roles, psw))
+            c = query('INSERT INTO lectors(login, roles, password) VALUES(?,?,?)', (login, roles or "", psw))
         except Exception as e:
-            print(e)
             raise UserException("Takový uživatel již existuje")
                 
         if not c.rowcount:
             raise UserException("Chyba při vkládání uživatele")
             
-        return Model.get( login )                              
+        return Model.get( login )    
+        
+    @staticmethod
+    def insertStudent(login,  group_id = None):
+        login = slug(login)
+        
+        try: 
+            c = query('INSERT INTO students(login, group_id) VALUES(?,?)', (login, group_id, ))
+        except Exception as e:
+            raise UserException("Takový uživatel již existuje")
+                
+        if not c.rowcount:
+            raise UserException("Chyba při vkládání uživatele")
+            
+        return Model.get( login )                                      
 
     def authenticate(self, psw = None):
         row = self.data
@@ -56,19 +83,16 @@ class Model(BaseModel):
         if not row:
             raise UserException("Uživatel nenalezen")
 
-        if psw:
-            #cvicici
+        if self.isLector:
+            if not psw:
+                raise UserException("Uživatel není student - je potřeba heslo")                           
+            
             if row["password"] != sha1(psw.encode('utf-8')).hexdigest():
                 raise UserException("Špatné heslo")
-        else:
-            if row["password"]:
-                raise UserException("Uživatel není student")                           
 
         s = request.environ.get('beaker.session')
         s['userLogin'] = self.login
         s.save()
-
-
 
     @staticmethod
     def logout():
@@ -83,7 +107,6 @@ class Model(BaseModel):
     def getPrimaryName(cls):
         return "login"
 
-
     @staticmethod
     def getCurrent():
         s = request.environ.get('beaker.session')
@@ -92,8 +115,15 @@ class Model(BaseModel):
         
         return Model.get(login)
         
+    def remove(self):
+        table = "lectors" if self.isLector else "students" 
+        c = query('DELETE FROM %s WHERE login = ?' , (self.read("login"),)  )            
+        
+        if not c.rowcount:
+            raise UserException("Chyba při mazání")        
+        
     @classmethod
-    def get(cls, id):
+    def get(cls, id, isStudent = False):
         try:
             request._locals["userCache"]
         except KeyError:
@@ -102,19 +132,27 @@ class Model(BaseModel):
         try:            
             return request._locals["userCache"][id]
         except KeyError:
-            request._locals["userCache"][id] = super(Model,cls).get(id)
+            request._locals["userCache"][id] = None
+
+            # zkusíme najít nejprve lektora a pak studenta            
+            for table in ("lectors", "students") if not isStudent else ("lectors",):
+                c = query('SELECT * FROM %s WHERE login = ?' % (table,), (id,) )
+                row = c.fetchone()
+                data = Model( row ) if row else None 
+                request._locals["userCache"][id] = data
+                if data: break
             
         return request._locals["userCache"][id]
 
     @staticmethod
     def getLectors():
-        c = query('SELECT * FROM users WHERE NOT password IS NULL',  )
+        c = query('SELECT * FROM lectors',  )
         for row in c.fetchall():
             yield Model(row) 
      
     @staticmethod
     def getByGroup(group_id): 
-        c = query('SELECT * FROM users WHERE group_id = ? ORDER BY login', (group_id,) )
+        c = query('SELECT * FROM students WHERE group_id = ? ORDER BY login', (group_id,) )
         for row in c.fetchall():
             yield Model( row )
    

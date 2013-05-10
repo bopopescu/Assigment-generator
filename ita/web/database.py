@@ -139,14 +139,20 @@ def cleanUp():
 
 from hashlib import sha1
 
-query("DROP TABLE IF EXISTS users")
-query("""CREATE TABLE users (login char(8) PRIMARY KEY NOT NULL,
+query("DROP TABLE IF EXISTS lectors")
+query("""CREATE TABLE lectors (login char(8) PRIMARY KEY NOT NULL,
                              password char(40) NULL,
                              roles char(20) NULL,
                              group_id INT NULL)""")
-query("INSERT INTO users VALUES ('xtomec06', NULL, NULL, 1)")
-query("INSERT INTO users VALUES ('xtest', '%s', 'lector' , NULL)" %  (sha1("test".encode('utf-8')).hexdigest(),) )
-query("INSERT INTO users VALUES ('master', '%s', 'master,lector' , NULL)" %  (sha1("test".encode('utf-8')).hexdigest(),) )
+                             
+query("INSERT INTO lectors VALUES ('xtest', '%s', 'lector' , NULL)" %  (sha1("test".encode('utf-8')).hexdigest(),) )
+query("INSERT INTO lectors VALUES ('master', '%s', 'lector,master' , NULL)" %  (sha1("test".encode('utf-8')).hexdigest(),) )
+
+query("DROP TABLE IF EXISTS students")
+query("""CREATE TABLE students (login char(8) PRIMARY KEY NOT NULL,
+                             password char(40) NULL,
+                             group_id INT NULL)""")
+query("INSERT INTO students VALUES ('xtomec06', NULL,  1)")
 
 query("DROP TABLE IF EXISTS groups")
 query("""CREATE TABLE groups (group_id INTEGER PRIMARY KEY AUTO_INCREMENT,

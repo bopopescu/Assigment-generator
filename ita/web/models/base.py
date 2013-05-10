@@ -46,7 +46,7 @@ class BaseModel(object):
         c = query('DELETE FROM %s WHERE %s = ?' % (self.getTable(), self.getPrimaryName() ), (self.getPrimary(),)  )            
         
         if not c.rowcount:
-            raise UserException("Chyba při mazání cvičení")  
+            raise ModelException("Chyba při mazání")  
              
     @classmethod
     def get(cls, id):

@@ -83,7 +83,7 @@ def edit(group_id):
     # vložení studenta
     if request.forms.get("add"):
         try:
-            usr = User.insert( request.forms.get("add"), group_id )
+            usr = User.insertStudent( request.forms.get("add"), group_id )
             msg("Student %s vložen" % usr.login,"success")
         except Exception as e: 
             msg("Chyba při vkládání studenta - %s " % e,"error")                   

@@ -60,10 +60,10 @@ def profil():
 def list():
     """Seznam lektorů """
     
-    # vložení nové skupiny
+    # vložení nového lektora
     if request.forms.get("add"):
         login =  request.forms.decode().get("add")
-        usr = User.insert(login, psw = login, roles = "lector" )
+        usr = User.insertLector(login, psw = login )
         if usr:
             msg("Lektor '%s' vytvořen" % usr.login, "success")
             msg("Heslo pro nového lektora bylo nastaveno na '%s'" % usr.login, "info")
