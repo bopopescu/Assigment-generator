@@ -121,10 +121,13 @@ $('#dropzone').filedrop({
         
     },
     
-    uploadFinished: function(i, file, response, time) {
+    uploadFinished: function(i, file, response, time, xhr) {
         var currentdate = new Date();
-        var timeMsg = "<strong>" + currentdate.getHours() + ":" + currentdate.getMinutes() + "</strong> ";
+        var timeMsg = "<strong>" + currentdate.getHours() + ":" + (currentdate.getMinutes()<10 ? "0" : "") + currentdate.getMinutes() + "</strong> ";
     
+        if(xhr.status != 200){
+            response = {msg : xhr.statusText, type : "error"};
+        }
     
         var msg = $("<div>");
         msg.addClass("alert fade in");

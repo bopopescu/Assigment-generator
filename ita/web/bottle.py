@@ -901,7 +901,7 @@ class BaseRequest(object):
     __slots__ = ('environ')
 
     #: Maximum size of memory buffer for :attr:`body` in bytes.
-    MEMFILE_MAX = 102400
+    MEMFILE_MAX = 1024*1024
     #: Maximum number pr GET or POST parameters per request
     MAX_PARAMS  = 100
 
@@ -1045,6 +1045,9 @@ class BaseRequest(object):
         ''' read body until content-length or MEMFILE_MAX into a string. Raise
             HTTPError(413) on requests that are to large. '''
         clen = self.content_length
+        
+        
+        
         if clen > self.MEMFILE_MAX:
             raise HTTPError(413, 'Request to large')
         if clen < 0: clen = self.MEMFILE_MAX + 1
@@ -1072,6 +1075,12 @@ class BaseRequest(object):
             :class:`FormsDict`. Values are either strings (form values) or
             instances of :class:`cgi.FieldStorage` (file uploads).
         """
+        
+        clen = self.content_length
+        
+        if clen > self.MEMFILE_MAX:
+            raise HTTPError(413, 'Request to large')
+            
         post = FormsDict()
         # We default to application/x-www-form-urlencoded for everything that
         # is not multipart and take the fast path (also: 3.1 workaround)
@@ -2099,6 +2108,7 @@ class FileUpload(object):
 
     def __init__(self, fileobj, name, filename, headers=None):
         ''' Wrapper for file uploads. '''
+        print(">>>>>>stavitm objekt")
         #: Open file(-like) object (BytesIO buffer or temporary file)
         self.file = fileobj
         #: Name of the upload form field
@@ -2130,10 +2140,17 @@ class FileUpload(object):
 
     def _copy_file(self, fp, chunk_size=2**16):
         read, write, offset = self.file.read, fp.write, self.file.tell()
+        total = 0
         while 1:
             buf = read(chunk_size)
+            total += len(buf)
+            print(">>>>>>>>>>",total)
+            if total > 1024:
+                raise HTTPError(413, 'File too large')
+            
             if not buf: break
             write(buf)
+            
         self.file.seek(offset)    
 
     def save(self, destination, overwrite=False, chunk_size=2**16):
