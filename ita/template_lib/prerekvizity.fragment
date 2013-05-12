@@ -1,0 +1,55 @@
+nonterminal: provide
+params: what, param = None, value = None
+code:
+global _prerekvizity
+
+#vytvoríme pokud nejsou
+try:
+    _prerekvizity
+except NameError:
+    _prerekvizity = {}
+    
+if not what in _prerekvizity: _prerekvizity[what] = {}
+
+#pokud je vse nastaveno tak konec
+if not param: return
+
+#mame zadany parametr takho (pre)zapiseme 
+_prerekvizity[what][param] = value    
+
+
+nonterminal: need
+params: what, param = None,  value = None, limit = 2
+note: zkontroluje jestli je k dispozici dany parametr 
+code:
+global _prerekvizity
+
+#vytvoríme pokud nejsou
+try:
+    _prerekvizity
+except NameError:
+    _prerekvizity = {}
+
+
+#pripravime vyjimku
+e = NotImplementedError()
+e.limit = limit
+
+# neni vubec pritomno
+if not what in _prerekvizity: raise e
+
+# je pritomno a nepotrebujeme nic dalsiho, koncime   
+if param == None: return 
+
+#parametr je vyzadovan ale neni pritomen v nastaveni
+if param in _prerekvizity[what]: raise e
+
+#parametr je pritomen a nepotrebujeme jeho hodnotu
+if value == None: return
+
+#hodnota je vyzadovana ale lisi se
+if  _prerekvizity[what][param] != value: raise e
+
+#vsechno ok...
+
+return

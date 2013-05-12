@@ -1,8 +1,8 @@
-nonterminal: list
+nonterminal: makeList
 params: name, delimiter = "\n", scope = None
 note:
 Vrátí instanci seznamu v rámci scope (defautlně callerId), tzn při opakovaném volání se vrací stejná instance
-Parametr nazev může být šablona, nebo název souboru 
+Parametr nazev může být nonterminálnebo přímo zadaný text 
 todo: potlačit při scope None 
 code:
 global _listCache
@@ -10,14 +10,16 @@ if scope == None: scope = callerId()
 
 # vytvoření listu pokud neexistuje
 try:
-  _listCache
+    _listCache
 except NameError:
-   _listCache = {}
+    _listCache = {}
+
+hashableName = id(name) if callable(name) else name
    
 if scope in _listCache:
-  if name in _listCache[scope]: return  _listCache[scope][name]
+    if hashableName in _listCache[scope]: return  _listCache[scope][hashableName]
 else:
-  _listCache[scope] = {}
+    _listCache[scope] = {}
 
 
 data = None
@@ -25,31 +27,41 @@ data = None
 # pokud predany nazev volatelny jako funkce tak ji zavolame
 if callable(name):
     data = name()
-elif name.find(".") > 0: # pokud je v názvu tečka, zkusíme načíst jakou soubor
-  import codecs
-  with codecs.open(MODULE_PATH+"/template_lib/%s" % name, 'r', 'utf-8') as f: 
-      data = f.read()
-else: # jinak ji povazujeme za nazev nonterminalu a zavolaáme ho  
-  data =  eval("%s()" % name)
+else: # jinak ji povazujeme za nazev nonterminalu a zavolaáme ho
+    data =  name
 
 
 data = [x for x in filter(lambda x: len(x) > 0, map(lambda x: x.strip(), data.split(delimiter) ) ) ]
 
-_listCache[scope][name] = data
+_listCache[scope][hashableName] = data
 
-return _listCache[scope][name]
+return _listCache[scope][hashableName]
+ 
+nonterminal: loadFile
+params: path
+code:
+import codecs
+with codecs.open(MODULE_PATH+"/template_lib/%s" % path, 'r', 'utf-8') as f: 
+  data = f.read()
+return data
  
  
 nonterminal: pop
-params: list
+params: fromList
 note:
 Vrátí a odstraní náhodný prvek ze seznamu
+Pokud předaný parametr není list, zkusí ho z něj vytvořit pomocí pravidla List
 code:
 from random import random
 from math import floor
 
-i = floor (len(list)*random() )
+# pokud není předaný parametr pouze text, tak z nšj zkusime udělat list  
+if not (type(fromList) is list):
+    fromList = makeList(fromList, scope = callerId() )
+
+
+i = floor (len(fromList)*random() )
 
 #todo: kontrola na nelist a na prázdnost
 
-return list.pop(i)
+return fromList.pop(i)

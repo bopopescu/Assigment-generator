@@ -1,5 +1,6 @@
 from collections import namedtuple
-from random import choice
+from random import random
+from math import floor
 from copy import copy
 import builtins 
 from . import VERBOSE
@@ -17,8 +18,8 @@ class GeneratorException(Exception):
         ret.append("Traceback (most recent call last):")
         for trace in self.trace:
             path, nonterm, lineno, line = trace
-            ret.append("Source %s, rule for %s, line %d" % (path, nonterm, lineno) )
-            ret.append("\t %s" % line.strip() )
+            ret.append("Source %s, rule for %s, line %s" % (path, nonterm, str(lineno) if lineno else "unknown") )
+            if line : ret.append("\t %s" % line.strip() )
         
         return "\n".join(ret)
 
@@ -36,45 +37,78 @@ class Generator:
             def wrap(nonterm):
                 def wrapper(*args, **kwargs):
                     localNonterm = nonterm
-                    selected = choice( rules[ localNonterm ] )
-
-                    glob = self.getScope()
-                    loc = {}
-
-                    # pro každé volání vytvoříme unikátní ID
-                    # začínáme názvem, at se to dobře debuguje
-                    randId = "".join( (nonterm, "_", str(self.counter) ) )
-                    self.counter += 1
-
-                    glob['_idStack'].append( randId )
-                    # provedeme kód
-                    exec(selected.code, glob, loc)
-                    # kod vytvoril funkci implementace
+                    localRules = copy(rules[ localNonterm ])
                     
-                    #vložime zaznam to zasobniku
-                    record =  ["curPath", "curNonterm", "lineno", "line" ]
-                    self.trace.append( record )
-                    try:
-                        retVal =  loc["implementation"](*args, **kwargs)
-                    except Exception as e:
-                        # nastala chyba, prevedeme záznam do čitelné podoby
-                        import inspect
-                        lineno = inspect.getframeinfo(inspect.trace()[1][0]).lineno
-                        
-                        record[0] = loc["implementation"]._ita_path
-                        record[1] = loc["implementation"]._ita_nonterminal
+                    #zkoušíme aplikovat nonterminál dokud nedosáhneme cíle 
+                    while len(localRules) > 0:
+                    
+                        whichRule = floor (len(localRules)*random() )
+                        selected =  localRules.pop(whichRule)
 
-                        originalLine = loc["implementation"]._ita_originalLines[ lineno ]
+                        glob = self.getScope()
+                        loc = {}
+    
+                        # pro každé volání vytvoříme unikátní ID
+                        # začínáme názvem, at se to dobře debuguje
+                        randId = "".join( (nonterm, "_", str(self.counter) ) )
+                        self.counter += 1
+    
+                        glob['_idStack'].append( randId )
+                        # provedeme kód
+                        exec(selected.code, glob, loc)
+                        # kod vytvoril funkci implementace
                         
-                        record[2] = originalLine
-                        record[3] = loc["implementation"]._ita_originalContent[ originalLine ] 
-                        raise e
+                        #vložime zaznam to zasobniku
+                        record =  ["curPath", "curNonterm", "lineno", "line" ]
+                        self.trace.append( record )
                         
-                    # skončili jsme, mužeme záznam odstranit
-                    self.trace.pop()
-                    glob['_idStack'].pop()
+                        
+                        
+                        try:
+                            retVal =  loc["implementation"](*args, **kwargs)
+                        except NotImplementedError as e:
+                            # pravdilo chce abychom ho nepoužili, pokračujeme tedy dále
+                            self.trace.pop()
+                            glob['_idStack'].pop()
+                            
+                            # pravidlo může vynutit ukončení více úrovní
+                            # v tom případě pošleme signál výš
+                            try: 
+                                if e.limit > 0:
+                                    e.limit -=1
+                                    raise e
+                            except AttributeError:
+                                #exception nema nastaven limit
+                                pass 
+                                
+                            # jinak pokračujeme v hledání
+                            continue;
+                            
+                        except Exception as e:
+                            # nastala chyba, prevedeme záznam do čitelné podoby
+                            import inspect
+                            
+                            record[0] = loc["implementation"]._ita_path
+                            record[1] = loc["implementation"]._ita_nonterminal
+                            
+                            record[2] = None
+                            record[3] = None
+    
+                            try:
+                                lineno = inspect.getframeinfo(inspect.trace()[1][0]).lineno
+                                originalLine = loc["implementation"]._ita_originalLines[ lineno ]
+                                record[2] = originalLine
+                                record[3] = loc["implementation"]._ita_originalContent[ originalLine ]
+                            except Exception:
+                                # v případě že nemáme stack nebo není přistupná řádka
+                                pass
+                            raise e
+                            
+                        # skončili jsme, mužeme záznam odstranit
+                        self.trace.pop()
+                        glob['_idStack'].pop()
 
-                    return retVal
+                        return retVal
                 
                 return wrapper
 

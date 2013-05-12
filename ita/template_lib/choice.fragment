@@ -4,3 +4,9 @@ code:
 from random import choice
 
 return choice(args)
+
+
+nonterminal: optional
+params: what
+text:
+{{choice("",what)}}
