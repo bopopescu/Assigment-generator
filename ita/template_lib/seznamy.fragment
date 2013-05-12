@@ -18,17 +18,20 @@ if scope in _listCache:
   if name in _listCache[scope]: return  _listCache[scope][name]
 else:
   _listCache[scope] = {}
-  
+
 
 data = None
 
-# pokud je v názvu tečka, zkusíme načíst jakou soubor
-if name.find(".") > 0:
+# pokud predany nazev volatelny jako funkce tak ji zavolame
+if callable(name):
+    data = name()
+elif name.find(".") > 0: # pokud je v názvu tečka, zkusíme načíst jakou soubor
   import codecs
   with codecs.open(MODULE_PATH+"/template_lib/%s" % name, 'r', 'utf-8') as f: 
       data = f.read()
-else:
-  data =  eval("%s()" % name)      
+else: # jinak ji povazujeme za nazev nonterminalu a zavolaáme ho  
+  data =  eval("%s()" % name)
+
 
 data = [x for x in filter(lambda x: len(x) > 0, map(lambda x: x.strip(), data.split(delimiter) ) ) ]
 
