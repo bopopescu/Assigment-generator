@@ -11,4 +11,6 @@ Loader = loader_file.FileLoader
 Parser = parser.Parser
 Generator = generator.Generator
 
-__all__ = ["VERBOSE", "MODULE_PATH", "web", "cli", "Generator", "Parser", "Loader", "FileLoader"] 
+GeneratorException = generator.GeneratorException
+
+__all__ = ["VERBOSE", "MODULE_PATH", "web", "cli", "Generator", "Parser", "Loader", "FileLoader", "GeneratorException"] 

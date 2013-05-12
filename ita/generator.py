@@ -6,11 +6,30 @@ from . import VERBOSE
 from . import MODULE_PATH
 
 
+class GeneratorException(Exception):
+    def __init__(self, exception, trace):
+        self.exception = exception
+        self.trace = trace
+
+    def __str__(self):
+        ret = []
+        ret.append("Exception: " + str(self.exception) )
+        ret.append("Traceback (most recent call last):")
+        for trace in self.trace:
+            path, nonterm, lineno, line = trace
+            ret.append("Source %s, rule for %s, line %d" % (path, nonterm, lineno) )
+            ret.append("\t %s" % line.strip() )
+        
+        return "\n".join(ret)
+
+
 class Generator:
     currentScope = None
     counter = None
     
     def __init__(self, parser):
+        self.trace = []
+
         def convertRules(rules):
             """ Převede slovnik nonterminálů na funkce které náhodně vyberou jednu z možných implementací """
 
@@ -31,8 +50,28 @@ class Generator:
                     # provedeme kód
                     exec(selected.code, glob, loc)
                     # kod vytvoril funkci implementace
-                    retVal =  loc["implementation"](*args, **kwargs)
+                    
+                    #vložime zaznam to zasobniku
+                    record =  ["curPath", "curNonterm", "lineno", "line" ]
+                    self.trace.append( record )
+                    try:
+                        retVal =  loc["implementation"](*args, **kwargs)
+                    except Exception as e:
+                        # nastala chyba, prevedeme záznam do čitelné podoby
+                        import inspect
+                        lineno = inspect.getframeinfo(inspect.trace()[1][0]).lineno
+                        
+                        record[0] = loc["implementation"]._ita_path
+                        record[1] = loc["implementation"]._ita_nonterminal
 
+                        originalLine = loc["implementation"]._ita_originalLines[ lineno ]
+                        
+                        record[2] = originalLine
+                        record[3] = loc["implementation"]._ita_originalContent[ originalLine ] 
+                        raise e
+                        
+                    # skončili jsme, mužeme záznam odstranit
+                    self.trace.pop()
                     glob['_idStack'].pop()
 
                     return retVal
@@ -79,8 +118,14 @@ class Generator:
     def run(self, startNonterminal):
         """ Spustí daný nonterminál """
         self.clearScope()
-        if not startNonterminal in self.rules: raise RuntimeError("Startovaci nonterminal %s nenalezen" % startNonterminal)
-        return self.rules[startNonterminal]()
+        if not startNonterminal in self.rules: raise NameError("Startovaci nonterminal %s nenalezen" % startNonterminal)
+        
+        try:
+            retVal = self.rules[startNonterminal]()
+        except Exception as e:
+            raise GeneratorException(e, self.trace)
+        
+        return  retVal
         
         
 

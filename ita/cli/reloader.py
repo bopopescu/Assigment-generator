@@ -83,6 +83,8 @@ def run(nonterminal, interval, path, toAscii = True):
             except UnicodeDecodeError as e:
                 # chybne kodovani sablony
                 print("Unicode error in %s : "% (e.filename) , e)
+            except ita.GeneratorException as e:
+                print(e)
 
         
             # seznam souborů , které budou hlídány

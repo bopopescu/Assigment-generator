@@ -82,6 +82,12 @@ class Parser:
             path se používá na záznam jako klíč pro záznam které nonterminály byly z této cesty načteny 
             vrací řádku na které skončil  """
 
+        def addToBlock( block, what ):
+            """ Přidá do bloku danou řádku spolu s číslem na kterém řádka je"""
+           
+            block.append( (curLine, what) )
+
+
         # preskocime prazdne radky
         while len( content[ curLine ].strip() ) == 0: curLine += 1
 
@@ -96,13 +102,18 @@ class Parser:
             raise e
 
 
-        curLine += 1 # preskocime radku s nonterm
+        curLine += 1 # preskocime radku s nonterm, protoze jsme ji uz zpracovali
         
-        # dict nezachovava poradi vlozenych klicu, tak musime uchovavat oboje
-        params = ""; #{"order":[], "defaults":{}, "all": False, "raw":"" }
+        
+        params = ""; 
 
         text = []
         code = []
+        
+        # mapování z kodovych radek na puvodni text
+        originalLines = {}
+        # mapovani puvodnich radek textu na text ktery obsahovali
+        originalContent = {}
 
         currentBlock = None
 
@@ -141,6 +152,8 @@ class Parser:
 
                 # zadny z nasich tagu, ignorujeme
 
+            originalContent[curLine] = line
+
             # nevime kam patri aktualni radka
             if currentBlock == None: raise makeException("line doesn't belong to any block", curLine);
 
@@ -149,10 +162,11 @@ class Parser:
                 continue
 
             if currentBlock == "code":
-                code.append(line.rstrip() )
+                addToBlock(code, line.rstrip())
                 continue
 
             if currentBlock == "text":
+
                 #najdeme vsechny casti
                 parts = self.reInlineCode.split(line)
 
@@ -167,38 +181,59 @@ class Parser:
                         # specialni syntax pro zachyceni promenne 
                         if capture:
                             data = capture.groupdict();
-                            text.append("%s = (%s); __value.append( str(%s) )" % (data["target"], data["code"], data["target"]));
-                        
+                            addToBlock(text, "%s = (%s); __value.append( str(%s) )" % (data["target"], data["code"], data["target"]))
+
                         elif self.reIdentifier.match(part):  # vnitrek by mohla byt sablona bez parametru
                                                            # tu pozname tak ze to vypada jeko identifikator a je volatelny 
                           part = "(%s() if callable(%s) else %s)"%(part,part,part)
-                        
-                        text.append("__value.append( str(%s) )" % part )
+                        addToBlock(text, "__value.append( str(%s) )" % part )
                     else: # liché části jsou text (v indexech to jsou ale sudé)
-                        text.append("__value.append( %s )" % repr(part) )
+                        addToBlock(text, "__value.append( %s )" % repr(part) )
                         
                         
 
 
         # samotné skládání kódu
-        program = ["def implementation(%s) :" % params ]
+        program = []
+        # při výjimce se použije pro přepočet původních řádek
+        programCounter = 1
 
+        program.append("def implementation(%s) :" % params)
+        
         # první přijde vložení "code" bloku
-        for line in code: program.append( "\t" + line )
+        
+        for lineno, line in code:
+            programCounter += 1
+            originalLines[programCounter] = lineno
+            program.append( "\t" + line )
 
-        #todo: nepridavat text pokud code obsahuje return na prvni urovni
         #todo: sanity check ze je aspon kod nebo text tzn funkce ma telo
 
         # vložení textu
         if len(text) > 0:
             # definice
             program.append("\t__value = []");
+            programCounter += 1
             # napumpování obsahu
-            for line in text: program.append( "\t" + line )
+            
+            for lineno, line in text:
+                programCounter +=1
+                originalLines[programCounter] = lineno
+                program.append( "\t" + line )
+
+             
+            
             # odstranění prázdných řádek
             program.append( "\t" + "while len(__value) > 0 and len(__value[-1].strip()) == 0: __value.pop()" )
             # samotný návrat
             program.append( "\t" + "return ''.join( __value )" )  
+
+        #vložime info o zdroji
+        program.append("implementation._ita_path = %s" % repr(path))
+        program.append("implementation._ita_nonterminal = %s" % repr(nonterm))
+        program.append("implementation._ita_originalLines = %s" % repr(originalLines))
+        program.append("implementation._ita_originalContent = %s" % repr(originalContent))
+
 
         
         self.processedPaths[path][nonterm] = self.processedPaths[path].get(nonterm,0)+1 
@@ -208,8 +243,11 @@ class Parser:
             #print("\n".join(program))
             
 
-
-        programCompiled = compile("\n".join(program),"<string>","exec")
+        try:
+            programCompiled = compile("\n".join(program),"<string>","exec")
+        except SyntaxError as e:
+            e.lineno = originalLines[e.lineno] 
+            raise( e )
         
         self._addrule(nonterm, programCompiled, params, "\n".join(program) )
                 
