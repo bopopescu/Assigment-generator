@@ -54,9 +54,13 @@ class FileLoader:
                 if includeContent:
                     with codecs.open(absPath,'rb', 'utf-8-sig') as f:
                         # readlines je sice narocnejsi na pamet, ale vyvazuje to zlo ktery by bylo potreba pri wrapovani bufferedreader
-                       yield (absPath, f.readlines())
+                        try:
+                            yield (absPath, f.readlines())
+                        except UnicodeDecodeError as e:
+                            e.filename = absPath 
+                            raise e
                 else:
-                       yield(absPath, None)
+                    yield(absPath, None)
         
 
 

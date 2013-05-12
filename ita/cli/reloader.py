@@ -80,6 +80,10 @@ def run(nonterminal, interval, path, toAscii = True):
             except NameError as e:
                 # neexistující nonterminál při run
                 print("Nonterminal not found: ", e)
+            except UnicodeDecodeError as e:
+                # chybne kodovani sablony
+                print("Unicode error in %s : "% (e.filename) , e)
+
         
             # seznam souborů , které budou hlídány
             filesToBeWatched = { fileName : os.path.getmtime(fileName) for fileName, data in l.getPathsOnly() }
