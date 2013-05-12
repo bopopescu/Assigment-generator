@@ -181,12 +181,18 @@ class Parser:
                         # specialni syntax pro zachyceni promenne 
                         if capture:
                             data = capture.groupdict();
-                            addToBlock(text, "%s = (%s); __value.append( str(%s) )" % (data["target"], data["code"], data["target"]))
-
+                            addToBlock(text, "%s = (%s);" % (data["target"], data["code"]))
+                            continue
                         elif self.reIdentifier.match(part):  # vnitrek by mohla byt sablona bez parametru
-                                                           # tu pozname tak ze to vypada jeko identifikator a je volatelny 
-                          part = "(%s() if callable(%s) else %s)"%(part,part,part)
-                        addToBlock(text, "__value.append( str(%s) )" % part )
+                            # tu pozname tak ze to vypada jeko identifikator a je volatelny 
+                            part = "(%s() if callable(%s) else %s)"%(part,part,part)
+                            
+                        # vysledek se prevadi na string jenom pokud neni None                            
+                        addToBlock(text, "_ = %s" % part )
+                        addToBlock(text, "if (_): __value.append( str(_) )")
+                        
+                        
+                        
                     else: # liché části jsou text (v indexech to jsou ale sudé)
                         addToBlock(text, "__value.append( %s )" % repr(part) )
                         
@@ -221,7 +227,6 @@ class Parser:
                 originalLines[programCounter] = lineno
                 program.append( "\t" + line )
 
-             
             
             # odstranění prázdných řádek
             program.append( "\t" + "while len(__value) > 0 and len(__value[-1].strip()) == 0: __value.pop()" )

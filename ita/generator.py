@@ -70,7 +70,7 @@ class Generator:
                             # pravdilo chce abychom ho nepoužili, pokračujeme tedy dále
                             self.trace.pop()
                             glob['_idStack'].pop()
-                            
+
                             # pravidlo může vynutit ukončení více úrovní
                             # v tom případě pošleme signál výš
                             try: 
