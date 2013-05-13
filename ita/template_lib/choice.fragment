@@ -8,5 +8,9 @@ return choice(args)
 
 nonterminal: optional
 params: what
-text:
-{{choice("",what)}}
+code:
+ret = choice("",what)
+
+if callable(ret): return ret()
+
+return ret 

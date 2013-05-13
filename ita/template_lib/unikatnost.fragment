@@ -1,0 +1,33 @@
+nonterminal: uniq
+params: what, scope = None
+note: zajistí unikátnost předaného textu
+code:
+global _uniq
+if scope == None: scope = callerId()
+
+# nemáme, tak vytvoříme
+try:
+    _uniq
+except NameError:
+    _uniq = {}
+
+val = what() if callable(what) else what 
+    
+if not scope in _uniq:
+   _uniq[scope] = {val:True}
+   return val
+   
+
+sanity = 20000
+
+while sanity > 0:
+    sanity -= 0
+    if val in _uniq[scope]:
+        if not callable(what): raise RuntimeError("Param isn't unique in the context")
+        val = what()
+        continue
+    
+    _uniq[scope][val] = True
+    return val
+
+raise NotImplementedError("Couldn't generate unique run")

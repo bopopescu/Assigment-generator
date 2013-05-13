@@ -1,5 +1,5 @@
 nonterminal: provide
-params: what, param = None, value = None
+params: what, value = True
 code:
 global _prerekvizity
 
@@ -11,16 +11,13 @@ except NameError:
     
 if not what in _prerekvizity: _prerekvizity[what] = {}
 
-#pokud je vse nastaveno tak konec
-if not param: return
-
 #mame zadany parametr takho (pre)zapiseme 
-_prerekvizity[what][param] = value    
+_prerekvizity[what] = value    
 
 
 nonterminal: need
-params: what, param = None,  value = None, limit = 2
-note: zkontroluje jestli je k dispozici dany parametr 
+params: what, value = None, limit = 1
+note: zkontroluje jestli je k dispozici dany parametr, limit udava jak vysoko ma vyjimka bublat 
 code:
 global _prerekvizity
 
@@ -30,7 +27,6 @@ try:
 except NameError:
     _prerekvizity = {}
 
-
 #pripravime vyjimku
 e = NotImplementedError()
 e.limit = limit
@@ -38,18 +34,25 @@ e.limit = limit
 # neni vubec pritomno
 if not what in _prerekvizity: raise e
 
-# je pritomno a nepotrebujeme nic dalsiho, koncime   
-if param == None: return 
-
-#parametr je vyzadovan ale neni pritomen v nastaveni
-if param in _prerekvizity[what]: raise e
-
-#parametr je pritomen a nepotrebujeme jeho hodnotu
+#je ptritomno ale nepotebujeme hodnotu
 if value == None: return
 
 #hodnota je vyzadovana ale lisi se
-if  _prerekvizity[what][param] != value: raise e
+if _prerekvizity[what] != value: raise e
 
 #vsechno ok...
 
 return
+
+
+nonterminal: use
+params: what, todo
+note: použije todo pouze pokud je need(what) pravdivé, přijímá nonterminály i text 
+code:
+
+try:
+    need(what)
+except NotImplementedError:
+    return ""
+
+return todo() if callable(todo) else todo;

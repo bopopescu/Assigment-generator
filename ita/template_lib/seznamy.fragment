@@ -27,8 +27,8 @@ data = None
 # pokud predany nazev volatelny jako funkce tak ji zavolame
 if callable(name):
     data = name()
-else: # jinak ji povazujeme za nazev nonterminalu a zavolaáme ho
-    data =  name
+else: # jinak ho povazujeme primo za text
+    data = name
 
 
 data = [x for x in filter(lambda x: len(x) > 0, map(lambda x: x.strip(), data.split(delimiter) ) ) ]
