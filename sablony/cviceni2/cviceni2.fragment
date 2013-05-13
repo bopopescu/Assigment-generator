@@ -1,0 +1,10 @@
+nonterminal: cviceni2
+text:
+{{provide("love")}}
+Cvičení 2
+
+{{cviceni2_pamet}}
+
+{{cviceni2_aritmetika}}
+
+{{cviceni_rotate}}

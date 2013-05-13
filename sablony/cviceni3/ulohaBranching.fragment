@@ -7,7 +7,7 @@ Implementujte následující program
 - v případě že je záporné, vypište "zaporne"
 - v případě nuly vypište "nula"
 
-{{choice("v případě poslední možnosti program skončí, jinak pokračuje znovu od zadání vstupu","")}}
+{{optional("v případě poslední možnosti program skončí, jinak pokračuje znovu od zadání vstupu")}}
 
 nonterminal: ulohaBranch
 text:
@@ -25,10 +25,10 @@ nonterminal: ulohaBranch
 text:
 Vytvořte program, který implementuje jednoduché interaktivní menu pro testování pod-programů z knihovny rw32.inc. Program bude fungovat v tak, že vás v cyklu vyzve k zadání čísla a podle zadané hodnoty proveďte následující:
 je-li zadána hodnota 0: ukončete cyklus,
-je-li zadána hodnota 1: {{pop(list("moznostiProgramBranching"))}},
-je-li zadána hodnota 2: {{pop(list("moznostiProgramBranching"))}},
-je-li zadána hodnota 3: {{pop(list("moznostiProgramBranching"))}},
-je-li zadána hodnota 4: {{pop(list("moznostiProgramBranching"))}},
+je-li zadána hodnota 1: {{pop(moznostiProgramBranching)}},
+je-li zadána hodnota 2: {{pop(moznostiProgramBranching)}},
+je-li zadána hodnota 3: {{pop(moznostiProgramBranching)}},
+je-li zadána hodnota 4: {{pop(moznostiProgramBranching)}},
 jinak: nevolá se žádný pod-program, pokračuje se v cyklu zadání čísla.
 
 

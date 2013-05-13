@@ -1,0 +1,33 @@
+nonterminal: cviceni2_pamet
+text:
+1. [1 bod]
+Do datového segmentu ve vašem programu zapište {{pop(jmeno_zdroj)}}.
+{{jmeno_moznosti}}
+
+nonterminal:jmeno_moznosti
+text:
+Následně vypište vždy na nový řádek {{pop(jmeno_jak)}} hodnotu jeho {{pop(login_poradi_znak)}} a {{optional("bitově invertovanou hodnotu ")}}{{pop(login_poradi_znak)}} symbolu.
+
+nonterminal:jmeno_moznosti
+text:
+Následně vypište vždy na nový řádek {{pop(jmeno_jak())}} a {{pop(jmeno_jak())}} reprezentaci jeho {{pop(login_poradi_znak)}} symbolu.
+
+nonterminal: jmeno_jak
+text:
+dekadickou (s využitím WriteUInt8)
+binární (s využitím WriteBin8)
+
+nonterminal: jmeno_zdroj
+text:
+vaše příjmení (malými písmeny, bez diakritiky) 
+vaše příjmení (velkými písmeny, bez diakritiky) 
+váš login
+
+nonterminal: login_poradi_znak
+text:
+prvního
+druhého
+třetího
+čtvrtého
+pátého
+posledního 

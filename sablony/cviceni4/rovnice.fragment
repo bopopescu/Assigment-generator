@@ -1,0 +1,85 @@
+###############################################################################
+# tri paramatrove
+###############################################################################
+nonterminal: rovnice
+text:
+{{need("parametru",3)}}
+
+{{znamenkovost_program}} Rovnice_Registry({{znamenkovost_program}} a, {{znamenkovost_program}} b, {{znamenkovost_program}} c) {
+  int x, y, z;
+  x = {{uniq(permutacePar3)}};
+  y = {{uniq(permutacePar3)}};
+  z = {{uniq(permutacePar3)}};
+  return {{cislo(2,5)}}*(x{{choice("+","-","*")}}y{{choice("+","-","*")}}z);
+}
+
+
+
+nonterminal: permutacePar3
+note: použitá pro zamichani parametru
+text:
+{{uniq(lambda: choice("a","b","c"))>>prvni}}{{uniq(lambda: choice("a","b","c"))>>druhy}}{{use("signed",optional("(-1) * "))}}{{prvni}} {{choice("+","-","*")}} {{druhy}}
+
+
+###############################################################################
+# dvou parametrove
+###############################################################################
+
+nonterminal: rovnice
+text:
+{{need("parametru",2)}}
+
+{{znamenkovost_program}} Vypocet_Registry({{znamenkovost_program}} a, {{znamenkovost_program}} b) {
+  {{znamenkovost_program}} i, j;
+  i = a*{{choice("a","b","(-a)","(-b)")}};
+  j = {{optional("(-1)*")}}{{choice("b*b","a*a")}};
+  if (a {{choice(">","<","==","<=",">=")}} b) {
+    return i - j;
+  } else {
+    return i + j;
+  }
+}
+
+
+
+nonterminal: rovnice
+text:
+{{need("parametru",2)}}
+{{znamenkovost_program}} Vypocet_Registry({{znamenkovost_program}} a, {{znamenkovost_program}} b) {
+  int tmp, var;
+  if (a > 0 && b > 0) {
+    tmp = {{pop(permutacePar2)}};
+    var = 1;
+  } else if (a {{choice(">","<","==","<=",">=")}} b) {
+    tmp = {{pop(permutacePar2)}};
+    var = 2;
+  } else {
+    tmp = {{pop(permutacePar2)}};
+    var = 3;
+  }
+  printf("Varianta %d\n", var);
+  return tmp;
+}
+
+
+nonterminal: permutacePar2
+note: použitá pro zamichani parametru
+text:
+a*a
+a*b
+a-b
+b-a
+a+b
+
+
+###############################################################################
+# pomocne pravidla na znaminka
+###############################################################################
+
+nonterminal: znamenkovost_program
+text:
+{{need("unsigned")}} unsigned int
+
+nonterminal: znamenkovost_program
+text:
+{{need("signed")}} int

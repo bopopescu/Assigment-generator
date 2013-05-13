@@ -1,0 +1,36 @@
+nonterminal: cviceni4
+text:
+
+1. [1 bod] Pod-program s parametry předanými přes registry:
+
+a) Vytvořte pod-program Vypocet_Registry, který má parametry {{parametry}}
+b) Pod-program bude implementovat výpočet dle příklad v jazyce C viz níže.
+c) Výsledek bude tento pod-program vracet v registru EDX (uvažujte, že výsledek se vždy vejde na 32 bitů).
+d) Zajistěte pomocí zásobníku, že všechny obecné registry (a příznakový registr), které byly pod-programem modifikovány, budou po volání pod-programu nastaveny na původní hodnoty (s výjimkou výstupního registru) – to zajistí pod-program.
+e) Do části „main“ implementujte kód pro jednoduché otestování (vypsání na obrazovku) funkčnosti tohoto pod-programu.
+
+2. [2 body] Pod-program s parametry předanými přes zásobník:
+
+a) Vytvořte pod-program Vypocet_Zasobnik tak, že bude implementovat tutéž funkci jako v předchozím bodě s rozdílem, že parametry budou předány přes zásobník.
+b) Pod-program bude používat lokální proměnné pro uložení mezivýsledků tak, jak je popsáno v níže uvedené funkci v jazyce C.
+c) Při vstupu/výstupu z/do pod-programu zajistěte vytvoření/zrušení stack-framu (rámce zásobníku).
+d) Zbytek zadaní je shodný s prvním úkolem.
+
+{{rovnice}}
+
+nonterminal: parametry
+text:
+{{provide("parametru",2)}}
+(a,b), které jsou předané pomocí registrů EAX a EBX ({{pop(znamenkovost)}} čísla velikosti 32-bitů).
+
+nonterminal: parametry
+text:
+{{provide("parametru",3)}}
+(a,b,c), které jsou předané pomocí registrů EAX, EBX a ECX (32-bitová, {{pop(znamenkovost)}} čísla).
+
+nonterminal: znamenkovost
+text:
+{{provide("unsigned")}} neznaménková
+nonterminal: znamenkovost
+text:
+{{provide("signed")}} znaménková

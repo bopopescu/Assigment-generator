@@ -1,7 +1,6 @@
-nonterminal: cviceni
-code:
-ulohy = [ ulohaFor(), ulohaWhile(), ulohaBranch() ]  
+nonterminal: cviceni3
 text:
+{{[ ulohaFor(), ulohaWhile(), ulohaBranch() ]>>ulohy}}
 Cvičení 3     
 
 1. [1 bod]

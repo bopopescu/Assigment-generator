@@ -1,0 +1,82 @@
+nonterminal: cviceni2_aritmetika
+text:
+{{need("love")}}
+2. [1 bod]
+{{pop(nactiDveCisla)}}
+{{porovnejDveCisla}}
+
+nonterminal: cviceni2_aritmetika
+text:
+2. [1 bod]
+{{pop(nactiDveCisla)}}
+{{pop(spocitejDveCisla)}}
+
+{{optional(spocitejDveCislaExtra)}}
+
+nonterminal: nactiDveCisla
+params: x="X", y="Y"
+text:
+S využitím pod-programů {{choice("z knihovny rw32.inc", "ReadInt16/ReadUInt16")}} načtěte dvě 16-bitová {{optional("ne-znaménková ")}}čísla {{x}} a {{y}}.
+Načtětete dvě znaménková 8-bitová čísla {{x}} a {{y}} z klávesnice (s využitím ReadInt8) 
+Z klávesnice načtěte dvě hodnoty (první označme {{x}}, druhou {{y}}) typu byte (pomocí ReadUInt{{choice(8,16)}}, tedy ne-znaménkové) a uložte je do datového segmentu (paměti).
+Číslo {{x}} je dekadická hodnota {{pop(login_poradi_znak)}} druhého znaku vašeho loginu. Číslo {{y}} je ne-znaménkového čísla velikosti byte načtené z klávesnice.
+
+nonterminal: spocitejDveCisla
+params: x="X", y="Y"
+text:
+Proveďte {{choice("součet","rozdíl")}} čísel {{x}} a {{y}}. Výsledek uložte do paměti a vypište jej na obrazovku.
+Pokud došlo k přetečení (podtečení) vypište na obrazovku dvojkový doplněk výsledku.
+Proveďte celočíselné ne-znaménkové násobení {{x}} a {{y}}
+
+nonterminal: porovnejDveCisla
+params: x="X", y="Y"
+text:
+Je-li {{x}} záporné, sečtěte jej s číslem {{y}}. Je-li kladné, odečtěte od něho {{y}}.
+Výsledek vypište na obrazovku
+
+
+nonterminal: porovnejDveCisla
+params: x="X", y="Y"
+text:
+Dále, pakliže: 
+{{x}} > {{y}}, vypište na samostatný řádek text „{{x}} > {{y}}“,
+{{x}} = {{y}}, vypište na samostatný řádek text „{{x}} = {{y}}“,
+{{x}} < {{y}}, vypište na samostatný řádek text „{{x}} < {{y}}“.
+
+(můžete použít např. pod-program WriteString).
+
+nonterminal: porovnejDveCisla
+params: x="X", y="Y"
+text:
+Z paměti načtete výsledek operace z předchozího bodu a:
+je-li záporný, vypište na obrazovku text „zaporny“,
+je-li kladný, vypište na obrazovku text „kladny“.
+
+nonterminal: spocitejDveCislaExtra
+params: x="X", y="Y"
+text:
+Dále, pakliže se výsledek: 
+vejde na 8-bitů: vypište jej na samostatný řádek pomocí funkce WriteUInt8,
+nevejde na 8-bitů: vypište jej na samostatný řádek pomocí funkce WriteUInt16.
+
+
+nonterminal: cviceni_rotate
+text:
+3. [1 bod]
+Proveďte bitovou rotaci {{choice("doprava", "doleva")}} o N bitů výsledku z předchozího bodu (je uloženo v paměti).
+Číslo N načtete z klávesnice.
+Hodnotu před i po rotaci vypište binárně na obrazovku.
+
+nonterminal: cviceni_rotate
+text:
+3. [1 bod]
+Proveďte bitovou rotaci {{choice("doprava", "doleva")}} o {{cislo(2,6)}} bitů výsledku z předchozího bodu (je uloženo v paměti).
+Hodnotu před i po rotaci vypište binárně na obrazovku.
+
+nonterminal: cviceni_rotate
+text:
+3. [1 bod]
+V datovém segmentu si vytvořte proměnou velikosti 1 word (16-bitů) a zvolte si pro ni libovolnou hodnotu a zapište ji hexadecimálně.
+S takto vytvořenou hodnotou proveďte rotaci doleva o hodnotu N.
+Číslo N načťete z klávesnice.
+Hodnotu před i po rotaci vypište binárně na obrazovku.

@@ -2,8 +2,8 @@ nonterminal: ulohaWhile
 text:
 S využitím přípravné šablony datového segmentu (viz níže) vytvořte program, který s využitím cyklu a složeného podmíněného výrazu vypočítá (a přehledně vypíše na obrazovku):
 
-a. počet {{pop(list("moznostiString"))}}
-b. počet {{pop(list("moznostiString"))}}
+a. počet {{pop(moznostiString)}}
+b. počet {{pop(moznostiString)}}
 
 {{dsString}}
 
@@ -11,8 +11,8 @@ nonterminal: ulohaWhile
 text:
 S využitím přípravné šablony datového segmentu (viz níže) proveďte následující (a přehledně vypíše na obrazovku):
 
-a. součet  {{pop(list("moznostiCisla"))}} čísel
-b. počet   {{pop(list("moznostiCisla"))}} čísel 
+a. součet  {{pop(moznostiCisla)}} čísel
+b. počet   {{pop(moznostiCisla)}} čísel 
 
 {{dsCisla}}
 
