@@ -88,8 +88,8 @@ class Parser:
             block.append( (curLine, what) )
 
 
-        # preskocime prazdne radky
-        while len( content[ curLine ].strip() ) == 0: curLine += 1
+        # preskocime prazdne radky a pocatecni komebtara
+        while len( content[ curLine ].strip() ) == 0 or content[ curLine ][0] == "#" : curLine += 1
 
         try:
             tag,nonterm = map(lambda x: x.strip(), content[curLine].split(":",2))
@@ -119,6 +119,9 @@ class Parser:
 
         for line in content[curLine:]:
             curLine += 1
+
+            # všechny řádky, které začínají # preskočíme
+            if line[0] == "#": continue
 
             if line.find(":") > 0:  # řádka obsahuje ":" na druhém nebo vyšším znaku (tzn nemůže začínat dvojtečkou)
                 tag,data = map(lambda x: x.strip(), line.split(":",1))
@@ -226,10 +229,13 @@ class Parser:
                 programCounter +=1
                 originalLines[programCounter] = lineno
                 program.append( "\t" + line )
+                if nonterm == "uniq":print(lineno, line)
 
             
             # odstranění prázdných řádek
             program.append( "\t" + "while len(__value) > 0 and len(__value[-1].strip()) == 0: __value.pop()" )
+            # odstranění odentrování poslední řádky
+            program.append( "\t" + "if len(__value) > 0 : __value[-1] = __value[-1].rstrip()" )
             # samotný návrat
             program.append( "\t" + "return ''.join( __value )" )  
 
@@ -251,7 +257,8 @@ class Parser:
         try:
             programCompiled = compile("\n".join(program),"<string>","exec")
         except SyntaxError as e:
-            e.lineno = originalLines[e.lineno] 
+            e.lineno = originalLines[e.lineno] if e.lineno in originalLines else None
+            
             raise( e )
         
         self._addrule(nonterm, programCompiled, params, "\n".join(program) )
