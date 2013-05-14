@@ -18,7 +18,7 @@ class Model(BaseModel):
     def generate(self):
         """Vrátí vygenerované zadání pro toto cvičení """
         from ita import Loader, Parser, Generator
-        l = Loader().add("sablony")
+        l = Loader("sablony")
         p = Parser( l )
         g = Generator( p )
 
