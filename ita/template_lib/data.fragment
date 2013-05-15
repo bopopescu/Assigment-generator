@@ -25,7 +25,7 @@ try:
 except NameError:
    _dataSegment = []
    
-data = pop(list("list.txt"));
+data = pop(makeList(loadFile("list.txt")));
    
 _dataSegment.append("%s db \"%s\", %s" % (name, data, term) )
 _dataSegment.append("");

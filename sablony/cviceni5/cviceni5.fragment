@@ -1,0 +1,117 @@
+nonterminal: cviceni5
+text:
+Převeďte níže uvedený program v C do asembleru při splnění těchto podmínek:
+
+- vytvoříte dva pod-programy Generate a Factorial, oběma budou parametry předávány přes zásobník,
+- pod-program Generate bude volat pod-program Factorial.
+
+#include <stdio.h>
+ 
+/**
+ * Faktorial -- rekurzivni vypocet
+ */
+unsigned int Factorial(unsigned int n) {
+    if ( n <= 1 ) 
+        return 1;
+    else
+        return n * Factorial(n-1);
+}
+ 
+/**
+ * Generuje hodnoty faktorialu < 1..n > do pole predaneho adresou
+ */ 
+void Generate(unsigned int *pole, unsigned int n) {
+ 
+    unsigned int i;
+ 
+    for (i = 1; i <= n; i++) {
+        *(pole++) = Factorial(i);
+    }
+}
+ 
+// definice maximalniho cisla jako argumentu pro vypocet faktorialu
+// - program musi fungovat sprave pri ruznych zmenach tohoto cisla
+#define MAX_FACT 10
+ 
+int main(int argc, char* argv[]) 
+{
+    // pole o velikosti MAX_FACT (definujte v datovem segmentu)
+    unsigned int pole[MAX_FACT];
+ 
+    unsigned int i;    
+ 
+    Generate(pole, MAX_FACT);
+ 
+    for (i = 1; i <= MAX_FACT; i++) {
+        printf("%d: %d\n", i, pole[i-1]);
+    }    
+ 
+    return 0;
+}
+
+
+Poznámka:
+    - Pro definici konstanty MAX_FACT můžete použít použijte EQU,
+    - při testování volte vhodnou velikost konstanty MAX_FACT tak aby se výsledek vešel na 32-bitů,
+    - typ unsigned int == dword == 32-bitů, ne-znaménkové číslo.
+    
+nonterminal: cviceni5
+text:
+Převeďte níže uvedený program v C do asembleru při splnění těchto podmínek:
+
+- vytvoříte dva pod-programy Swap a Reverse, oběma budou parametry předávány přes zásobník,
+- pod-program Reverse bude volat pod-program Swap.
+
+#include <stdio.h>
+ 
+/**
+ * Vymeni hodnoty predane ukazatelem
+ * - volani parametru pomoci zasobniku
+ * - oba parametry jsou ukazatele
+ */
+void Swap(char *from, char *to) {
+    char tmp = *to;
+    *to = *from;
+    *from = tmp;    
+}
+ 
+/**
+ * Provede reverzaci retezce predaneho adresou
+ * - volani parametru pomoci zasobniku
+ * - parametr je ukazatel
+ */
+void Reverse(char *string) {
+ 
+    char *begin, *end;
+    int i, length = 0;
+ 
+    // spocita delku retezce 
+    while ( *(string + length) != '\0' )
+        length++;
+ 
+    // nastavi ukazatele zacatku a konce    
+    begin = string;
+    end = string + length - 1;
+ 
+    // provede inverze pomoci swap
+    for ( i = 0 ; i < length/2 ; i++ ) {        
+        Swap(begin++, end--);
+   }
+}
+ 
+ 
+int main(int argc, char* argv[]) 
+{
+    char string[] = "Implementujte v asembleru funkci pro reverzaci retezce pomoci pod-programu Reverse a Swap";
+ 
+    printf("%s\n", string);
+    Reverse(string);      
+    printf("%s\n", string);
+ 
+    return 0;
+}
+
+
+Poznámka:
+    - Pro definici konce řetězce použijte nulu.
+    - Pro tisk řetězce může použít WriteString, nebo si definovat vlastní funkci.

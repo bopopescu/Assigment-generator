@@ -1,0 +1,48 @@
+nonterminal: cviceni6
+text:
+{{adresar}}
+{{cviceni6info}}
+
+nonterminal: adresar
+text:
+Zjistěte aktuální adresář pomocí funkce GetCurrentDirectoryA a vypište jej na nový řádek
+(výpis můžete realizovat pomocí standardních pod-programů v rw32.inc).
+
+pro výpis a formátování textu můžete použít funkci printf anebo si vytvořte vlastní funkci.
+
+{{provide("getCurrentDirectory")}}
+{{provide("printf")}}
+
+
+nonterminal: cviceni6info 
+text:
+Poznámky:
+{{use("getCurrentDirectory",helpReadFile)}}
+{{use("getCurrentDirectory",helpGetCurrentDirectory)}}
+{{use("printf", helpPrintf)}}
+{{use("getLocalTime","Funkce GetLocalTime je částečně popsána v přednášce přednáškách a importuje se z knihovny kernel32.dll.")}}
+
+nonterminal: helpPrintf
+text:
+- Funkce printf se importuje z knihovny msvcrt.dll (a je již importována v rw32.inc).
+
+nonterminal: helpGetCurrentDirectory
+text:
+Funkce GetCurrentDirectory
+____________________________________
+DWORD WINAPI GetCurrentDirectory(
+  _In_   DWORD nBufferLength,    // vami zvolena delka bufferu vyhrazeneho pro vysledek, datovy typ DWORD
+  _Out_  LPTSTR lpBuffer         // ukazatel na buffer pro vysledek kam bude nazev adresare ulozen
+);
+
+nonterminal: helpReadFile
+text:
+Funkce ReadFile
+____________________________________
+BOOL WINAPI ReadFile(
+  _In_         HANDLE hFile,                // identifikator otevreneho soubou
+  _Out_        LPVOID lpBuffer,             // ukazatel na vystupni buffer kam budou ulozena nactena data
+  _In_         DWORD nNumberOfBytesToRead,  // hodnota typu DWORD udavajici kolik bajtu chceme ze souboru nacist
+  _Out_opt_    LPDWORD lpNumberOfBytesRead, // ukazatel na hodnotu typu DWORD do ktere se ulozi kolik bajtu bylo skutecne nacteno
+  _Inout_opt_  LPOVERLAPPED lpOverlapped    // nastavte na NULL
+);
