@@ -7,6 +7,13 @@ from threading import Thread, Event
 import queue
 import sqlite3
 
+
+SAMPLES = 600
+WORKERS = 2
+NONTERMINAL = "cviceni6" 
+
+
+
 connection = sqlite3.connect(":memory:")
 connection.isolation_level = None  # vypnutí relací 
 cursor = connection.cursor()
@@ -16,9 +23,6 @@ query("CREATE TABLE collisions (hash char(32) PRIMARY KEY NOT NULL)")
 
 
 ita.VERBOSE = False
-
-SAMPLES = 500000
-WORKERS = 2
 
 # BUFFER > WORKERS
 BUFFER = 500
@@ -44,7 +48,7 @@ class WorkerThread(Thread):
         generator = Generator( parser )
         
         while not shouldDie.is_set():
-            text = generator.run("cviceni")
+            text = generator.run(NONTERMINAL)
             hashed = md5(text.encode('utf-8')).hexdigest()
             pendingResolve.put(hashed);
             
@@ -64,8 +68,7 @@ try:
         hashed = pendingResolve.get()
         if processed % 100 == 0:
             bar = math.floor(pendingResolve.qsize()*COEF)
-            print("["+ ("*"*bar).ljust(BAR_SIZE)+"]")
-            print(processed)
+            print("["+ ("*"*bar).ljust(BAR_SIZE)+"]", processed)
         
         try:
             query("INSERT INTO collisions VALUES ('%s')" % hashed)
@@ -81,6 +84,7 @@ except KeyboardInterrupt:
 print("%d/%d = %1.2f%%" % (collisions_count, SAMPLES, round(collisions_count/SAMPLES*100,2)))
 
 print("ukoncuju")
+shouldDie.set()
 
 # vycistime zbytek fronty, coz umozni ukonceni vlaknum ktere cekaji na zapis do ni
 try:
@@ -88,7 +92,7 @@ try:
 except queue.Empty:
     pass
     
-shouldDie.set()
+
 
 # pockame na ukonceni vsech vlaken
 for thread in threads:
