@@ -167,7 +167,7 @@ query("""CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTO_INCREMENT,
                                 `nonterminal` char(32),
                                 state INT NULL,
                                 shared INT NULL)""")
-query("INSERT INTO lectures(name, lector,nonterminal, state) VALUES ('Cvičení 1. - logické operace', 'xtest','cviceni', 1)")
+query("INSERT INTO lectures(name, lector,nonterminal, state) VALUES ('Cvičení 1. - logické operace', 'xtest','cviceni3', 1)")
 query("INSERT INTO lectures(name, lector, nonterminal) VALUES ('Cvičení 2. - hospoda', 'xtest', 'cislo')")
 
 query("DROP TABLE IF EXISTS assigments")
