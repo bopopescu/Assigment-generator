@@ -159,7 +159,7 @@ class Generator:
         except Exception as e:
             raise GeneratorException(e, self.trace)
         
-        return  retVal
+        return  str(retVal)
         
         
 
