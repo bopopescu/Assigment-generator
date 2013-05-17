@@ -1,0 +1,30 @@
+nonterminal: cviceni7
+text:
+{{slozitaRovnice}}
+
+{{use("pi","Pi je konstanta pi")}}
+
+nonterminal: cviceni7
+text:
+1.
+{{jednoduchaRovniceUkol}}
+
+2.
+{{jednoduchaRovniceUkol}}
+
+V obou případech:
+Načtená čísla i výsledky uložte do paměti.
+Výsledky vypište na obrazovku.
+
+{{use("pi","Pi je konstanta pi")}}
+
+nonterminal: cviceni7
+text:
+1.
+{{jednoduchaRovniceUkol}}{{use("pi","\n\nPi je konstanta pi")}}
+
+2.
+{{prochazeniPole}}
+
+{{dataSegment}}
+

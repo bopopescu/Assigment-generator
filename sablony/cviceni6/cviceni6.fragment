@@ -1,17 +1,52 @@
 nonterminal: cviceni6
 text:
-{{adresar}}
+S využitím funkcí Win API vytvořte program, který vytvoří soubor [vas-login].txt a do tohoto souboru zapište text.
+{{typCteni}}
+
+Z funkcí Win API využijete minimálně tyto funkce:
+CreateFileA pro vytvoření souboru,
+WriteFile pro zápis do souboru,
+CloseHandle pro uzavření souboru.
+
 {{cviceni6info}}
 
-nonterminal: adresar
+nonterminal: cviceni6
 text:
-Zjistěte aktuální adresář pomocí funkce GetCurrentDirectoryA a vypište jej na nový řádek
-(výpis můžete realizovat pomocí standardních pod-programů v rw32.inc).
+Pomocí funkce Win API GetLocalTime a zjistěte aktuální datum a čas ve formátu. Vytiskněte ho na obrazovku ve formátu "{{optional("Dnes je ")}}STREDA, 2012-12-05 13:01:02."
+Výpis provedte za pomoci funkce WriteConsoleA.
 
-pro výpis a formátování textu můžete použít funkci printf anebo si vytvořte vlastní funkci.
+nonterminal: cviceni6
+text:
+Vytvořte program, který přečte obsah existujícího souboru a vypíše jej na obrazovku.
+Pomocí funkce ReadString načtete ve vašem programu jméno souboru.
+Tento soubor ve vašem programu otevřete pomocí funkce CreateFileA pouze pro čtení (v případě že neexistuje, tak ho nevytvářejte a zpracujte příslušnou chybu).
+Pomocí funkce ReadFile obsah souboru načtěte (při načítání si zvolte vhodnou velikost výstupního bufferu, v případě příliš velkých souborů není potřeba načítat obsah celý).
+{{choice("Načtený obsah souboru","Počet přečtených bytů")}} vypište na obrazovku pomocí funkce WriteConsoleA.
+Otevřený soubor uzavřete pomocí funkce CloseHandle.
 
+
+nonterminal: typCteni
+text:
+Text bude zadaný z klávesnice (text načtěte pomocí ReadString z knihovny rw32.inc), do souboru zapište vždy jen tolik (znaků) kolik jste skutečně přečetli.
+
+nonterminal: typCteni
+text:
+Text bude nacten pomocí funkce ReadConsoleA z klávesnice (ze standardního vstupu, jehož handle zjistíte pomocí GetStdHandle)
+
+nonterminal: typCteni
+text:
+Text bude získán s využitím funkce Win API GetLocalTime a bude obshovat aktuální datum a čas ve formátu "{{optional("Dnes je ")}}STREDA, 2012-12-05 13:01:02."
+
+nonterminal: typCteni
+text:
+Text bude aktuální adresář zjištěný pomocí funkce GetCurrentDirectoryA. 
 {{provide("getCurrentDirectory")}}
-{{provide("printf")}}
+
+nonterminal: typCteni
+text:
+Text bude dálka v bytech řetězce reprezentujícího aktuální adresář zjištěný pomocí funkce GetCurrentDirectoryA. 
+{{provide("getCurrentDirectory")}}
+
 
 
 nonterminal: cviceni6info 

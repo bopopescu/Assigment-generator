@@ -1,0 +1,131 @@
+nonterminal: jednoduchaRovniceUkol
+params: promenne = "x,y"
+code:
+par = promenne.split(",")
+x = pop(par)
+y = pop(par)
+typy = makeList(jednoduchaRovniceTyp, scope="rovnice")
+typ = pop(typy) 
+text:
+Z klávesnice načtěte čísla {{x}} a {{y}} typu {{typ}} a pomocí FPU vypočítejte následující rovnici (f bude typu {{typ}}):
+
+f = {{jednoduchaRovniceRAW(x,y)}}
+
+
+nonterminal: jednoduchaRovniceUkol
+params: promenne = "x,y"
+text:
+{{hate("faktorialEq")}}
+{{provide("faktorialEq")}}
+S využitím FPU vypočítejte faktoriál N, kde N je číslo typu int načtené z klávesnice.
+Výpočet faktoriálu provádějte v typu double a jednotlivé mezi-výpočty (tzn. faktoriál čísel 1 až N-1) vypisujte na obrazovku.
+Výsledek uložte do paměti a vypište na obrazovku.
+
+nonterminal:  jednoduchaRovniceTyp
+text:
+int (32-bitů)
+double
+float
+
+nonterminal: jednoduchaRovnice
+params: promenne = "x,y"
+code:
+par = promenne.split(",")
+x = pop(par)
+y = pop(par)
+text:
+{{jednoduchaRovniceRAW(x,y)}}
+
+############################################################
+# zname rovnice jsou zadany pomoici těchto pravidel
+############################################################
+nonterminal: jednoduchaRovniceRAW
+params: x,y
+text:
+{{pop(wellKnown).replace("X",x).replace("Y",y)}}
+#pouzijeme maximalne jednou
+{{hate("simpleEq")}}
+{{provide("simpleEq")}}
+
+nonterminal: wellKnown
+note: známé rovnice, zadané přímo
+text:
+X^2 - 2*X*Y + Y^2
+
+############################################################
+# jednoduche jednoradakove zadani
+############################################################
+
+nonterminal: jednoduchaRovniceRAW
+params: x,y
+text:
+{{uniq(lambda: rovniceKombinace(x,y))}} {{operator}} {{uniq(lambda: rovniceKombinace(x,y))}}
+
+nonterminal: jednoduchaRovniceRAW
+params: x,y
+text:
+{{choice("abs","sqrt","sin","cos")}}( {{rovniceKombinace(x,y)>>vnitrek}}{{vnitrek}} ) {{operator}} {{x if y in vnitrek else y}} 
+
+############################################################
+# slozite viceradkove zadani
+############################################################
+nonterminal: slozitaRovnice
+text:
+{{choice("x,y","a,b","i,j","m,n", "g,h")>>parametry}}
+f1 = {{uniq(lambda: jednoduchaRovnice(parametry))}}
+f2 = {{uniq(lambda: jednoduchaRovnice(parametry+",f1"))}}
+f3 = {{uniq(lambda: jednoduchaRovnice(parametry+",f1,f2"))}} 
+
+nonterminal: slozitaRovnice
+text:
+x = {{jednoduchaRovnice("i1,i2")}}
+y = {{jednoduchaRovnice("d1,d2")}}
+z = {{jednoduchaRovnice("f1,f2")}}
+
+Proměnné i1 a i2, d1, d2, f1, f2, budou načteny z klávesnice a následně uloženy do datového segmentu.
+    d1 a d2 jsou typu double,
+    f1 a f2 jsou typu float,
+    i1 a i2 jsou typu int (32-bitů v doplňkovém kódu).
+
+Výsledky x, y a z (postupně double, float, int) uložte do paměti a vypište na obrazovku. 
+
+############################################################
+# pomocna pravidla
+nonterminal: rovniceKombinace
+params: x,y
+text:
+abs({{choice(x,y)}})
+
+nonterminal: rovniceKombinace
+params: x,y
+text:
+{{choice(x,y)}}^2
+
+nonterminal: rovniceKombinace
+params: x,y
+text:
+Pi{{provide("pi")}}
+
+nonterminal: rovniceKombinace
+params: x,y
+text:
+{{cislo(2,5)}}*({{x}} {{operator}} {{y}})
+
+nonterminal: rovniceKombinace
+params: x,y
+text:
+{{x}} {{operator}} {{y}}
+
+nonterminal: operator
+code:
+data = makeList(operatorRAW(), scope="rovnice")
+if len(data) == 0: data.extend( makeList(operatorRAW(), scope=False) )
+return pop(data)
+
+
+nonterminal: operatorRAW
+text:
++
+*
+-
+/

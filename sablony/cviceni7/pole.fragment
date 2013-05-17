@@ -1,0 +1,8 @@
+nonterminal: prochazeniPole
+text:
+Vypočítejte součet a průměr číselné posloupnosti čísel dle připravené šablony viz níže.
+Čísla jsou typu double.
+
+Výsledky, tzn. součet a průměr uložte do datového segmentu a vypište na obrazovku.
+
+{{dsCislaDouble}}
