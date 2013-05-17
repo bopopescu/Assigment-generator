@@ -1,25 +1,27 @@
 nonterminal: makeList
 params: name, delimiter = "\n", scope = None
 note:
-Vrátí instanci seznamu v rámci scope (defautlně callerId), tzn při opakovaném volání se vrací stejná instance
+Vrátí instanci seznamu v rámci scope (defautlně callerId, pokud je False necachuje se), tzn při opakovaném volání se vrací stejná instance
 Parametr nazev může být nonterminálnebo přímo zadaný text 
 todo: potlačit při scope None 
 code:
 global _listCache
-if scope == None: scope = callerId()
 
-# vytvoření listu pokud neexistuje
-try:
-    _listCache
-except NameError:
-    _listCache = {}
-
-hashableName = id(name) if callable(name) else name
-   
-if scope in _listCache:
-    if hashableName in _listCache[scope]: return  _listCache[scope][hashableName]
-else:
-    _listCache[scope] = {}
+if scope != False:
+    if scope == None: scope = callerId()
+    
+    # vytvoření listu pokud neexistuje
+    try:
+        _listCache
+    except NameError:
+        _listCache = {}
+    
+    hashableName = id(name) if callable(name) else name
+       
+    if scope in _listCache:
+        if hashableName in _listCache[scope]: return  _listCache[scope][hashableName]
+    else:
+        _listCache[scope] = {}
 
 
 data = None
@@ -32,6 +34,8 @@ else: # jinak ho povazujeme primo za text
 
 
 data = [x for x in filter(lambda x: len(x) > 0, map(lambda x: x.strip(), data.split(delimiter) ) ) ]
+
+if scope == False: return data
 
 _listCache[scope][hashableName] = data
 

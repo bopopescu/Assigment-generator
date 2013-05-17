@@ -45,6 +45,21 @@ if _prerekvizity[what] != value: raise e
 return
 
 
+nonterminal: hate
+params: what, limit = 1
+note: opak need, pokud je pritomen tak se skonci 
+code:
+
+try:
+    need(what)
+except NotImplementedError:
+    return ""
+
+e = NotImplementedError()
+e.limit = limit
+
+raise e
+
 nonterminal: use
 params: what, todo
 note: použije todo pouze pokud je need(what) pravdivé, přijímá nonterminály i text 

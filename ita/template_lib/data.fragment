@@ -32,6 +32,30 @@ _dataSegment.append("");
 
 return ""
 
+
+nonterminal: dsCislaDouble
+params: min = -10, max = 10, pocet = 12
+code:
+from random import random
+global _dataSegment
+
+try:
+  _dataSegment
+except NameError:
+   _dataSegment = []
+
+data = []
+for i in range( int(pocet) ):
+	data.append( str(round(random()*(max-min)+min,6)) )
+
+data = ",".join(data)
+
+_dataSegment.append("input_array dq %s" % data)
+_dataSegment.append("input_array_len dd (input_array_len - input_array)/2")
+_dataSegment.append("")
+
+return ""
+
 nonterminal: dsCisla
 params: min = -9000, max = 9000, pocet = 12
 code:
@@ -55,3 +79,5 @@ _dataSegment.append("input_array_len dw (input_array_len - input_array)/2")
 _dataSegment.append("")
 
 return ""         
+
+
