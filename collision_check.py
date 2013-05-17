@@ -1,6 +1,7 @@
 from ita import Loader, Parser, Generator
 import sys
 import ita
+import sys
 import math
 from hashlib import md5
 from threading import Thread, Event
@@ -10,9 +11,7 @@ import sqlite3
 
 SAMPLES = 600
 WORKERS = 2
-NONTERMINAL = "cviceni6" 
-
-
+NONTERMINAL = sys.argv[1] if  len(sys.argv) > 1 else "cviceni2"
 
 connection = sqlite3.connect(":memory:")
 connection.isolation_level = None  # vypnutí relací 
@@ -66,9 +65,9 @@ try:
     while processed < SAMPLES:
         processed += 1
         hashed = pendingResolve.get()
-        if processed % 100 == 0:
-            bar = math.floor(pendingResolve.qsize()*COEF)
-            print("["+ ("*"*bar).ljust(BAR_SIZE)+"]", processed)
+#        if processed % 500 == 0:
+#            bar = math.floor(pendingResolve.qsize()*COEF)
+#            print("["+ ("*"*bar).ljust(BAR_SIZE)+"]", processed)
         
         try:
             query("INSERT INTO collisions VALUES ('%s')" % hashed)
@@ -83,7 +82,6 @@ except KeyboardInterrupt:
 
 print("%d/%d = %1.2f%%" % (collisions_count, SAMPLES, round(collisions_count/SAMPLES*100,2)))
 
-print("ukoncuju")
 shouldDie.set()
 
 # vycistime zbytek fronty, coz umozni ukonceni vlaknum ktere cekaji na zapis do ni
@@ -98,5 +96,4 @@ except queue.Empty:
 for thread in threads:
     thread.join()    
 
-    
-print("konec")
+
