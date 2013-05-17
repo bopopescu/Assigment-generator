@@ -118,6 +118,8 @@ if config.database["storage"] == "sqlite":
     query = querySQLite
 elif config.database["storage"] == "mysql":
     query = queryMySQL
+else:
+    raise NotImplemented("Typ DB není podporován")
 
   
 @hook("after_request")
@@ -139,48 +141,47 @@ def cleanUp():
 
 from hashlib import sha1
 
-query("DROP TABLE IF EXISTS lectors")
-query("""CREATE TABLE lectors (login char(8) PRIMARY KEY NOT NULL,
-                             password char(40) NULL,
-                             roles char(20) NULL,
-                             group_id INT NULL)""")
-                             
-query("INSERT INTO lectors VALUES ('xtest', '%s', 'lector' , NULL)" %  (sha1("test".encode('utf-8')).hexdigest(),) )
-query("INSERT INTO lectors VALUES ('master', '%s', 'lector,master' , NULL)" %  (sha1("test".encode('utf-8')).hexdigest(),) )
-
-query("DROP TABLE IF EXISTS students")
-query("""CREATE TABLE students (login char(8) PRIMARY KEY NOT NULL,
-                             group_id INT NULL)""")
-query("INSERT INTO students VALUES ('xtomec06', 1)")
-
-query("DROP TABLE IF EXISTS groups")
-query("""CREATE TABLE groups (group_id INTEGER PRIMARY KEY AUTO_INCREMENT,
-                              name char(40) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
-                              lector char(8) NOT NULL )""")
-query("INSERT INTO groups VALUES (NULL,'Skupina 01', 'xtest')")
-query("INSERT INTO groups VALUES (NULL,'Skupina náhradní', 'master')")
-
-query("DROP TABLE IF EXISTS lectures")
-query("""CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTO_INCREMENT,
-                                name char(40) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
-                                lector char(8) NOT NULL,
-                                `nonterminal` char(32),
-                                state INT NULL,
-                                shared INT NULL)""")
-query("INSERT INTO lectures(name, lector,nonterminal, state) VALUES ('Cvičení 1. - logické operace', 'xtest','cviceni3', 1)")
-query("INSERT INTO lectures(name, lector, nonterminal) VALUES ('Cvičení 2. - hospoda', 'xtest', 'cislo')")
-
-query("DROP TABLE IF EXISTS assigments")
-query("""CREATE TABLE assigments (assigment_id INTEGER PRIMARY KEY AUTO_INCREMENT,
-                                        login char(8) NOT NULL,
-                                        lecture_id INT NOT NULL,
-                                        generated INT NULL,
-                                        changed INT NULL,
-                                        `text` TEXT,
-                                        `response` TEXT,
-                                        state INT NULL,
-                                        points FLOAT)""")
-query("INSERT INTO assigments(login, lecture_id, `text`, response, state) VALUES ('xtomec06', 1, 'generovany', 'odpoved', 1)")
-
-
-#con.commit()  
+if  "reset" in config.database and  config.database["reset"]:
+    query("DROP TABLE IF EXISTS lectors")
+    query("""CREATE TABLE lectors (login char(8) PRIMARY KEY NOT NULL,
+                                 password char(40) NULL,
+                                 roles char(20) NULL)""")
+                                 
+    query("INSERT INTO lectors VALUES ('xtest', '%s', 'lector')" %  (sha1("test".encode('utf-8')).hexdigest(),) )
+    query("INSERT INTO lectors VALUES ('master', '%s', 'lector,master')" %  (sha1("test".encode('utf-8')).hexdigest(),) )
+    
+    query("DROP TABLE IF EXISTS students")
+    query("""CREATE TABLE students (login char(8) PRIMARY KEY NOT NULL,
+                                 group_id INT NULL)""")
+    query("INSERT INTO students VALUES ('xtomec06', 1)")
+    
+    query("DROP TABLE IF EXISTS groups")
+    query("""CREATE TABLE groups (group_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+                                  name char(40) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
+                                  lector char(8) NOT NULL )""")
+    query("INSERT INTO groups VALUES (NULL,'Skupina 01', 'xtest')")
+    query("INSERT INTO groups VALUES (NULL,'Skupina náhradní', 'master')")
+    
+    query("DROP TABLE IF EXISTS lectures")
+    query("""CREATE TABLE lectures (lecture_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+                                    name char(40) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
+                                    lector char(8) NOT NULL,
+                                    `nonterminal` char(32),
+                                    state INT NULL,
+                                    shared INT NULL)""")
+    query("INSERT INTO lectures(name, lector,nonterminal, state) VALUES ('Cvičení 1. - logické operace', 'xtest','cviceni3', 1)")
+    query("INSERT INTO lectures(name, lector, nonterminal) VALUES ('Cvičení 2. - hospoda', 'xtest', 'cislo')")
+    
+    query("DROP TABLE IF EXISTS assigments")
+    query("""CREATE TABLE assigments (assigment_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+                                            login char(8) NOT NULL,
+                                            lecture_id INT NOT NULL,
+                                            generated INT NULL,
+                                            changed INT NULL,
+                                            `text` TEXT,
+                                            `response` TEXT,
+                                            state INT NULL,
+                                            points FLOAT)""")
+    query("INSERT INTO assigments(login, lecture_id, `text`, response, state) VALUES ('xtomec06', 1, 'generovany', 'odpoved', 1)")
+    
+   

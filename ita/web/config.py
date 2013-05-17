@@ -10,6 +10,7 @@ session_opts = {
 database = {
     "storage" : "sqlite",
     "path" : "test.db"
+    "reset" : True
 }
 
 #database = {
