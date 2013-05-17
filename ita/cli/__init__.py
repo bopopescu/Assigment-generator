@@ -1,5 +1,6 @@
 import sys
 from . import reloader as cli_reloader
+from . import maker as cli_maker
 
 def dieWithHelp(detail = None):
     """Vytiskne chybovou hlášku v případě nerozpoznanéího formátu parametrů"""
@@ -53,10 +54,21 @@ def getParams(defaults):
     return defaults    
 
 def reloader():
-    params = getParams({"nonterminal" : "cviceni", "interval" : 1, "path" : "sablony", "toAscii":True})
+    params = getParams({"nonterminal" : "cislo", "interval" : 1, "path" : "sablony", "toAscii":True})
     params["interval"] = int(params["interval"])
     
     cli_reloader.run(**params);
     
+def maker():
+    params = getParams({"nonterminal" : "cislo", "source" : None, "count" : None, "path" : "sablony",})
+    if params["count"]: params["count"] = int(params["count"])
     
-__ALL__ = ["reloader", "params"]    
+    if not  params["count"] and not  params["source"]:
+        dieWithHelp("Either count or source must be specified")
+    
+    cli_maker.run(**params);    
+    
+    
+    
+    
+__ALL__ = ["reloader", "maker", "params"]    
