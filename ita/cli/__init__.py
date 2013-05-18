@@ -1,8 +1,9 @@
 import sys
+import os
 from . import reloader as cli_reloader
 from . import maker as cli_maker
 
-def dieWithHelp(detail = None):
+def dieWithHelp(detail = None, defaults = None):
     """Vytiskne chybovou hlášku v případě nerozpoznanéího formátu parametrů"""
     #todo: stderr
     
@@ -11,6 +12,15 @@ def dieWithHelp(detail = None):
     else:
         print("Nerozpoznany format parametru, musi byt ve formatu '-nazev[ hodnota]'")
     
+    if defaults:
+        print("Defaultní parametry:")
+        print(sys.argv[0].split(os.sep)[-1], end=" ")
+        for key, value  in defaults.items():
+            if type(value) is bool and value == True:
+                print("-%s" % (key,), end=" ")
+            else:
+                print("-%s %s" % (key,value), end=" ")
+        print()
     sys.exit(1)
 
 def getParams(defaults):
@@ -25,12 +35,14 @@ def getParams(defaults):
     while i < paramCount:
         param = params[i]
         i += 1
-
+        
         # parametr je ve formátu "-nazev[ hodnota]"
         if param[0] != "-": dieWithHelp()
 
         #ziskame parametr a jeho hodnotu, pokud je jenom pritomen, je jeho hodnota true
         name = param[1:]
+    
+        if name == "help": dieWithHelp("Napoveda", defaults)
         
         #je to posledni parametr, nebo nasledujici zacina pomlckou
         if (i >= paramCount) or (params[i][0] == "-"):
