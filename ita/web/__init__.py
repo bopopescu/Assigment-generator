@@ -3,10 +3,11 @@ import os
 
 # bad practice - do NOT try this at home
 # nicmene to vycisti top level adresar a neni potreba moduly instalovat
-# diky tomu je cela aplikace zavisla jenom na Pythonu...
+# diky tomu je cela aplikace zavisla jenom na Pythonu, coz je priorita zadani...
   
 path = os.path.dirname(__file__)
 sys.path.append(path)
+
 
 ################################################################################
 # označeni aktualni revize
