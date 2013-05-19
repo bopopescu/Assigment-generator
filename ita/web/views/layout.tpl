@@ -50,7 +50,7 @@
       <hr>
 
       <div class="footer">
-        <div class="pull-right">DIP Aleš Tomeček 2013</div>
+        <div class="pull-right">DIP Aleš Tomeček 2013 (verze {{VERSION_CONTROL}})</div>
         
         %if not user:
             <div>

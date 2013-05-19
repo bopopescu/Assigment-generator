@@ -1,6 +1,7 @@
 """různé pomocné struktury"""
 import bottle
 from bottle import hook, request
+from ita.web import VERSION_CONTROL
 
  
 @hook("before_request")
@@ -100,6 +101,10 @@ def template(*args, **kwargs):
     kwargs["slug"] = slug
     kwargs["getMenu"] = _getMenu
     kwargs["requestedURL"] = request.path
+    
+    ### verze
+    kwargs["VERSION_CONTROL"] = VERSION_CONTROL
+    
         
     return bottle.template(*args, **kwargs) 
     

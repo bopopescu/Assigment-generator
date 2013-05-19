@@ -8,6 +8,18 @@ import os
 path = os.path.dirname(__file__)
 sys.path.append(path)
 
+################################################################################
+# označeni aktualni revize
+VERSION_CONTROL = "unknown"
+try:
+    import subprocess
+    label = subprocess.check_output(["git", "rev-parse","HEAD"], shell=True)
+    VERSION_CONTROL = label.decode("ascii").strip()
+except:
+    pass    
+
+################################################################################
+
 import bottle
 
 # přidáme views z aktuálního adresáře
@@ -17,7 +29,6 @@ from beaker.middleware import SessionMiddleware
 
 from . import config
 from .frontend import app as frontendApp
-
 
 ################################################################################
 
@@ -44,4 +55,4 @@ def run(**kwargs):
 
 
 
-__all__ = ["run"]
+__all__ = ["run", "VERSION_CONTROL"]
