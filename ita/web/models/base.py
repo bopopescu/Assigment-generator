@@ -13,6 +13,9 @@ class BaseModel(object):
         try:
             return self.data[name]
         except KeyError:
+            # pod některýma impelmentacema  dat to hází index error místo key :-/
+            raise AttributeError()            
+        except IndexError:
             raise AttributeError()
 
     @classmethod
