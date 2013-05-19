@@ -21,10 +21,8 @@ from .frontend import app as frontendApp
 
 ################################################################################
 
-from git_reloader import app as gitReloader
-
 mainApp = frontendApp
-#mainApp.mount("/git/", gitReloader)
+
 
 mainApp = SessionMiddleware(mainApp , config.session_opts)
 
