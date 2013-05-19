@@ -26,6 +26,32 @@ class Model(BaseModel):
         roles = self.read("roles")
         return role in roles
         
+    def addRole(self, role):
+        if not self.isLector:
+            raise NotImplementedError("Roles are supported only for lectors")
+            
+        roles = self.read("roles")
+        roles.append(role)
+        
+        newRoles = ",".join(set(roles))
+        c = query('UPDATE lectors SET roles=? WHERE login = ?', (newRoles, self.login))
+        
+    def removeRole(self, role):
+        if not self.isLector:
+            raise NotImplementedError("Roles are supported only for lectors")
+            
+        roles = self.read("roles")
+
+        try:
+            roles.remove(role)
+            newRoles = ",".join(set(roles))
+            c = query('UPDATE lectors SET roles=? WHERE login = ?', (newRoles, self.login))        
+        except ValueError:
+            # role neni nastavena
+            pass
+        
+                     
+        
     def getGroup(self):
         print(self.isLector , self.read("roles"))
         group_id = self.read("group_id") 

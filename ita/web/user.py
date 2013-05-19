@@ -60,6 +60,19 @@ def profil():
 def list():
     """Seznam lektorů """
     
+    
+    if request.params.get("promote"):
+        lec = User.get( request.params.get("promote") )
+        lec.addRole("master")
+        msg("Lektor %s byl povýšen" % lec.login,"success")
+        redirect(request.path)
+        
+    if request.params.get("degrade"):
+        lec = User.get( request.params.get("degrade") )
+        lec.removeRole("master")
+        msg("Lektor %s byl ponížen :-)" % lec.login,"success")
+        redirect(request.path)       
+    
     # vložení nového lektora
     if request.forms.get("add"):
         login =  request.forms.decode().get("add")
