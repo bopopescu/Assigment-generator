@@ -114,6 +114,9 @@ class Model(BaseModel):
 
     @staticmethod
     def getSums(logins):
+    
+        if len(logins) == 0: raise StopIteration
+        
         c = query('SELECT login, SUM(points) AS points FROM assigments WHERE login IN (%s)' % (",".join(map(lambda x: "'%s'"%x,logins ))))
         for row in c.fetchall():
             yield row

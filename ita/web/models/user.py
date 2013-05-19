@@ -143,7 +143,7 @@ class Model(BaseModel):
         
     def remove(self):
         table = "lectors" if self.isLector else "students" 
-        c = query('DELETE FROM %s WHERE login = ?' , (self.read("login"),)  )            
+        c = query('DELETE FROM %s WHERE login = ?' % table , (self.read("login"),)  )            
         
         if not c.rowcount:
             raise UserException("Chyba při mazání")        
