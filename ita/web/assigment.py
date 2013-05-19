@@ -8,7 +8,7 @@ from group import Group
 ################################################################################
 # model
 from models import Assigment
-
+from models.base import ModelException
 
         
 ################################################################################
@@ -47,17 +47,20 @@ def assigmentRate(assigment_id):
         action = request.forms.get("action")
         if (not action) or  (not action in ("lock", "rate", "unlock")): HTTPError(400, "Neznámá akce")
         print("----------action", action)
-        if action == "lock":
-            assigment.lock()
-            msg("Řešení bylo zamčeno", "success")
-        elif action == "rate":
-            assigment.rate(  request.forms.get("points") )
-            msg("Řešení bylo ohodnoceno", "success")
-        elif action == "unlock":
-            assigment.unlock()
-            msg("Řešení bylo odemčeno", "success")            
-            
+        try:
+            if action == "lock":
+                assigment.lock()
+                msg("Řešení bylo zamčeno", "success")
+            elif action == "rate":
+                assigment.rate(  request.forms.get("points") )
+                msg("Řešení bylo ohodnoceno", "success")
+            elif action == "unlock":
+                assigment.unlock()
+                msg("Řešení bylo odemčeno", "success")            
+        except ModelException as e:
+            msg("Chyba při manipulaci: %s" %s, "error")             
         redirect('/assigments-lector')
+        return
 
     return template("assigments_rate", {"assigment" : assigment } )
 
