@@ -12,7 +12,7 @@ class BaseModel(object):
     def __getattr__ (self, name):
         try:
             return self.data[name]
-        except IndexError:
+        except KeyError:
             raise AttributeError()
 
     @classmethod
