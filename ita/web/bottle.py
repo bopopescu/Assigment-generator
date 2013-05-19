@@ -2108,7 +2108,6 @@ class FileUpload(object):
 
     def __init__(self, fileobj, name, filename, headers=None):
         ''' Wrapper for file uploads. '''
-        print(">>>>>>stavitm objekt")
         #: Open file(-like) object (BytesIO buffer or temporary file)
         self.file = fileobj
         #: Name of the upload form field
