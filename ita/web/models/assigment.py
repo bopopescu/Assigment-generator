@@ -24,7 +24,6 @@ class Model(BaseModel):
         """ Aktualizuje záznam, ale přidá k němu záznam o změně """
         if not "changed" in kwargs:
             kwargs["changed"] = str(time.time()).split('.')[0]
-            super(Model, self).update(**kwargs)
         
         return super(Model, self).update(**kwargs)
 
@@ -135,7 +134,7 @@ class Model(BaseModel):
     @staticmethod
     def create(lecture_id, text, login):
         now = str(time.time()).split('.')[0]
-        c = query('INSERT INTO assigments(login, generated `text`, lecture_id) VALUES (?, ?, ?, ?)', (login, now, text, lecture_id) )
+        c = query('INSERT INTO assigments(login, generated, `text`, lecture_id) VALUES (?, ?, ?, ?)', (login, now, text, lecture_id) )
         return Model.get( c.lastrowid )        
     
     
