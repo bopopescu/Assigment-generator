@@ -1,10 +1,4 @@
-<h1>todo</h1>
-<ul>
- <li> omezit bahrávání velkých souborů
- <li> formátování 
- <li> zvyraznovani syntaxe u editace sablony
- <li> odstranit WTforms
-
-</ul>
+<h1>Vítejte</h1>
+<p>pro práci se systémem se musíte nejprve přihlásit.</p>
 
 %rebase layout
