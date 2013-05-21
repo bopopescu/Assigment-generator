@@ -11,6 +11,7 @@ sys.path.append(path)
 
 ################################################################################
 # označeni aktualni revize
+print("Trying to detect master reference")
 VERSION_CONTROL = "unknown"
 try:
     import subprocess
@@ -19,6 +20,7 @@ try:
 except:
     pass    
 
+print("Reference resolved",VERSION_CONTROL )
 ################################################################################
 
 import bottle
