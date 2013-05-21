@@ -1,0 +1,12 @@
+.\sablony                     šablony svicení
+.\ita                         samotný modul
+.\ita\cli                     podmodul nástrojů
+.\ita\web                     podmodul webového rozhraní
+.\template_lib                šablony standardní knihovny
+
+.\bare.py                     ukázka použití
+.\collision_check.py          skript pro testování kolizí v zadáních
+.\run_maker.py                spouštěcí skript pro nástroj Maker
+.\run_reloader.py             spouštěcí skript pro nástroj Reloader
+.\run_web.py                  spouštěcí skript webového rozhraní  
+ 
