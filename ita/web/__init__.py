@@ -11,7 +11,7 @@ sys.path.append(path)
 
 ################################################################################
 # označeni aktualni revize
-print("Trying to detect master reference")
+print("Trying to detect main reference")
 VERSION_CONTROL = "unknown"
 try:
     import subprocess

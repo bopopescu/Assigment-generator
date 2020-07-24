@@ -21,13 +21,13 @@ def list():
     """Seznam odevzdaných zadání"""
     
     usr = getUser() 
-    #todo pro mastera zobrazit všechny
+    #todo pro maina zobrazit všechny
 
     # zjistíme v jaké jsme skupině
     assigments = Assigment.getPending( usr.login ) 
     silent = Assigment.getSilent( usr.login ) 
     
-    return template("assigments_lector", {"assigments" : assigments, "silent" : silent, "showLector" : usr.inRole("master") } )
+    return template("assigments_lector", {"assigments" : assigments, "silent" : silent, "showLector" : usr.inRole("main") } )
 
 
 

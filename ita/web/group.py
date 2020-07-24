@@ -38,9 +38,9 @@ def list():
             msg("Chyba při vytváření skupiny","error")
             redirect(request.path)
         
-    groups = Group.getAll() if usr.inRole("master") else Group.getAll(usr.login) 
+    groups = Group.getAll() if usr.inRole("main") else Group.getAll(usr.login) 
     
-    return template("groups", {"groups" : groups, "showLector": usr.inRole("master") } )
+    return template("groups", {"groups" : groups, "showLector": usr.inRole("main") } )
 
 @route('/groups/download/<group_id:int>', method=['GET'])
 @role('lector')    
@@ -50,7 +50,7 @@ def download(group_id):
     user = getUser()
     group = Group.get( group_id )
     
-    if not ( user.inRole("master") or group.lector == user.login):
+    if not ( user.inRole("main") or group.lector == user.login):
         return unauthorized()
 
     headers = {}
@@ -77,7 +77,7 @@ def edit(group_id):
     user = getUser()
     group = Group.get( group_id )
     
-    if not ( user.inRole("master") or group.lector == user.login):
+    if not ( user.inRole("main") or group.lector == user.login):
         return unauthorized()
     
     # vložení studenta
@@ -124,7 +124,7 @@ def delete(group_id):
     user = getUser()
     group = Group.get( group_id )
 
-    if not ( user.inRole("master") or group.lector == user.login):
+    if not ( user.inRole("main") or group.lector == user.login):
         return unauthorized()
 
     answer = request.forms.get("answer") 

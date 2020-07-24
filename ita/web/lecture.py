@@ -50,9 +50,9 @@ def list():
             msg("Chyba při vytváření cvičení","error")
             redirect(request.path)
         
-    lectures = Lecture.getAll() if usr.inRole("master") else Lecture.getAll(usr.login) 
+    lectures = Lecture.getAll() if usr.inRole("main") else Lecture.getAll(usr.login) 
     
-    return template("lectures", {"lectures" : lectures, "showLector": usr.inRole("master") } )
+    return template("lectures", {"lectures" : lectures, "showLector": usr.inRole("main") } )
 
 @route('/lectures/edit/<lecture_id:int>', method=['GET', 'POST'])
 @role('lector')    
@@ -63,7 +63,7 @@ def edit(lecture_id):
     form = LectureForm(request.forms.decode(), lecture)
     user = getUser()
 
-    if not ( user.inRole("master") or lecture.lector == user.login):
+    if not ( user.inRole("main") or lecture.lector == user.login):
         return unauthorized()
 
     if request.method == 'POST' and form.validate():
@@ -89,7 +89,7 @@ def delete(lecture_id):
     lecture = Lecture.get( lecture_id )
     user = getUser()
 
-    if not ( user.inRole("master") or lecture.lector == user.login):
+    if not ( user.inRole("main") or lecture.lector == user.login):
         return unauthorized()
 
 

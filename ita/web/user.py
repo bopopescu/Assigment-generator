@@ -36,7 +36,7 @@ def getUser():
 # stránky
 
 @route("/chosenOne",  method=['GET', 'POST'])
-@role('master', 'lector')
+@role('main', 'lector')
 def profil():
     """Nastavení hesla"""
     
@@ -56,20 +56,20 @@ def profil():
     return template("profil", {"user":usr} )
 
 @route('/lectors', method=['GET', 'POST'])
-@role('master')
+@role('main')
 def list():
     """Seznam lektorů """
     
     
     if request.params.get("promote"):
         lec = User.get( request.params.get("promote") )
-        lec.addRole("master")
+        lec.addRole("main")
         msg("Lektor %s byl povýšen" % lec.login,"success")
         redirect(request.path)
         
     if request.params.get("degrade"):
         lec = User.get( request.params.get("degrade") )
-        lec.removeRole("master")
+        lec.removeRole("main")
         msg("Lektor %s byl ponížen :-)" % lec.login,"success")
         redirect(request.path)       
     
@@ -164,7 +164,7 @@ def userMenu():
         if not usr.inRole("student"):
             addMenu("/chosenOne", "Profil", 97)
             
-        if usr.inRole("master"):
+        if usr.inRole("main"):
             addMenu("/lectors", "Cvičící", 95)
         
     else:    

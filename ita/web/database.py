@@ -182,10 +182,10 @@ query("""CREATE TABLE IF NOT EXISTS assigments (assigment_id INTEGER PRIMARY KEY
 
 if "reset" in config.database and  config.database["reset"]:                                    
     query("INSERT INTO lectors VALUES ('xtest', '%s', 'lector')" %  (sha1("test".encode('utf-8')).hexdigest(),) )
-    query("INSERT INTO lectors VALUES ('master', '%s', 'lector,master')" %  (sha1("test".encode('utf-8')).hexdigest(),) )                                    
+    query("INSERT INTO lectors VALUES ('main', '%s', 'lector,main')" %  (sha1("test".encode('utf-8')).hexdigest(),) )                                    
     query("INSERT INTO students VALUES ('xtomec06', 1)")                                    
     query("INSERT INTO groups VALUES (NULL,'Skupina 01', 'xtest')")
-    query("INSERT INTO groups VALUES (NULL,'Skupina náhradní', 'master')")
+    query("INSERT INTO groups VALUES (NULL,'Skupina náhradní', 'main')")
 
     query("INSERT INTO lectures(name, lector,nonterminal, state) VALUES ('Cvičení 1. - logické operace', 'xtest','cviceni3', 1)")
     query("INSERT INTO lectures(name, lector, nonterminal) VALUES ('Cvičení 2. - hospoda', 'xtest', 'cislo')")
